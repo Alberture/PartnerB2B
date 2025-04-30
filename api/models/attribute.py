@@ -1,5 +1,6 @@
 from django.db import models
 
+"""
 TYPE_CHOICE = [
     ('text', 'Texte'),
     ('integer', 'Entier'),
@@ -22,6 +23,10 @@ VALIDATION_CHOICE = [
     ('file', ''),
 ]
 
+CHOICE_FOR_CHOICE = [
+    ('abilitySituation', ['']),
+]
+
 class Attribute(models.Model):
     name = models.CharField(max_length=255, unique=True,)
     displayedName = models.CharField(max_length=255)
@@ -29,5 +34,6 @@ class Attribute(models.Model):
     category = models.CharField()
     isRequired = models.BooleanField()
     validation = models.CharField(choices=VALIDATION_CHOICE)
-    #Liste choix
+    choice = models.CharField()
     sensitiveData = models.BooleanField()
+"""
