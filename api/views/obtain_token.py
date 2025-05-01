@@ -12,6 +12,7 @@ class ObtainPairToken(APIView):
         APIView to obtain refresh and access token 
         for a partner with a valid APIKey
     """
+
     def post(self, request, *args, **kwargs):
         try:
             partner = Partner.objects.get(apiKey=request.data['apiKey'])
