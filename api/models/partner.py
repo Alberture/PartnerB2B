@@ -21,9 +21,9 @@ class Partner(models.Model):
     limitUsage = models.PositiveIntegerField()
 
     def save(self, *args, **kwargs):
-        self.apiKey = generateAPIKey(self)
+        self.apiKey = generateAPIKey()
         partner = Partner.objects.filter(apiKey=self.apiKey)
         while partner:
-            self.apiKey = generateAPIKey(self)
+            self.apiKey = generateAPIKey()
             partner = Partner.objects.filter(apiKey=self.apiKey)
         super().save(*args, **kwargs)
