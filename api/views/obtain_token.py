@@ -3,10 +3,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.views import APIView
-
 from datetime import datetime
 
-from ..serializers import ObtainTokenSerializer
 from ..models import Partner
 
 class ObtainPairToken(APIView):

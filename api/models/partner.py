@@ -1,8 +1,8 @@
 from django.db import models
-import binascii
-import os
 
 from rest_framework.authtoken.models import Token
+
+from ..utils import generateAPIKey
 
 STATUS_CHOICE = [
     ('pending', 'en attente'),
@@ -20,7 +20,10 @@ class Partner(models.Model):
     webhookUrl = models.CharField(max_length=1000, null=True, blank=True)
     limitUsage = models.PositiveIntegerField()
 
-
     def save(self, *args, **kwargs):
-        self.apiKey = binascii.hexlify(os.urandom(20)).decode()
+        self.apiKey = generateAPIKey(self)
+        partner = Partner.objects.filter(apiKey=self.apiKey)
+        while partner:
+            self.apiKey = generateAPIKey(self)
+            partner = Partner.objects.filter(apiKey=self.apiKey)
         super().save(*args, **kwargs)
