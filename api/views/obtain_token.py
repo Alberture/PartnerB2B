@@ -2,23 +2,44 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework.views import APIView
+
 from datetime import datetime
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
+from ..serializers import ObtainTokenSerializer
+from ..models import Partner
 
+class ObtainPairToken(APIView):
+    """
+        APIView to obtain refresh and access token 
+        for a partner with a valid APIKey
+    """
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        access_token = AccessToken(serializer.validated_data['access'])
-        refresh_token = RefreshToken(serializer.validated_data['refresh'])
-        access_exp = datetime.fromtimestamp(access_token['exp']).isoformat()
-        refresh_exp = datetime.fromtimestamp(refresh_token['exp']).isoformat()
+        try:
+            partner = Partner.objects.get(apiKey=request.data['apiKey'])
+        except:
+            return Response({'error': 'API key was not found'})
         
+        """
+            Since I'm using django JWT I need to pass an User-like object the RefreshToken object
+            because the RefreshToken object is based on the User object
+        """
+        class PartnerUserWrapper:
+            def __init__(self, id): self.id = id
+            @property
+            def is_active(self): return True  # required by JWT
+
+        partner_user = PartnerUserWrapper(partner.id)
+
+        refresh_token = RefreshToken.for_user(partner_user)
+        refresh_expire = datetime.fromtimestamp(refresh_token['exp']).isoformat()
+        
+        access_token = refresh_token.access_token
+        access_expire = datetime.fromtimestamp(access_token['exp']).isoformat()
+
         return Response({
-            'access': str(access_token),
-            'refresh': str(refresh_token),
-            'access_expires': access_exp,
-            'refresh_expires': refresh_exp,
-        })
+            "access": str(access_token),
+            "refresh": str(refresh_token),
+            "access_expire": access_expire,
+            "refesh_expire": refresh_expire,
+        })    

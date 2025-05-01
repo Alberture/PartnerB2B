@@ -4,7 +4,12 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 from datetime import datetime
 
-class CustomTokenRefreshView(TokenRefreshView):
+class RefreshToken(TokenRefreshView):
+    """
+        Class that inherit from TokenRefreshView (used to 
+        generate refresh tokens) to custom the returned 
+        Response when refreshing an access token
+    """
     serializer_class = TokenRefreshSerializer
 
     def post(self, request, *args, **kwargs):

@@ -1,7 +1,7 @@
-from .obtain_token import CustomTokenObtainPairView
-from .refresh_token import CustomTokenRefreshView
+from .obtain_token import ObtainPairToken
+from .refresh_token import RefreshToken
 
 __all__ = [
-    'CustomTokenObtainPairView',
-    'CustomTokenRefreshView'
+    'ObtainPairToken',
+    'RefreshToken'
 ]
