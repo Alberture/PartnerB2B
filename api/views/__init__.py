@@ -3,5 +3,5 @@ from .refresh_token import RefreshToken
 
 __all__ = [
     'ObtainPairToken',
-    'RefreshToken'
+    'RefreshToken',
 ]

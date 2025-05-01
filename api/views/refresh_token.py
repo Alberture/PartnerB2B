@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 from datetime import datetime
+from rest_framework.views import APIView
 
 class RefreshToken(TokenRefreshView):
     """
