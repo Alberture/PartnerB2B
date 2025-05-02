@@ -7,6 +7,8 @@ from rest_framework.renderers import JSONRenderer
 from ..models import Attribute
 from ..serializers import AttributeSerializer
 
+from django.contrib.postgres.aggregates import ArrayAgg
+
 class Metadata(APIView):
     """
         APIView that returns metadata from attributes
