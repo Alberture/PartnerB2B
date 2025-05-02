@@ -3,6 +3,7 @@ from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
 
 from ..models import Attribute
 from ..serializers import AttributeSerializer
@@ -11,8 +12,13 @@ from django.contrib.postgres.aggregates import ArrayAgg
 
 class Metadata(APIView):
     """
-        APIView that returns metadata from attributes
+        APIView with only a get method that lists
+        all attributes in each category of attributes
+        and their specificities
     """
+
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         categories = Attribute.objects.values('category').distinct()
         result = {}
