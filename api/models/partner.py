@@ -12,9 +12,9 @@ STATUS_CHOICE = [
 ]
 
 class Partner(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=255)
     apiKey = models.CharField(max_length=512, null=True, blank=True)
-    activationStatus = models.CharField(choices=STATUS_CHOICE, default='pending')
+    activationStatus = models.CharField(choices=STATUS_CHOICE, default='pending', max_length=11)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     webhookUrl = models.CharField(max_length=1000, null=True, blank=True)
