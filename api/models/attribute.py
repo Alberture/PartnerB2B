@@ -36,5 +36,5 @@ class Attribute(models.Model):
     type = models.CharField(choices=TYPE_CHOICE)
     category = models.CharField(choices=CATEGORIES_CHOICE)
     isRequired = models.BooleanField()
-    validation = models.CharField(null=True, blank=True, choices=CATEGORIES_CHOICE)
+    validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     sensitiveData = models.BooleanField()
