@@ -1,11 +1,11 @@
-from ..models import Profile
+from ..models import ProfileAttribute
 from rest_framework import serializers
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileAttributeSerializer(serializers.ModelSerializer):
     """
         Serializer to transform an ProfileAttribute object
         to a JSON format
     """
     class Meta:
-        model = Profile
+        model = ProfileAttribute
         fields = '__all__'
