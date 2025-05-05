@@ -7,7 +7,9 @@ from .document import DocumentItemSerializer
 from rest_framework import serializers
 
 class ProfileItemSerializer(serializers.ModelSerializer):
-
+    """
+        Serializer to transform a Profile object to JSON format
+    """
     createdAt = serializers.DateTimeField(read_only=True)
     updatedAt = serializers.DateTimeField(read_only=True)
     status = serializers.CharField(read_only=True)
