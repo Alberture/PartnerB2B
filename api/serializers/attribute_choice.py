@@ -3,8 +3,7 @@ from ..models import AttributeChoice
 
 class AttributeChoiceSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform an AttributeChoice object 
-        to a JSON format
+        Serializer to transform Json to an AtributeChoice object
     """
 
     class Meta:
