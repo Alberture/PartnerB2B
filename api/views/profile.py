@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 
-from ..serializers import ProfileSerializer, ProfileAttributeSerializer
+from ..serializers import ProfileSerializer, ProfileAttributeSerializer, ProfileItemSerializer
 from ..models import Partner, Profile, Attribute
 
 class ProfileViewSet(ModelViewSet):
@@ -39,12 +39,13 @@ class ProfileViewSet(ModelViewSet):
 
 
     def retrieve(self, request, pk, *args, **kwargs):
+       
         try:
-            profile = self.query_set.filter(pk=pk) 
+            profile = self.queryset.get(pk=pk) 
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.serializer_class(profile)
+        serializer = ProfileItemSerializer(profile)
         return Response(serializer.data)
     
     
