@@ -32,12 +32,14 @@ class ProfileItemSerializer(serializers.ModelSerializer):
 
     def get_last_analyse(self, obj):
         analyse = obj.analyse_set.order_by('-id')[:1].first()
-        return {
-            'score' : analyse.score,
-            'status' : analyse.status,
-            'details' : analyse.details,
-            'version' : analyse.version
-        }
+        if analyse:
+            return {
+                'score' : analyse.score,
+                'status' : analyse.status,
+                'details' : analyse.details,
+                'version' : analyse.version
+            }
+        return None
     
 
 class ProfileSerializer(serializers.ModelSerializer):

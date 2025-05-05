@@ -2,6 +2,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
+from rest_framework.decorators import action
+
+from django.shortcuts import get_object_or_404
 
 from ..serializers import ProfileSerializer, ProfileAttributeSerializer, ProfileItemSerializer
 from ..models import Partner, Profile, Attribute, ProfileAttribute
@@ -27,19 +30,28 @@ class ProfileViewSet(ModelViewSet):
             if request.data.get('attributes'):
                 for name, value in request.data.get('attributes').items():
                     valid_value = {"value": value}
-                    profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
+                    profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value, many=True)
                     if profile_attribute_serializer.is_valid(raise_exception=True):
                         try:
                             attribute = Attribute.objects.get(name=name)
                         except:
-                            return Response(status=status.HTTP_400_BAD_REQUEST)
+                            return Response(
+                                {'message': 'L\'attribut %s n\'existe pas.' % (name) },
+                                status=status.HTTP_400_BAD_REQUEST
+                            )
                         profile_attribute_serializer.save(attribute=attribute, profile=profile)
                     else:
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                        return Response(
+                            {'message': 'Le format des données n\'est pas respecté'}, 
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
                     
             return Response(profile_serializer.data, status=status.HTTP_201_CREATED)
         
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'message': 'Le format des données n\'est pas respecté'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 
     def retrieve(self, request, pk, *args, **kwargs):
@@ -47,7 +59,10 @@ class ProfileViewSet(ModelViewSet):
         try:
             profile = self.queryset.get(pk=pk) 
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'message': 'Ce profil n\'existe pas. Veuillez vérifier l\'identifiant de l\'utilisateur.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
         serializer = ProfileItemSerializer(profile)
         return Response(serializer.data)
@@ -59,16 +74,19 @@ class ProfileViewSet(ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         profile_serializer = ProfileSerializer(instance=profile, data=request.data)
-        if profile_serializer.is_valid():
+        if profile_serializer.is_valid(raise_exception=True):
             profile = profile_serializer.save()
 
             if request.data.get('attributes'):
                 for name, value in request.data.get('attributes').items():
-                    
+
                     try:
                         attribute = Attribute.objects.get(name=name)
                     except:
-                        return Response(status=status.HTTP_400_BAD_REQUEST)    
+                        return Response(
+                            {'message': 'L\'attribut %s n\'existe pas.' % (name) },
+                            status=status.HTTP_400_BAD_REQUEST
+                        )  
                 
                     valid_value = {"value": value}
                     try:
@@ -77,10 +95,33 @@ class ProfileViewSet(ModelViewSet):
                     except:
                         profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
                     
-                    profile_attribute_serializer.is_valid(raise_exception=True)
-                    profile_attribute_serializer.save(attribute=attribute, profile=profile)
-
+                    if profile_attribute_serializer.is_valid(raise_exception=True):
+                        profile_attribute_serializer.save(attribute=attribute, profile=profile)
+                    else:
+                        return Response(
+                            {'message': 'Le format des données n\'est pas respecté'}, 
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
                     
             return Response(profile_serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=['post'], url_path='sumbit')
+    def submit(self, request, pk=None):
+        try:
+            profile = self.queryset.get(pk=pk) 
+        except:
+            return Response({
+                'message': 'Nous n\'avons pas pu trouver ce profile. Veuillez vérifier l\'identifiant de l\'utilisateur.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+        profile.status = 'complete'
+        profile.save()
+
+        return Response({
+            'status': 'Complet',
+            'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
+        })
+
+        
