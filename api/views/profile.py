@@ -24,14 +24,15 @@ class ProfileViewSet(ModelViewSet):
         partner = Partner.objects.get(pk=user_like_partner.id)
         profile_serializer = ProfileSerializer(data=request.data)
           
-        if profile_serializer.is_valid(raise_exception=True):
+        if profile_serializer.is_valid():
             profile = profile_serializer.save(partner=partner)
 
             if request.data.get('attributes'):
                 for name, value in request.data.get('attributes').items():
                     valid_value = {"value": value}
-                    profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value, many=True)
-                    if profile_attribute_serializer.is_valid(raise_exception=True):
+                    profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
+                    
+                    if profile_attribute_serializer.is_valid():
                         try:
                             attribute = Attribute.objects.get(name=name)
                         except:
@@ -74,7 +75,7 @@ class ProfileViewSet(ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         profile_serializer = ProfileSerializer(instance=profile, data=request.data)
-        if profile_serializer.is_valid(raise_exception=True):
+        if profile_serializer.is_valid():
             profile = profile_serializer.save()
 
             if request.data.get('attributes'):
@@ -95,7 +96,7 @@ class ProfileViewSet(ModelViewSet):
                     except:
                         profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
                     
-                    if profile_attribute_serializer.is_valid(raise_exception=True):
+                    if profile_attribute_serializer.is_valid():
                         profile_attribute_serializer.save(attribute=attribute, profile=profile)
                     else:
                         return Response(
