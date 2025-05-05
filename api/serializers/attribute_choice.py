@@ -5,7 +5,6 @@ class AttributeChoiceSerializer(serializers.ModelSerializer):
     """
         Serializer to transform Json to an AtributeChoice object
     """
-
     class Meta:
         model = AttributeChoice
         fields = ['displayedName']

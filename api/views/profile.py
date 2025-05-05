@@ -1,4 +1,4 @@
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
@@ -6,10 +6,14 @@ from rest_framework import status
 from ..serializers import ProfileSerializer, ProfileAttributeSerializer
 from ..models import Partner, Profile, Attribute
 
-class ProfileViewSet(ViewSet):
+class ProfileViewSet(ModelViewSet):
     """
         ViewSet for Profile management (CRUD)
     """
+    
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+
     def create(self, request, *args, **kwargs):
             
         validated_token = JWTAuthentication().get_validated_token(request.META['HTTP_AUTHORIZATION'][7:])
@@ -32,3 +36,15 @@ class ProfileViewSet(ViewSet):
             return Response(profile_serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    def retrieve(self, request, pk, *args, **kwargs):
+        try:
+            profile = self.query_set.filter(pk=pk) 
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.serializer_class(profile)
+        return Response(serializer.data)
+    
+    
