@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, process_attribute_value, error_response
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer
-from ..models import Profile, ProfileAttribute
+from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
+from ..models import Profile, ProfileAttribute, Attribute
 
 
 class ProfileViewSet(ModelViewSet):
@@ -17,6 +18,7 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def create(self, request, *args, **kwargs):
         partner = get_authenticated_partner(request)
@@ -86,5 +88,17 @@ class ProfileViewSet(ModelViewSet):
             'status': 'Complet',
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
+    
+    @action(detail=True, methods=['post'], url_path='documents')
+    def add_document(self, request, pk=None):
+        serializer = ProfileAttributeDocumentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            document_attribute = Attribute.objects.get(name="document")
+            profile = get_profile_or_error(pk)
+            if not profile:
+                error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
 
+            document = serializer.save(attribute=document_attribute, profile=profile)
+            return Response(serializer.data)
 
+        error_response("Le format des données n'est pas respecté")
