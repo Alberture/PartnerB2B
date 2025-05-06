@@ -3,7 +3,7 @@ from .attribute_choice import AttributeChoiceSerializer
 from .profile import ProfileSerializer, ProfileItemSerializer
 from .profile_attribute import ProfileAttributeSerializer
 from .analyse import AnalyseItemSerializer
-from .document import DocumentItemSerializer
+from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
 __all__ = [
     'AttributeSerializer',
@@ -11,5 +11,5 @@ __all__ = [
     'ProfileSerializer',
     'ProfileAttributeSerializer',
     'AnalyseItemSerializer',
-    'DocumentItemSerializer'
+    'ProfileAttributeDocumentItemSerializer'
 ]

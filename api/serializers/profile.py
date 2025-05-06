@@ -2,7 +2,7 @@ from ..models import Profile
 from .profile_attribute import ProfileAttributeItemSerializer
 from .analyse import AnalyseItemSerializer
 from .attribute import AttributeItemSerializer
-from .document import DocumentItemSerializer
+from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
 from rest_framework import serializers
 
@@ -15,7 +15,7 @@ class ProfileItemSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     externalReference = serializers.CharField(read_only=True)
     profileattribute_set = ProfileAttributeItemSerializer(read_only=True, many=True)
-    document_set = DocumentItemSerializer(read_only=True, many=True)
+    document_set = ProfileAttributeDocumentItemSerializer(read_only=True, many=True)
     last_analyse = serializers.SerializerMethodField(read_only=True)
 
     class Meta:

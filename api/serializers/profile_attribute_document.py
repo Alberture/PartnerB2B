@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-class DocumentItemSerializer(serializers.Serializer):
+class ProfileAttributeDocumentItemSerializer(serializers.Serializer):
     """
         Serializer to transform Document object to JSON format
     """

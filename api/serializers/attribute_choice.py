@@ -1,10 +1,8 @@
 from rest_framework import serializers
 from ..models import AttributeChoice
 
-class AttributeChoiceSerializer(serializers.ModelSerializer):
+class AttributeChoiceSerializer(serializers.Serializer):
     """
         Serializer to transform Json to an AtributeChoice object
     """
-    class Meta:
-        model = AttributeChoice
-        fields = ['displayedName']
+    displayedName = serializers.CharField(read_only=True)

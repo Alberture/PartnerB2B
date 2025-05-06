@@ -1,8 +1,9 @@
+import binascii
+import os
+
 from django.db import models
 
 from rest_framework.authtoken.models import Token
-
-from ..utils import generateAPIKey
 
 STATUS_CHOICE = [
     ('pending', 'en attente'),
@@ -24,6 +25,6 @@ class Partner(models.Model):
         self.apiKey = generateAPIKey()
         partner = Partner.objects.filter(apiKey=self.apiKey)
         while partner:
-            self.apiKey = generateAPIKey()
+            self.apiKey = binascii.hexlify(os.urandom(20)).decode()
             partner = Partner.objects.filter(apiKey=self.apiKey)
         super().save(*args, **kwargs)
