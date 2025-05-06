@@ -19,44 +19,46 @@ class ProfileAttribute(models.Model):
     def clear(self):
         attribute_type = self.attribute.type
         
-        if attribute_type == 'choice':
-            if not self.value_is_in_choice_set(self.attribute.attributechoice_set.order_by("displayedName"), self.value):
-                raise ValidationError("La donnée n'est pas dans la liste des choix.")
-            
-            if self.attribute.validation == 'unique choice':
-                if not self.choice_is_unique():
-                    raise ValidationError("Il ne peut y avoir qu'un seul choix pour cet attribute")
-    
-        elif self.attribute.validation == 'regex' and not re.search(self.attribute.regex, self.value):
-            raise ValidationError("Le format de la donnée n'est pas correcte")
-            
-        elif attribute_type == 'integer':
-            try:
-                int(self.value)
-            except:
-                raise ValidationError("La donnée doit être un entier naturel.")
-            
-        elif attribute_type == 'float':
-            try:
-                float(self.value)
-            except:
-                raise ValidationError("La donnée doit être un décimal")
-
-        elif attribute_type == 'boolean' and not self.value in ('True', 'False'):
-            raise ValidationError("La donnée doit être un booléen")
-
-        elif attribute_type == 'date':
-            try:
-                datetime.strptime(self.value, "%Y-%m-%d")
-            except ValueError:
-                raise ValidationError("La donnée doit être une date sous la forme yyyy-mm-dd")
+        if self.attribute.validation == 'regex' and not re.search(self.attribute.regex, self.value):
+             raise ValidationError("Le format de la donnée n'est pas correcte")
         
-        elif attribute_type == 'json':
-            try:
-                json.loads(self.value)
-            except json.JSONDecodeError:
-                raise ValidationError("La donnée doit être au format json")
+        match attribute_type:
+            case 'choice':
+                if not self.value_is_in_choice_set(self.attribute.attributechoice_set.order_by("displayedName"), self.value):
+                    raise ValidationError("La donnée n'est pas dans la liste des choix.")
             
+                if self.attribute.validation == 'unique choice':
+                    if not self.choice_is_unique():
+                        raise ValidationError("Il ne peut y avoir qu'un seul choix pour cet attribute")
+    
+            case 'integer':
+                try:
+                    int(self.value)
+                except:
+                    raise ValidationError("La donnée doit être un entier naturel.")
+                
+            case 'float':
+                try:
+                    float(self.value)
+                except:
+                    raise ValidationError("La donnée doit être un décimal")
+
+            case 'boolean':
+                if not self.value in ('True', 'False'):
+                    raise ValidationError("La donnée doit être un booléen")
+                
+            case 'date':
+                try:
+                    datetime.strptime(self.value, "%Y-%m-%d")
+                except ValueError:
+                    raise ValidationError("La donnée doit être une date sous la forme yyyy-mm-dd")
+                
+            case 'json':
+                try:
+                    json.loads(self.value)
+                except json.JSONDecodeError:
+                    raise ValidationError("La donnée doit être au format json")
+           
 
     def save(self, *args, **kwargs):
         self.clear()
