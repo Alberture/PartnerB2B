@@ -6,6 +6,7 @@ from .attribute import Attribute
 
 import re
 from datetime import datetime
+import json
 
 class ProfileAttribute(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
@@ -33,24 +34,30 @@ class ProfileAttribute(models.Model):
             try:
                 int(self.value)
             except:
-                raise ValidationError("Le format de la donnée n'est pas correcte")
+                raise ValidationError("La donnée doit être un entier naturel.")
             
         elif attribute_type == 'float':
             try:
                 float(self.value)
             except:
-                raise ValidationError("Le format de la donnée n'est pas correcte")
+                raise ValidationError("La donnée doit être un décimal")
 
         elif attribute_type == 'boolean' and not self.value in ('True', 'False'):
-            raise ValidationError("Le format de la donnée n'est pas correcte")
+            raise ValidationError("La donnée doit être un booléen")
 
         elif attribute_type == 'date':
             try:
                 datetime.strptime(self.value, "%Y-%m-%d")
             except ValueError:
-                raise ValidationError("Le format de la donnée n'est pas correcte")
-
+                raise ValidationError("La donnée doit être une date sous la forme yyyy-mm-dd")
+        
+        elif attribute_type == 'json':
+            try:
+                json.loads(self.value)
+            except json.JSONDecodeError:
+                raise ValidationError("La donnée doit être au format json")
             
+
     def save(self, *args, **kwargs):
         self.clear()
         return super().save(*args, **kwargs)
