@@ -24,7 +24,7 @@ class ProfileAttribute(models.Model):
         
         match attribute_type:
             case 'choice':
-                if not self.value_is_in_choice_set(self.attribute.attributechoice_set.order_by("displayedName"), self.value):
+                if not self.value_is_in_choice_set():
                     raise ValidationError("La donnée n'est pas dans la liste des choix.")
             
                 if self.attribute.validation == 'unique choice':
@@ -64,14 +64,14 @@ class ProfileAttribute(models.Model):
         self.clear()
         return super().save(*args, **kwargs)
     
-    def value_is_in_choice_set(self, choice_set, value):
-        exists = choice_set.filter(displayedName=value.lower())  
+    def value_is_in_choice_set(self):
+        choice_set = self.attribute.attributechoice_set.order_by("displayedName")
+        exists = choice_set.filter(displayedName=self.value.lower())  
         if not exists:
             return False
         return True
     
     def choice_is_unique(self):
-        
         if self.id:
             return True
         
