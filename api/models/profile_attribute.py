@@ -18,8 +18,8 @@ class ProfileAttribute(models.Model):
 
     def clear(self):
         attribute_type = self.attribute.type
-        
-        if self.attribute.validation == 'regex' and not re.search(self.attribute.regex, self.value):
+
+        if self.attribute.validation == 'regex' and re.search(self.attribute.regex, self.value) != self.value:
              raise ValidationError("Le format de la donnée n'est pas correcte")
         
         match attribute_type:
@@ -29,7 +29,7 @@ class ProfileAttribute(models.Model):
             
                 if self.attribute.validation == 'unique choice':
                     if not self.choice_is_unique():
-                        raise ValidationError("Il ne peut y avoir qu'un seul choix pour cet attribute")
+                        raise ValidationError("Il ne peut y avoir qu'un seul choix pour cet attribut")
     
             case 'integer':
                 try:

@@ -26,8 +26,9 @@ class ProfileViewSet(ModelViewSet):
           
         if profile_serializer.is_valid():
             profile = profile_serializer.save(partner=partner)
-
+            
             if request.data.get('attributes'):
+            
                 for name, value in request.data.get('attributes').items():
                     try:
                         attribute = Attribute.objects.get(name=name)
@@ -37,17 +38,20 @@ class ProfileViewSet(ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST
                         )
                     
-                    valid_value = {"value": value}
-                    profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
-                    
-                    if profile_attribute_serializer.is_valid():
-                        profile_attribute_serializer.save(attribute=attribute, profile=profile)
-                    else:
+                    if isinstance(value, list):
+                        for choice in value:
+                            if not self.save_value(choice, attribute, profile):
+                                return Response(
+                                    {'message': 'Le format des données n\'est pas respecté'}, 
+                                    status=status.HTTP_400_BAD_REQUEST
+                                )
+                    elif not self.save_value(value, attribute, profile) :
                         return Response(
                             {'message': 'Le format des données n\'est pas respecté'}, 
                             status=status.HTTP_400_BAD_REQUEST
                         )
-                    
+                
+                
             return Response(profile_serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(
@@ -89,17 +93,21 @@ class ProfileViewSet(ModelViewSet):
                             {'message': 'L\'attribut %s n\'existe pas.' % (name) },
                             status=status.HTTP_400_BAD_REQUEST
                         )  
-                
-                    valid_value = {"value": value}
-                    try:
-                        profile_attribute = ProfileAttribute.objects.get(profile=profile, attribute=attribute)
-                        profile_attribute_serializer = ProfileAttributeSerializer(instance=profile_attribute, data=valid_value)
-                    except:
-                        profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
                     
-                    if profile_attribute_serializer.is_valid():
-                        profile_attribute_serializer.save(attribute=attribute, profile=profile)
-                    else:
+                    try:
+                        profile_attribute = ProfileAttribute.objects.filter(profile=profile, attribute=attribute)
+                    except:
+                        profile_attribute = None
+                
+                    if isinstance(value, list):
+                        profile_attribute.delete()
+                        for choice in value:
+                            if not self.save_value(choice, attribute, profile):
+                                return Response(
+                                    {'message': 'Le format des données n\'est pas respecté'}, 
+                                    status=status.HTTP_400_BAD_REQUEST
+                                )
+                    elif not self.save_value(value, attribute, profile, profile_attribute.first()) :
                         return Response(
                             {'message': 'Le format des données n\'est pas respecté'}, 
                             status=status.HTTP_400_BAD_REQUEST
@@ -126,5 +134,13 @@ class ProfileViewSet(ModelViewSet):
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
     
+    def save_value(self, value, attribute, profile, profile_attribute_instance=None):
+        valid_value = {"value": value}
 
+        profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value, instance=profile_attribute_instance)
+        
+        if profile_attribute_serializer.is_valid():
+            profile_attribute_serializer.save(attribute=attribute, profile=profile)
+            return True
+        return False
         
