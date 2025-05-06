@@ -18,9 +18,9 @@ class ProfileAttribute(models.Model):
 
     def clear(self):
         attribute_type = self.attribute.type
-
-        if self.attribute.validation == 'regex' and re.search(self.attribute.regex, self.value) != self.value:
-             raise ValidationError("Le format de la donnée n'est pas correcte")
+     
+        if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
+            raise ValidationError("Le format de la donnée n'est pas correcte")
         
         match attribute_type:
             case 'choice':
@@ -66,7 +66,8 @@ class ProfileAttribute(models.Model):
     
     def value_is_in_choice_set(self):
         choice_set = self.attribute.attributechoice_set.order_by("displayedName")
-        exists = choice_set.filter(displayedName=self.value.lower())  
+        exists = choice_set.filter(displayedName=self.value)
+  
         if not exists:
             return False
         return True

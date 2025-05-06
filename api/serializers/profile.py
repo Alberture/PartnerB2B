@@ -47,11 +47,17 @@ class ProfileSerializer(serializers.ModelSerializer):
         Serializer to transform JSON format to a Profile object
     """
     profileattribute_set = ProfileAttributeItemSerializer(read_only=True, many=True)
+    status = serializers.CharField(read_only=True)
+    createdAt = serializers.DateTimeField(read_only=True)
+    pk = serializers.IntegerField(read_only=True)
+    externalReference = serializers.CharField(write_only=True)
+
     class Meta:
         model = Profile
         fields = [
             'pk',
             'status',
             'createdAt',
-            'profileattribute_set'
+            'profileattribute_set',
+            'externalReference'
         ]
