@@ -1,6 +1,7 @@
 from django.db import models
 
 from .profile import Profile
+from .attribute import Attribute
 
 DOCUMENT_STATUS_CHOICE = [
     ('pending', 'En attente'),
@@ -15,8 +16,9 @@ FILE_TYPE = [
     ('txt', 'txt'),
 ]
 
-class Document(models.Model):
+class ProfileAttributeDocument(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
     file = models.CharField()
     type = models.CharField(choices=FILE_TYPE)
     downloadedAt = models.DateTimeField(auto_now_add=True)

@@ -18,7 +18,7 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
 
     def create(self, request, *args, **kwargs):
-    
+        
         validated_token = JWTAuthentication().get_validated_token(request.META['HTTP_AUTHORIZATION'][7:])
         user_like_partner = JWTAuthentication().get_user(validated_token)
         partner = Partner.objects.get(pk=user_like_partner.id)
@@ -29,17 +29,18 @@ class ProfileViewSet(ModelViewSet):
 
             if request.data.get('attributes'):
                 for name, value in request.data.get('attributes').items():
+                    try:
+                        attribute = Attribute.objects.get(name=name)
+                    except:
+                        return Response(
+                            {'message': 'L\'attribut %s n\'existe pas.' % (name) },
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    
                     valid_value = {"value": value}
                     profile_attribute_serializer = ProfileAttributeSerializer(data=valid_value)
                     
                     if profile_attribute_serializer.is_valid():
-                        try:
-                            attribute = Attribute.objects.get(name=name)
-                        except:
-                            return Response(
-                                {'message': 'L\'attribut %s n\'existe pas.' % (name) },
-                                status=status.HTTP_400_BAD_REQUEST
-                            )
                         profile_attribute_serializer.save(attribute=attribute, profile=profile)
                     else:
                         return Response(
@@ -124,5 +125,6 @@ class ProfileViewSet(ModelViewSet):
             'status': 'Complet',
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
+    
 
         

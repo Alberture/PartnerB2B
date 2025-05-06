@@ -4,7 +4,7 @@ from .attribute_choice import AttributeChoice
 from .profile import Profile
 from .profile_attribute import ProfileAttribute
 from .analyse import Analyse
-from .document import Document
+from .profile_attribute_document import ProfileAttributeDocument
 
 __all__ = [
     'Partner',
@@ -14,5 +14,5 @@ __all__ = [
     'Profil',
     'ProfileAttribute',
     'Analyse',
-    'Document'
+    'ProfileAttributeDocument'
 ]

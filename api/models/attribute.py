@@ -1,7 +1,7 @@
 from django.db import models
 
 TYPE_CHOICE = [
-    ('text', 'Texte'),
+    ('string', 'Texte'),
     ('integer', 'Entier'),
     ('float', 'Décimal'),
     ('date', 'Date'),
@@ -37,4 +37,5 @@ class Attribute(models.Model):
     category = models.CharField(choices=CATEGORIES_CHOICE)
     isRequired = models.BooleanField()
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
+    regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
