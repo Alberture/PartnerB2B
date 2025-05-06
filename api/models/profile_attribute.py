@@ -4,6 +4,9 @@ from django.core.exceptions import ValidationError
 from .profile import Profile
 from .attribute import Attribute
 
+import re
+from datetime import datetime
+
 class ProfileAttribute(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
@@ -14,21 +17,40 @@ class ProfileAttribute(models.Model):
 
     def clear(self):
         attribute_type = self.attribute.type
+        
         if attribute_type == 'choice':
             if not self.value_is_in_choice_set(self.attribute.attributechoice_set.order_by("displayedName"), self.value):
-                raise ValidationError("error")
+                raise ValidationError("La donnée n'est pas dans la liste des choix.")
             
             if self.attribute.validation == 'unique choice':
                 if not self.choice_is_unique():
-                    raise ValidationError("error")
+                    raise ValidationError("Il ne peut y avoir qu'un seul choix pour cet attribute")
     
-        elif attribute_type == 'file':
-            pass
-        elif attribute_type == 'json':
-            pass
-        elif self.attribute.type != type(self.value):
-            raise ValidationError("error")  
+        elif self.attribute.validation == 'regex' and not re.search(self.attribute.regex, self.value):
+            raise ValidationError("Le format de la donnée n'est pas correcte")
+            
+        elif attribute_type == 'integer':
+            try:
+                int(self.value)
+            except:
+                raise ValidationError("Le format de la donnée n'est pas correcte")
+            
+        elif attribute_type == 'float':
+            try:
+                float(self.value)
+            except:
+                raise ValidationError("Le format de la donnée n'est pas correcte")
 
+        elif attribute_type == 'boolean' and not self.value in ('True', 'False'):
+            raise ValidationError("Le format de la donnée n'est pas correcte")
+
+        elif attribute_type == 'date':
+            try:
+                datetime.strptime(self.value, "%Y-%m-%d")
+            except ValueError:
+                raise ValidationError("Le format de la donnée n'est pas correcte")
+
+            
     def save(self, *args, **kwargs):
         self.clear()
         return super().save(*args, **kwargs)
