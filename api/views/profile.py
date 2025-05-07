@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, process_attribute_value, error_response
 
@@ -18,11 +18,10 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def create(self, request, *args, **kwargs):
         partner = get_authenticated_partner(request)
-
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             profile = serializer.save(partner=partner)
