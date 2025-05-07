@@ -4,6 +4,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from ..models import Partner, Profile, Attribute, ProfileAttributeDocument, Analysis
 from ..serializers import ProfileAttributeSerializer
+from datetime import datetime
 
 def get_authenticated_partner(request):
     """
@@ -101,11 +102,35 @@ def process_attribute_value(value, attribute, profile, instance=None):
     return True
 
 
-def error_response(message):
+def error_response(message, details=[], code=status.HTTP_400_BAD_REQUEST):
     """
         Method that returns a Response with a custom message
 
         param: string message
         return Response
     """
-    return Response({'message': message}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        {
+            "error":{
+                "code": code,
+                "message": message,
+                "details": details,
+            },
+            "meta":{
+                "timestamp": datetime.now()
+            }
+        }, 
+        status=code
+    )
+        
+
+def valid_response(data, code=status.HTTP_200_OK):
+    return Response(
+        {
+            "data":data,
+            "meta":{
+                "timestamp": datetime.now()
+            }
+        },
+        status=code
+    )

@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
-from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, process_attribute_value, error_response
+from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, process_attribute_value, error_response, valid_response
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
 from ..models import Profile, ProfileAttribute, Attribute
@@ -35,7 +35,7 @@ class ProfileViewSet(ModelViewSet):
                 if not process_attribute_value(value, attribute, profile):
                     return error_response("Le format des données n'est pas respecté")
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return valid_response(serializer.data, code=status.HTTP_201_CREATED)
 
         return error_response("Le format des données n'est pas respecté")
 
@@ -47,7 +47,7 @@ class ProfileViewSet(ModelViewSet):
             return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")
 
         serializer = ProfileItemSerializer(profile)
-        return Response(serializer.data)
+        return valid_response(serializer.data)
 
     def partial_update(self, request, pk, *args, **kwargs):
         partner = get_authenticated_partner()
@@ -73,7 +73,7 @@ class ProfileViewSet(ModelViewSet):
                 if not process_attribute_value(value, attribute, profile, profile_attribute_qs.first()):
                     return error_response("Le format des données n'est pas respecté")
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return valid_response(serializer.data)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -87,7 +87,7 @@ class ProfileViewSet(ModelViewSet):
         profile.status = 'complete'
         profile.save()
 
-        return Response({
+        return valid_response({
             'status': 'Complet',
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from ..models import Attribute
 from ..serializers import AttributeSerializer
+from ..utils import valid_response
 
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -26,6 +27,6 @@ class Metadata(APIView):
             serializer = AttributeSerializer(attributes, many=True)
             result[categorie['category']] = serializer.data
         
-        return Response(result)
+        return valid_response(result)
 
         

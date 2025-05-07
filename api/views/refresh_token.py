@@ -4,6 +4,8 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 from datetime import datetime
 
+from ..utils import valid_response
+
 class RefreshToken(TokenRefreshView):
     """
         Class that inherit from TokenRefreshView (used to 
@@ -20,7 +22,7 @@ class RefreshToken(TokenRefreshView):
         access_token = AccessToken(access_token_str)
         access_exp = datetime.fromtimestamp(access_token['exp']).isoformat()
 
-        return Response({
-            'access': access_token_str,
-            'access_expires': access_exp
-        })
+        return valid_response({
+                'access': access_token_str,
+                'access_expires': access_exp
+            })

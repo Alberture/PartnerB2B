@@ -7,6 +7,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
+from ..utils import valid_response, error_response
 from ..models import Partner
 
 class ObtainPairToken(APIView):
@@ -19,7 +20,7 @@ class ObtainPairToken(APIView):
         try:
             partner = Partner.objects.get(apiKey=request.data['apiKey'])
         except:
-            return Response({'error': 'API key was not found'})
+            return error_response(message="API key was not found")
         
         class PartnerUserWrapper:
             """
@@ -28,8 +29,10 @@ class ObtainPairToken(APIView):
             """
             def __init__(self, id): 
                 self.id = id
-                partner = Partner.objects.get(pk=id)
-                user = User.objects.create_user(username=partner.name)
+                try:
+                    partner = Partner.objects.get(pk=id)
+                except:
+                    user = User.objects.create_user(username=partner.name)
 
             @property
             def is_active(self): return True  # required by JWT
@@ -42,9 +45,9 @@ class ObtainPairToken(APIView):
         access_token = refresh_token.access_token
         access_expire = datetime.fromtimestamp(access_token['exp']).isoformat()
 
-        return Response({
-            "access": str(access_token),
-            "refresh": str(refresh_token),
-            "access_expire": access_expire,
-            "refesh_expire": refresh_expire,
-        })    
+        return valid_response({
+                "access": str(access_token),
+                "refresh": str(refresh_token),
+                "access_expire": access_expire,
+                "refesh_expire": refresh_expire,
+            })

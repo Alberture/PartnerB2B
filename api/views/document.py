@@ -1,11 +1,12 @@
 from django.db.models import Count
 
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner
+from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
 from ..models import Attribute
 
 class DocumentViewSet(ModelViewSet):
@@ -17,8 +18,14 @@ class DocumentViewSet(ModelViewSet):
         docuement = get_docuement_or_error(pk)
         if not docuement:
             error_response("Ce document n'existe pas.")
+
+        partner = get_authenticated_partner(request)
+        profile = get_profile_or_error(docuement.profile.id, partner)  
+        if not profile:
+            return error_response("Ce document n'existe pas.")
+
         serializer= self.serializer_class(instance=docuement)
-        return Response(serializer.data)
+        return valid_response(serializer.data)
     
     def create(self, request, profiles_pk=None, *args, **kwargs):
         if not profiles_pk:
@@ -26,14 +33,18 @@ class DocumentViewSet(ModelViewSet):
         
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            document_attribute = Attribute.objects.get(name="document")
+            document_attribute = get_attribute_or_error(request.data['attribute'])
+            if not document_attribute:
+                error_response("Ce attribute n'existe pas")
+            if document_attribute.documents != 'documents':
+                return error_response("Cet attribute ne correspond pas à un doccuemnt")
             partner = get_authenticated_partner(request)
             profile = get_profile_or_error(profiles_pk, partner)
             if not profile:
                 return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
 
             serializer.save(attribute=document_attribute, profile=profile)
-            return Response(serializer.data)
+            return valid_response(serializer.data, status.HTTP_201_CREATED)
 
         error_response("Le format des données n'est pas respecté")
 
