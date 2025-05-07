@@ -12,11 +12,15 @@ profile_router.register(r'analyses', AnalyseViewSet, basename='profiles-analysis
 document_domain_router = routers.SimpleRouter()
 document_domain_router.register(r'documents', DocumentViewSet, basename='documents')
 
+analysis_domain_router = routers.SimpleRouter()
+analysis_domain_router.register(r'analyses', AnalyseViewSet, basename='analysis')
+
 urlpatterns = [
     path('auth/token/', ObtainPairToken.as_view(), name='token'),
     path('auth/token/refresh/', RefreshToken.as_view(), name='token_refresh'),
     path('metadata/', Metadata.as_view(), name='metadata'),
     path(r'', include(profile_domain_router.urls)),
     path(r'', include(profile_router.urls)),
-    path(r'', include(document_domain_router.urls))
+    path(r'', include(document_domain_router.urls)),
+    path(r'', include(analysis_domain_router.urls))
 ]

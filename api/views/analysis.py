@@ -3,22 +3,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from ..utils import error_response, get_profile_or_error
-from ..serializers import AnalysisSerializer
+from ..utils import error_response, get_profile_or_error, get_analysis_or_error
+from ..serializers import AnalysisSerializer, AnalysisItemSerializer, AnalysisItemRetrieveSerializer
 
 class AnalyseViewSet(ModelViewSet):
 
     permission_classes = [IsAuthenticated]
     serializer_class = AnalysisSerializer
 
-    """
     def retrieve(self, request, pk, *args, **kwargs):
-        docuement = get_docuement_or_error(pk)
-        if not docuement:
-            error_response("Ce document n'existe pas.")
-        serializer= self.serializer_class(instance=docuement)
+        analysis = get_analysis_or_error(pk)
+        if not analysis:
+            error_response("Cette analyse n'existe pas.")
+        serializer= AnalysisItemRetrieveSerializer(instance=analysis)
         return Response(serializer.data)
-    """ 
+    
     def create(self, request, profiles_pk=None, *args, **kwargs):
         if not profiles_pk:
             return error_response("Il manque l'identifiant du profil.")
