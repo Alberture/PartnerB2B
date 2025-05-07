@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from ..models import Partner, Profile, Attribute
+from ..models import Partner, Profile, Attribute, ProfileAttributeDocument
 from ..serializers import ProfileAttributeSerializer
 
 def get_authenticated_partner(request):
@@ -43,6 +43,13 @@ def get_attribute_or_error(name):
         return Attribute.objects.get(name=name)
     except Attribute.DoesNotExist:
         return None
+
+def get_docuement_or_error(pk):
+    try:
+        return ProfileAttributeDocument.objects.get(pk=pk)
+    except Attribute.DoesNotExist:
+        return None
+
 
 def save_value(value, attribute, profile, instance=None):
     """

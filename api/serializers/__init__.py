@@ -12,5 +12,6 @@ __all__ = [
     'ProfileAttributeSerializer',
     'AnalyseItemSerializer',
     'ProfileAttributeDocumentItemSerializer',
-    'ProfileAttributeDocumentSerializer'
+    'ProfileAttributeDocumentSerializer',
+    'ProfileItemSerializer'
 ]

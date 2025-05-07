@@ -89,16 +89,28 @@ class ProfileViewSet(ModelViewSet):
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
     
-    @action(detail=True, methods=['post'], url_path='documents')
+    @action(detail=True, methods=['post'], url_path='document')
     def add_document(self, request, pk=None):
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document_attribute = Attribute.objects.get(name="document")
             profile = get_profile_or_error(pk)
             if not profile:
-                error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
+                return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
 
-            document = serializer.save(attribute=document_attribute, profile=profile)
+            serializer.save(attribute=document_attribute, profile=profile)
             return Response(serializer.data)
 
         error_response("Le format des données n'est pas respecté")
+    
+    def destroy(self, request, *args, **kwargs):
+        return error_response('Not allowed to DELETE')
+    
+    def update(self, request, *args, **kwargs):
+        return error_response('Not allowed to PUT')
+
+    def list(self, request, *args, **kwargs):
+        return error_response('Not allowed to GET')
+
+
+    
