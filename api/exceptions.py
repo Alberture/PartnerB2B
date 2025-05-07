@@ -1,5 +1,6 @@
 from rest_framework.views import exception_handler
-from rest_framework import permissions
+from rest_framework import status
+from rest_framework.response import Response
 
 from .utils import error_response
 
@@ -9,10 +10,8 @@ def custom_exception_handler(exc, context):
 
     handlers = {
         'ValidationError' : _handle_validation_error,
-        'Http404' : _handle_generic_error,
-        'PermissionDenied' : _handle_permissions_error,
+        'Http404' : _handle_404_error,
         'NotAuthenticated' : _handle_authentication_error,
-        'MethodNotAllowed': _handle_not_allowed_error,
     }
 
     # Call REST framework's default exception handler first,
@@ -30,7 +29,6 @@ def custom_exception_handler(exc, context):
     return response
 
 def _handle_authentication_error(exc, context, response):
-    dd(context)
     if response : 
         response.data = {
             "error": {
@@ -46,45 +44,35 @@ def _handle_authentication_error(exc, context, response):
 
     return response
 
-def _handle_generic_error(exc, context, response):
+def _handle_404_error(exc, context, response):
     if response : 
         response.data = {
             "error": {
-                'message' : 'Please login to proceed',
+                'message' : 'Nous n\'avons pas pu trouver la page que vous cherchiez. Veuillez vérifier l\'url.',
                 'code' : response.status_code,
                 'details': []
             },
             "meta":{
                 "timestamp": datetime.now()
-            }
-            
+            } 
         }
-
     return response
 
 def _handle_validation_error(exc, context, response):
-    if response : 
-        response.data = {
-            "error": {
-                'message' : 'Please login to proceed',
-                'code' : response.status_code,
-                'details': [
-                    
-                ]
+    if not response:
+        return Response({
+            "error":{
+                "message": exc.args[0],
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "details": []
             },
             "meta":{
                 "timestamp": datetime.now()
             }
-            
-        }
-
+        })
     return response
 
-def _handle_not_allowed_error(exc, context, response):
-    return response
 
-def _handle_permissions_error(exc, context, response):
-    return response
 
 
 
