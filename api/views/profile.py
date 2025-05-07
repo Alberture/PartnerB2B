@@ -40,6 +40,7 @@ class ProfileViewSet(ModelViewSet):
         return error_response("Le format des données n'est pas respecté")
 
     def retrieve(self, request, pk, *args, **kwargs):
+        
         partner = get_authenticated_partner(request)
         profile = get_profile_or_error(pk, partner)
         
@@ -92,14 +93,20 @@ class ProfileViewSet(ModelViewSet):
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
     
-    def destroy(self, request, *args, **kwargs):
-        return error_response('Not allowed to DELETE')
+    def destroy(self, request, pk, *args, **kwargs):
+        if request.user.is_staff:
+            return super().destroy(request, pk, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
     
-    def update(self, request, *args, **kwargs):
-        return error_response('Not allowed to PUT')
+    def update(self, request, pk, *args, **kwargs):
+        if request.user.is_staff:
+            return super().update(request, pk, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
 
     def list(self, request, *args, **kwargs):
-        return error_response('Not allowed to GET')
+        if request.user.is_staff:
+            return super().list(request, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
 
 
     

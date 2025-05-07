@@ -31,7 +31,7 @@ class ObtainPairToken(APIView):
                 self.id = id
                 try:
                     partner = Partner.objects.get(pk=id)
-                except:
+                except Partner.DoesNotExist:
                     user = User.objects.create_user(username=partner.name)
 
             @property

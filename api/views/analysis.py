@@ -41,14 +41,22 @@ class AnalyseViewSet(ModelViewSet):
             'status': analysis.status   
         }, code=status.HTTP_201_CREATED)
     
+    def destroy(self, request, pk, *args, **kwargs):
+        if request.user.is_staff:
+            return super().destroy(request, pk, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+    
+    def update(self, request, pk, *args, **kwargs):
+        if request.user.is_staff:
+            return super().update(request, pk, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+
     def list(self, request, *args, **kwargs):
-        return error_response()
+        if request.user.is_staff:
+            return super().list(request, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
     
-    def destroy(self, request, *args, **kwargs):
-        return error_response()
-    
-    def update(self, request, *args, **kwargs):
-        return error_response()
-    
-    def partial_update(self, request, *args, **kwargs):
-        return error_response()
+    def partial_update(self, request, pk, *args, **kwargs):
+        if request.user.is_staff:
+            return super().partial_update(request, pk, *args, **kwargs)
+        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
