@@ -9,11 +9,6 @@ from ..utils import get_docuement_or_error, error_response, get_profile_or_error
 from ..models import Attribute
 
 class DocumentViewSet(ModelViewSet):
-    """
-        APIView with only a get method that lists
-        all attributes in each category of attributes
-        and their specificities
-    """
 
     permission_classes = [IsAuthenticated]
     serializer_class = ProfileAttributeDocumentItemSerializer
