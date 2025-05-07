@@ -1,7 +1,5 @@
 from ..models import Profile
 from .profile_attribute import ProfileAttributeItemSerializer
-from .analyse import AnalyseItemSerializer
-from .attribute import AttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
 from rest_framework import serializers
