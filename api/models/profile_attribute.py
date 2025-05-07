@@ -16,7 +16,7 @@ class ProfileAttribute(models.Model):
     updatedAt = models.DateTimeField(auto_now=True)
     source = models.CharField(null=True, blank=True) 
 
-    def clear(self):
+    def clean(self):
         attribute_type = self.attribute.type
      
         if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
@@ -34,13 +34,13 @@ class ProfileAttribute(models.Model):
             case 'integer':
                 try:
                     int(self.value)
-                except:
+                except ValueError:
                     raise ValidationError("La donnée doit être un entier naturel.")
                 
             case 'float':
                 try:
                     float(self.value)
-                except:
+                except ValueError:
                     raise ValidationError("La donnée doit être un décimal")
 
             case 'boolean':
@@ -61,7 +61,7 @@ class ProfileAttribute(models.Model):
            
 
     def save(self, *args, **kwargs):
-        self.clear()
+        self.clean()
         return super().save(*args, **kwargs)
     
     def value_is_in_choice_set(self):

@@ -90,7 +90,7 @@ class ProfileViewSet(ModelViewSet):
 
         return valid_response({
             'status': 'Complet',
-            'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
+            'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
         })
     
     def destroy(self, request, pk, *args, **kwargs):

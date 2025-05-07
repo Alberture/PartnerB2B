@@ -36,7 +36,7 @@ class DocumentViewSet(ModelViewSet):
             document_attribute = get_attribute_or_error(request.data['attribute'])
             if not document_attribute:
                 error_response("Ce attribute n'existe pas")
-            if document_attribute.documents != 'documents':
+            if document_attribute.category != 'documents':
                 return error_response("Cet attribute ne correspond pas à un doccuemnt")
             partner = get_authenticated_partner(request)
             profile = get_profile_or_error(profiles_pk, partner)
