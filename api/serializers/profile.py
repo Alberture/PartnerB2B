@@ -29,7 +29,7 @@ class ProfileItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_last_analyse(self, obj):
-        analyse = obj.analyse_set.order_by('-id')[:1].first()
+        analyse = obj.analysis_set.order_by('-id')[:1].first()
         if analyse:
             return {
                 'score' : analyse.score,

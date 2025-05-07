@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from ..utils import error_response, get_profile_or_error, get_analysis_or_error
+from ..utils import error_response, get_profile_or_error, get_analysis_or_error, get_authenticated_partner
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer, AnalysisItemRetrieveSerializer
 
 class AnalyseViewSet(ModelViewSet):
@@ -24,7 +24,8 @@ class AnalyseViewSet(ModelViewSet):
         
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        profile = get_profile_or_error(profiles_pk)
+        partner = get_authenticated_partner(request)
+        profile = get_profile_or_error(profiles_pk, partner)
         if not profile:
             return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
         analysis = serializer.save(profile=profile)

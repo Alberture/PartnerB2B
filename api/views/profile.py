@@ -40,7 +40,9 @@ class ProfileViewSet(ModelViewSet):
         return error_response("Le format des données n'est pas respecté")
 
     def retrieve(self, request, pk, *args, **kwargs):
-        profile = get_profile_or_error(pk)
+        partner = get_authenticated_partner(request)
+        profile = get_profile_or_error(pk, partner)
+        
         if not profile:
             return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")
 
@@ -48,9 +50,10 @@ class ProfileViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, pk, *args, **kwargs):
-        profile = get_profile_or_error(pk)
+        partner = get_authenticated_partner()
+        profile = get_profile_or_error(pk, partner)
         if not profile:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")
 
         serializer = self.get_serializer(instance=profile, data=request.data, partial=True)
         if serializer.is_valid():
@@ -76,7 +79,8 @@ class ProfileViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='submit')
     def submit(self, request, pk=None):
-        profile = get_profile_or_error(pk)
+        partner = get_authenticated_partner(request)
+        profile = get_profile_or_error(pk, partner)
         if not profile:
             return error_response("Nous n'avons pas pu trouver ce profil. Veuillez vérifier l'identifiant de l'utilisateur.")
 
@@ -87,20 +91,6 @@ class ProfileViewSet(ModelViewSet):
             'status': 'Complet',
             'message': 'Ce profil a été marqué comme complet et prêt pour analyse.'
         })
-    
-    @action(detail=True, methods=['post'], url_path='document')
-    def add_document(self, request, pk=None):
-        serializer = ProfileAttributeDocumentSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            document_attribute = Attribute.objects.get(name="document")
-            profile = get_profile_or_error(pk)
-            if not profile:
-                return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
-
-            serializer.save(attribute=document_attribute, profile=profile)
-            return Response(serializer.data)
-
-        error_response("Le format des données n'est pas respecté")
     
     def destroy(self, request, *args, **kwargs):
         return error_response('Not allowed to DELETE')

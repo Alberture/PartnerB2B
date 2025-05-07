@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from ..utils import get_docuement_or_error, error_response, get_profile_or_error
+from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner
 from ..models import Attribute
 
 class DocumentViewSet(ModelViewSet):
@@ -27,7 +27,8 @@ class DocumentViewSet(ModelViewSet):
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document_attribute = Attribute.objects.get(name="document")
-            profile = get_profile_or_error(profiles_pk)
+            partner = get_authenticated_partner(request)
+            profile = get_profile_or_error(profiles_pk, partner)
             if not profile:
                 return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
 

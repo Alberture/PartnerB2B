@@ -22,7 +22,7 @@ class Partner(models.Model):
     limitUsage = models.PositiveIntegerField()
 
     def save(self, *args, **kwargs):
-        self.apiKey = generateAPIKey()
+        self.apiKey = binascii.hexlify(os.urandom(20)).decode()
         partner = Partner.objects.filter(apiKey=self.apiKey)
         while partner:
             self.apiKey = binascii.hexlify(os.urandom(20)).decode()
