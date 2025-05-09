@@ -60,16 +60,7 @@ def _handle_404_error(exc, context, response):
 
 def _handle_validation_error(exc, context, response):
     if not response:
-        return Response({
-            "error":{
-                "message": exc.args[0],
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "details": []
-            },
-            "meta":{
-                "timestamp": datetime.now()
-            }
-        })
+        return Response(exc.args[0])
     return response
 
 

@@ -51,7 +51,7 @@ class ProfileViewSet(ModelViewSet):
         return valid_response(serializer.data)
 
     def partial_update(self, request, pk, *args, **kwargs):
-        partner = get_authenticated_partner()
+        partner = get_authenticated_partner(request)
         profile = get_profile_or_error(pk, partner)
         if not profile:
             return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")

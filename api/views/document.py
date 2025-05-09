@@ -17,7 +17,7 @@ class DocumentViewSet(ModelViewSet):
     def retrieve(self, request, pk, *args, **kwargs):
         docuement = get_docuement_or_error(pk)
         if not docuement:
-            error_response("Ce document n'existe pas.")
+            return error_response("Ce document n'existe pas.")
 
         partner = get_authenticated_partner(request)
         profile = get_profile_or_error(docuement.profile.id, partner)  
