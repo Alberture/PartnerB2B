@@ -51,21 +51,45 @@ class DocumentViewSet(ModelViewSet):
     def destroy(self, request, pk, *args, **kwargs):
         if request.user.is_staff:
             return super().destroy(request, pk, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
     
     def update(self, request, pk, *args, **kwargs):
         if request.user.is_staff:
             return super().update(request, pk, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
 
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
     
     def partial_update(self, request, pk, *args, **kwargs):
         if request.user.is_staff:
             return super().partial_update(request, pk, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
 
         

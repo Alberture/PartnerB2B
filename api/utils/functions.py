@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from ..models import Partner, Profile, Attribute, ProfileAttributeDocument, Analysis
 from ..serializers import ProfileAttributeSerializer
 from datetime import datetime
@@ -30,7 +32,37 @@ def get_profile_or_error(pk, partner):
     try:
         return Profile.objects.get(pk=pk, partner=partner)
     except Profile.DoesNotExist:
-        return None
+        raise ObjectDoesNotExist({
+            "error":{
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Profil non trouvé",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "Cet identifiant de profil n'existe pas. Veuillez vérifier l'identifiant."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
+    except ValueError:
+        raise ValueError({
+            "error":{
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Erreur de type",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "L'identifiant du profile est un entier naturel."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
 
 def get_attribute_or_error(name):
     """
@@ -43,65 +75,115 @@ def get_attribute_or_error(name):
     try:
         return Attribute.objects.get(name=name)
     except Attribute.DoesNotExist:
-        return None
+        raise ObjectDoesNotExist({
+            "error":{
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Attribut non trouvé",
+                "details":[
+                    {
+                    "field": "name",
+                    "error": "Cet attribut n'existe pas. Veuillez vérifier le nom de l'attribut."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
+    except ValueError:
+        raise ValueError({
+            "error":{
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Erreur de type",
+                "details":[
+                    {
+                    "field": "name",
+                    "error": "L'identifiant du profile est une chaine de caractère."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
 
 def get_docuement_or_error(pk):
     try:
         return ProfileAttributeDocument.objects.get(pk=pk)
     except Attribute.DoesNotExist:
-        return None 
+        raise ObjectDoesNotExist({
+            "error":{
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Valeur associé au profile non trouvé",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "Cette valeur associé n'existe pas. Veuillez vérifier l'identifiant de cette dernière."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
+    except ValueError:
+        raise ValueError({
+            "error":{
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Erreur de type",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "L'identifiant d'un document est un entier naturel."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
     
 def get_analysis_or_error(pk):
     try:
         return Analysis.objects.get(pk=pk)
     except Attribute.DoesNotExist:
-        return None
-
+        raise ObjectDoesNotExist({
+            "error":{
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Analyse non trouvé",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "Cette Analyse n'existe pas. Veuillez vérifier l'identifiant."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
+    except ValueError:
+        raise ValueError({
+            "error":{
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Erreur de type",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "L'identifiant de l'analyse est un entier naturel."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
 
 def save_value(value, attribute, profile, instance=None):
-    """
-        Method that saves or not a value in a new 
-        ProfileAttribute object or instance.
-        Mainly created to make the code more 
-        readable.
-
-        param: 
-            string value
-            Attribute attribute
-            Profile profile
-            ProfileAttribute instance
-        
-        return: Boolean
-    """
     serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
-    if serializer.is_valid():
-        serializer.save(attribute=attribute, profile=profile)
-        return True
-    return False
-
-def process_attribute_value(value, attribute, profile, instance=None):
-    """
-        Method is returns False if a value couldn't be saved in
-        a ProfileAttribute object and True if everything was saved
-
-        param: 
-            string value
-            Attribute attribute
-            Profile profile
-            ProfileAttribute instance
-        
-        return: Boolean
-    """
-    if isinstance(value, list):
-        for choice in value:
-            if not save_value(choice, attribute, profile):
-                return False
-    else:
-        if not save_value(value, attribute, profile, instance):
-            return False
-    return True
-
-
+    serializer.is_valid(raise_exception=True)
+    serializer.save(attribute=attribute, profile=profile)
+    
 def error_response(message, details=[], code=status.HTTP_400_BAD_REQUEST):
     """
         Method that returns a Response with a custom message

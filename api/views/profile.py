@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
-from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, process_attribute_value, error_response, valid_response
+from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, error_response, valid_response, save_value
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
 from ..models import Profile, ProfileAttribute, Attribute
@@ -23,60 +23,41 @@ class ProfileViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         partner = get_authenticated_partner(request)
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             profile = serializer.save(partner=partner)
             attributes = request.data.get('attributes', {})
 
             for name, value in attributes.items():
                 attribute = get_attribute_or_error(name)
-                if not attribute:
-                    return error_response(f"L'attribut {name} n'existe pas.")
-
-                if not process_attribute_value(value, attribute, profile):
-                    return error_response("Le format des données n'est pas respecté")
+                save_value(value, attribute, profile)
 
             return valid_response(serializer.data, code=status.HTTP_201_CREATED)
 
-        return error_response("Le format des données n'est pas respecté")
-
     def retrieve(self, request, pk, *args, **kwargs):
-        
         partner = get_authenticated_partner(request)
         profile = get_profile_or_error(pk, partner)
-        
-        if not profile:
-            return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")
-
         serializer = ProfileItemSerializer(profile)
         return valid_response(serializer.data)
 
     def partial_update(self, request, pk, *args, **kwargs):
         partner = get_authenticated_partner(request)
         profile = get_profile_or_error(pk, partner)
-        if not profile:
-            return error_response("Ce profil n'existe pas. Veuillez vérifier l'identifiant de l'utilisateur.")
 
         serializer = self.get_serializer(instance=profile, data=request.data, partial=True)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             profile = serializer.save()
             attributes = request.data.get('attributes', {})
 
             for name, value in attributes.items():
                 attribute = get_attribute_or_error(name)
-                if not attribute:
-                    return error_response(f"L'attribut {name} n'existe pas.")
-
                 profile_attribute_qs = ProfileAttribute.objects.filter(profile=profile, attribute=attribute)
 
                 if isinstance(value, list):
                     profile_attribute_qs.delete()
-
-                if not process_attribute_value(value, attribute, profile, profile_attribute_qs.first()):
-                    return error_response("Le format des données n'est pas respecté")
+                save_value(value, attribute, profile, profile_attribute_qs.first())
 
             return valid_response(serializer.data)
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        
 
     @action(detail=True, methods=['post'], url_path='submit')
     def submit(self, request, pk=None):
@@ -96,12 +77,25 @@ class ProfileViewSet(ModelViewSet):
     def destroy(self, request, pk, *args, **kwargs):
         if request.user.is_staff:
             return super().destroy(request, pk, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
     
     def update(self, request, pk, *args, **kwargs):
         if request.user.is_staff:
             return super().update(request, pk, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        return error_response(
+            message="Erreur de permission", 
+            code=status.HTTP_403_FORBIDDEN,
+            details=[
+                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
+            ]
+        )
+    
 
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:

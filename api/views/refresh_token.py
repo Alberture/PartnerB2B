@@ -2,6 +2,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from datetime import datetime
 
 from ..utils import valid_response
@@ -13,6 +14,7 @@ class RefreshToken(TokenRefreshView):
         Response when refreshing an access token
     """
     serializer_class = TokenRefreshSerializer
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

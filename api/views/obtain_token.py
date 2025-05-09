@@ -19,8 +19,10 @@ class ObtainPairToken(APIView):
     def post(self, request, *args, **kwargs):
         try:
             partner = Partner.objects.get(apiKey=request.data['apiKey'])
-        except:
-            return error_response(message="API key was not found")
+        except Partner.DoesNotExist:
+            return error_response(message="Clef API non trouvée.", details=[
+                {"error": 'Vous devez mettre une valeur "apiKey" valide dans les données envoyées.'}
+            ])
         
         class PartnerUserWrapper:
             """
