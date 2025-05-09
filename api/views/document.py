@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ValidationError
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
+from ..utils import get_docuement_or_error, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
 from ..models import Attribute
-from ..permissions import BelongsToPartnerToGetPatch
+from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
 
 class DocumentViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch]
+    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     def retrieve(self, request, pk, *args, **kwargs):
@@ -42,18 +42,6 @@ class DocumentViewSet(ModelViewSet):
                 })
             serializer.save(attribute=document_attribute, profile=profile)
             return valid_response(serializer.data, status.HTTP_201_CREATED)
-
-
-    def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
     
     def get_object(self):
         analysis = get_docuement_or_error(self.kwargs["pk"])

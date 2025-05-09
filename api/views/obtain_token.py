@@ -7,7 +7,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from ..utils import valid_response, error_response, get_partner_or_error
+from ..utils import valid_response, get_partner_or_error
 from ..models import Partner
 
 class ObtainPairToken(APIView):

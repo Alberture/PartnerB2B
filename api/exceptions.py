@@ -2,8 +2,6 @@ from rest_framework.views import exception_handler
 from rest_framework import status
 from rest_framework.response import Response
 
-from permissions import BelongsToPartnerToGetPatch
-
 from datetime import datetime
 
 def error_response_template(message, status, details):

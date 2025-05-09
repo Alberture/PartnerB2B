@@ -7,9 +7,6 @@ from datetime import datetime
 
 class BelongsToPartnerToGetPatch(permissions.BasePermission):
     
-    message = "Error Permission"
-    #details = []
-
     def has_permission(self, request, view):
         return True
     
@@ -23,30 +20,8 @@ class BelongsToPartnerToGetPatch(permissions.BasePermission):
                 Profile.objects.get(pk=obj.id, partner=partner)
                 return True
             except Profile.DoesNotExist:
-                raise PermissionError({
-                    "error": {
-                        "code": status.HTTP_403_FORBIDDEN,
-                        "message": "Permission Error",
-                        "details": [
-                            {"error": "The profile you are trying to retrieve or edit does not belong to you."}
-                        ]
-                    },
-                    "meta": {
-                        "timestamp": datetime.now()
-                    }
-                })
+                return False
             
-        raise PermissionError({
-                    "error": {
-                        "code": status.HTTP_403_FORBIDDEN,
-                        "message": "Permission Error",
-                        "details": [
-                            {"error": "You must be an admin to perform this action."}
-                        ]
-                    },
-                    "meta": {
-                        "timestamp": datetime.now()
-                    }
-                }
-            )
+        return True
     
+

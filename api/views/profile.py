@@ -6,11 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import PermissionDenied
 
-from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, error_response, valid_response, save_value
+from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, valid_response, save_value
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
 from ..models import Profile, ProfileAttribute, Attribute
-from ..permissions import BelongsToPartnerToGetPatch
+from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePut
 
 class ProfileViewSet(ModelViewSet):
     """
@@ -20,7 +20,8 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = [
         IsAuthenticated, 
-        BelongsToPartnerToGetPatch
+        BelongsToPartnerToGetPatch,
+        IsAdminToDeletePut
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
@@ -80,8 +81,8 @@ class ProfileViewSet(ModelViewSet):
         raise PermissionDenied(
             {
                 "code": status.HTTP_403_FORBIDDEN,
-                "message": "Erreur de permission",
-                "details":[{ "error": "Vous n'êtes pas autorisé à réaliser cette action"}]
+                "message": "Permission Error",
+                "details":[{ "error": "You"}]
             }
         )
 

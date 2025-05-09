@@ -220,28 +220,6 @@ def save_value(value, attribute, profile, instance=None):
     serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
     serializer.is_valid(raise_exception=True)
     serializer.save(attribute=attribute, profile=profile)
-    
-def error_response(message, details=[], code=status.HTTP_400_BAD_REQUEST):
-    """
-        Method that returns a Response with a custom message
-
-        param: string message
-        return Response
-    """
-    return Response(
-        {
-            "error":{
-                "code": code,
-                "message": message,
-                "details": details,
-            },
-            "meta":{
-                "timestamp": datetime.now()
-            }
-        }, 
-        status=code
-    )
-        
 
 def valid_response(data, code=status.HTTP_200_OK):
     return Response(

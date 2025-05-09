@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from ..utils import error_response, get_profile_or_error, get_analysis_or_error, get_authenticated_partner, valid_response
+from ..utils import get_profile_or_error, get_analysis_or_error, get_authenticated_partner, valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer, AnalysisItemRetrieveSerializer
-from ..permissions import BelongsToPartnerToGetPatch
+from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
 
 class AnalyseViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch]
+    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
     serializer_class = AnalysisSerializer
 
     def retrieve(self, request, pk, *args, **kwargs):
@@ -29,12 +29,7 @@ class AnalyseViewSet(ModelViewSet):
             'pk': analysis.id,
             'status': analysis.status   
         }, code=status.HTTP_201_CREATED)
-    
-    def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
-
+  
     def get_object(self):
         analysis = get_analysis_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, get_profile_or_error(analysis.profile.id))
