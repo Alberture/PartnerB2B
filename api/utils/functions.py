@@ -35,11 +35,11 @@ def get_profile_or_error(pk):
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,
-                "message": "Profil non trouvé",
+                "message": "Profile Not Found",
                 "details":[
                     {
                     "field": "pk",
-                    "error": "Cet identifiant de profil n'existe pas. Veuillez vérifier l'identifiant."
+                    "error": "This profile id does not exist. Please try again."
                     }
                 ]
             },
@@ -51,11 +51,11 @@ def get_profile_or_error(pk):
         raise ValueError({
             "error":{
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Erreur de type",
+                "message": "Type Error",
                 "details":[
                     {
                     "field": "pk",
-                    "error": "L'identifiant du profile est un entier naturel."
+                    "error": "The profile id must be an integer."
                     }
                 ]
             },
@@ -78,11 +78,11 @@ def get_attribute_or_error(name):
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,
-                "message": "Attribut non trouvé",
+                "message": "Attribute Not Found",
                 "details":[
                     {
                     "field": "name",
-                    "error": "Cet attribut n'existe pas. Veuillez vérifier le nom de l'attribut."
+                    "error": "This attribute name does not exist. Please try again"
                     }
                 ]
             },
@@ -94,11 +94,11 @@ def get_attribute_or_error(name):
         raise ValueError({
             "error":{
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Erreur de type",
+                "message": "Type Error",
                 "details":[
                     {
                     "field": "name",
-                    "error": "L'identifiant du profile est une chaine de caractère."
+                    "error": "The attribute name must be a string."
                     }
                 ]
             },
@@ -114,11 +114,11 @@ def get_docuement_or_error(pk):
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,
-                "message": "Valeur associé au profile non trouvé",
+                "message": "ProfileAttributeDocument Not Found",
                 "details":[
                     {
                     "field": "pk",
-                    "error": "Cette valeur associé n'existe pas. Veuillez vérifier l'identifiant de cette dernière."
+                    "error": "This document id does not exist. Please try again"
                     }
                 ]
             },
@@ -130,11 +130,11 @@ def get_docuement_or_error(pk):
         raise ValueError({
             "error":{
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Erreur de type",
+                "message": "TypeError",
                 "details":[
                     {
                     "field": "pk",
-                    "error": "L'identifiant d'un document est un entier naturel."
+                    "error": "The document id must be an integer"
                     }
                 ]
             },
@@ -154,7 +154,7 @@ def get_analysis_or_error(pk):
                 "details":[
                     {
                     "field": "pk",
-                    "error": "Cette Analyse n'existe pas. Veuillez vérifier l'identifiant."
+                    "error": "This analysis does not exist. Please try again."
                     }
                 ]
             },
@@ -170,7 +170,7 @@ def get_analysis_or_error(pk):
                 "details":[
                     {
                     "field": "pk",
-                    "error": "L'identifiant de l'analyse est un entier naturel."
+                    "error": "The analysis id must be an integer."
                     }
                 ]
             },
@@ -186,11 +186,11 @@ def get_partner_or_error(apiKey):
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,
-                "message": "Partner non trouvé",
+                "message": "Partner not found",
                 "details":[
                     {
                     "field": "apiKey",
-                    "error": "Cette clef API n'existe pas."
+                    "error": "The API key was not found."
                     }
                 ]
             },
@@ -202,11 +202,11 @@ def get_partner_or_error(apiKey):
         raise ValueError({
             "error":{
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Erreur de type",
+                "message": "Type Error",
                 "details":[
                     {
                     "field": "pk",
-                    "error": "L'identifiant de l'analyse est un entier naturel."
+                    "error": "The partner id must be an integer."
                     }
                 ]
             },

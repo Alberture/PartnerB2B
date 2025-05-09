@@ -2,6 +2,8 @@ from rest_framework.views import exception_handler
 from rest_framework import status
 from rest_framework.response import Response
 
+from permissions import BelongsToPartnerToGetPatch
+
 from datetime import datetime
 
 def error_response_template(message, status, details):
@@ -20,7 +22,6 @@ def custom_exception_handler(exc, context):
 
     handlers = {
         'ValidationError' : _handle_validation_error,
-        'NotFound' : _handle_404_error,
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_permission_error,
         'ObjectDoesNotExist': _handle_object_does_not_exist,
@@ -44,47 +45,39 @@ def custom_exception_handler(exc, context):
 def _handle_authentication_error(exc, context, response):
     if response : 
         response.data = error_response_template(
-            'Erreur d\'authentification.',
+            'Authentication Error',
               response.status_code,
-              [{'error': "L'access token fourni est soit expiré ou non valide"}]
+              [{'error': "The token either expired or is invalid."}]
             )
-
-    return response
-
-def _handle_404_error(exc, context, response):
-    if response : 
-        response.data = error_response_template(
-            'Erreur, page non trouvée.',
-            response.status_code,
-            [{'error': "Nous n\'avons pas pu trouver la page que vous cherchiez. Veuillez vérifier l\'url."}]
-        )
 
     return response
 
 def _handle_validation_error(exc, context, response):
     if not response:
         return Response(exc.args[0])
-    else:
-        fields = response.data.keys()
-        response.data = error_response_template(
-            'Erreur de validation.',
-            response.status_code,
-            [
-                {
-                    "field": next(iter(fields)),
-                    'error': response.data[next(iter(fields))]
-                }
-            ]
-        )
+
+    fields = response.data.keys()
+    response.data = error_response_template(
+        'Validation Error.',
+        response.status_code,
+        [
+            {
+                "field": next(iter(fields)),
+                'error': response.data[next(iter(fields))]
+            }
+        ]
+    )
     return response
 
 def _handle_permission_error(exc, context, response):
-    if response:
-        response.data = error_response_template(
-            'Erreur de permission.',
-            response.status_code,
-            [{'error': "Vous n'êtes pas autorisé à réalise cette action"}]
-        )
+    if not response:
+        return Response(exc.args[0])
+    
+    response.data = error_response_template(
+        'Permission Error.',
+        response.status_code,
+        [{'error': "You are not allowed to perform this action."}]
+    )
     return response
 
 def _handle_object_does_not_exist(exc, context, response):
