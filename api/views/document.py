@@ -1,19 +1,18 @@
-from django.db.models import Count
+from django.core.exceptions import ValidationError
 
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from ..utils import get_docuement_or_error, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
+from ..utils import get_docuement_or_error, get_profile_or_error, get_attribute_or_error, valid_response
 from ..models import Attribute
-from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
+from ..permissions import DocumentBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
 
 class DocumentViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     def retrieve(self, request, pk, *args, **kwargs):
@@ -42,8 +41,14 @@ class DocumentViewSet(ModelViewSet):
                 })
             serializer.save(attribute=document_attribute, profile=profile)
             return valid_response(serializer.data, status.HTTP_201_CREATED)
+        
+    
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            return super().list(request, *args, **kwargs)
+        raise PermissionDenied()
     
     def get_object(self):
-        analysis = get_docuement_or_error(self.kwargs["pk"])
-        self.check_object_permissions(self.request, get_profile_or_error(analysis.profile.id))
-        return analysis
+        document = get_docuement_or_error(self.kwargs["pk"])
+        self.check_object_permissions(self.request, document)
+        return document

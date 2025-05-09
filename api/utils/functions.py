@@ -110,7 +110,7 @@ def get_attribute_or_error(name):
 def get_docuement_or_error(pk):
     try:
         return ProfileAttributeDocument.objects.get(pk=pk)
-    except Attribute.DoesNotExist:
+    except ProfileAttributeDocument.DoesNotExist:
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,

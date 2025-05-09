@@ -68,15 +68,14 @@ def _handle_validation_error(exc, context, response):
     return response
 
 def _handle_permission_error(exc, context, response):
-    if not response:
+    if response:
         return Response(exc.args[0])
     
-    response.data = error_response_template(
+    return Response(error_response_template(
         'Permission Error.',
         response.status_code,
         [{'error': "You are not allowed to perform this action."}]
-    )
-    return response
+    ))
 
 def _handle_object_does_not_exist(exc, context, response):
     if not response:

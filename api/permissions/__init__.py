@@ -1,8 +1,13 @@
-from .profile import BelongsToPartnerToGetPatch
-from .general import IsAdminToDeletePut,IsAdminToDeletePutPatch
+from .profile import ProfileBelongsToPartnerToGetPatch, IsAdminToDeletePut
+from .common import IsAdminToDeletePutPatch
+from .analysis import AnalysisBelongsToPartnerToGetPatch
+from .document import DocumentBelongsToPartnerToGetPatch
+
 
 __all__ = [
-    'BelongsToPartnerToGetPatch',
+    'ProfileBelongsToPartnerToGetPatch',
     'IsAdminToDeletePut',
-    'IsAdminToDeletePutPatch'
+    'IsAdminToDeletePutPatch',
+    "AnalysisBelongsToPartnerToGetPatch",
+    'DocumentBelongsToPartnerToGetPatch'
 ]

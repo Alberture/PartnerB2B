@@ -5,11 +5,11 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemRetrieveSerializer
-from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
+from ..permissions import AnalysisBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
 
 class AnalyseViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
     serializer_class = AnalysisSerializer
 
     def retrieve(self, request, pk, *args, **kwargs):
@@ -38,5 +38,5 @@ class AnalyseViewSet(ModelViewSet):
     
     def get_object(self):
         analysis = get_analysis_or_error(self.kwargs["pk"])
-        self.check_object_permissions(self.request, get_profile_or_error(analysis.profile.id))
+        self.check_object_permissions(self.request, analysis)
         return analysis

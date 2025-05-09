@@ -9,7 +9,7 @@ from ..utils import get_authenticated_partner, get_profile_or_error, get_attribu
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer
 from ..models import Profile, ProfileAttribute
-from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePut
+from ..permissions import ProfileBelongsToPartnerToGetPatch, IsAdminToDeletePut
 
 class ProfileViewSet(ModelViewSet):
     """
@@ -19,7 +19,7 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = [
         IsAuthenticated, 
-        BelongsToPartnerToGetPatch,
+        ProfileBelongsToPartnerToGetPatch,
         IsAdminToDeletePut
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
