@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.core.exceptions import ValidationError
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
@@ -16,59 +17,33 @@ class DocumentViewSet(ModelViewSet):
 
     def retrieve(self, request, pk, *args, **kwargs):
         docuement = get_docuement_or_error(pk)
-        if not docuement:
-            return error_response("Ce document n'existe pas.")
-
         partner = get_authenticated_partner(request)
-        profile = get_profile_or_error(docuement.profile.id, partner)  
-        if not profile:
-            return error_response("Ce document n'existe pas.")
+        get_profile_or_error(docuement.profile.id, partner)  
 
         serializer= self.serializer_class(instance=docuement)
         return valid_response(serializer.data)
     
     def create(self, request, profiles_pk=None, *args, **kwargs):
-        if not profiles_pk:
-            return error_response("Il manque l'identifiant du profil.")
-        
+        partner = get_authenticated_partner(request)
+        profile = get_profile_or_error(profiles_pk, partner)
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document_attribute = get_attribute_or_error(request.data['attribute'])
-            if not document_attribute:
-                error_response("Ce attribute n'existe pas")
             if document_attribute.category != 'documents':
-                return error_response("Cet attribute ne correspond pas à un doccuemnt")
-            partner = get_authenticated_partner(request)
-            profile = get_profile_or_error(profiles_pk, partner)
-            if not profile:
-                return error_response("Ce profile n'existe pas. Veuillez vérifier l'identifiant")
-
+                document_attributes = Attribute.objects.filter(category="documents")
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Erreur de validation",
+                    "details":[
+                        { 
+                            "field": "attribute",
+                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(document_attributes))
+                        }
+                    ]
+                })
             serializer.save(attribute=document_attribute, profile=profile)
             return valid_response(serializer.data, status.HTTP_201_CREATED)
 
-        error_response("Le format des données n'est pas respecté")
-
-    def destroy(self, request, pk, *args, **kwargs):
-        if request.user.is_staff:
-            return super().destroy(request, pk, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
-    
-    def update(self, request, pk, *args, **kwargs):
-        if request.user.is_staff:
-            return super().update(request, pk, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
 
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
@@ -81,15 +56,3 @@ class DocumentViewSet(ModelViewSet):
             ]
         )
     
-    def partial_update(self, request, pk, *args, **kwargs):
-        if request.user.is_staff:
-            return super().partial_update(request, pk, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
-
-        

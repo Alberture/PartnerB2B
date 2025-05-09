@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, error_response, valid_response, save_value
 
@@ -51,10 +52,12 @@ class ProfileViewSet(ModelViewSet):
             for name, value in attributes.items():
                 attribute = get_attribute_or_error(name)
                 profile_attribute_qs = ProfileAttribute.objects.filter(profile=profile, attribute=attribute)
-
                 if isinstance(value, list):
                     profile_attribute_qs.delete()
-                save_value(value, attribute, profile, profile_attribute_qs.first())
+                    for choice in value:
+                        save_value(choice, attribute, profile)
+                else:
+                    save_value(value, attribute, profile, profile_attribute_qs.first())
 
             return valid_response(serializer.data)
         
@@ -63,9 +66,6 @@ class ProfileViewSet(ModelViewSet):
     def submit(self, request, pk=None):
         partner = get_authenticated_partner(request)
         profile = get_profile_or_error(pk, partner)
-        if not profile:
-            return error_response("Nous n'avons pas pu trouver ce profil. Veuillez vérifier l'identifiant de l'utilisateur.")
-
         profile.status = 'complete'
         profile.save()
 
@@ -73,34 +73,17 @@ class ProfileViewSet(ModelViewSet):
             'status': 'Complet',
             'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
         })
-    
-    def destroy(self, request, pk, *args, **kwargs):
-        if request.user.is_staff:
-            return super().destroy(request, pk, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
-    
-    def update(self, request, pk, *args, **kwargs):
-        if request.user.is_staff:
-            return super().update(request, pk, *args, **kwargs)
-        return error_response(
-            message="Erreur de permission", 
-            code=status.HTTP_403_FORBIDDEN,
-            details=[
-                {"error": "Vous n'êtes pas autrorisé à réaliser cette action."}
-            ]
-        )
-    
 
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        return error_response("Vous n'êtes pas autrorisé à réaliser cette action.", code=status.HTTP_403_FORBIDDEN)
+        raise PermissionDenied(
+            {
+                "code": status.HTTP_403_FORBIDDEN,
+                "message": "Erreur de permission",
+                "details":[{ "error": "Vous n'êtes pas autorisé à réaliser cette action"}]
+            }
+        )
 
 
     

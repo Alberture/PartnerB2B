@@ -24,7 +24,7 @@ def custom_exception_handler(exc, context):
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_permission_error,
         'ObjectDoesNotExist': _handle_object_does_not_exist,
-        'ValueError': _handle_value_error
+        'ValueError': _handle_value_error,
     }
 
     # Call REST framework's default exception handler first,
@@ -85,7 +85,6 @@ def _handle_permission_error(exc, context, response):
             response.status_code,
             [{'error': "Vous n'êtes pas autorisé à réalise cette action"}]
         )
-
     return response
 
 def _handle_object_does_not_exist(exc, context, response):

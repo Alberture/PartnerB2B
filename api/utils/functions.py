@@ -178,8 +178,45 @@ def get_analysis_or_error(pk):
                 "timestamp": datetime.now()
             }
         })
+    
+def get_partner_or_error(apiKey):
+    try:
+        return Partner.objects.get(apiKey=apiKey)
+    except Partner.DoesNotExist:
+        raise ObjectDoesNotExist({
+            "error":{
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Partner non trouvé",
+                "details":[
+                    {
+                    "field": "apiKey",
+                    "error": "Cette clef API n'existe pas."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
+    except ValueError:
+        raise ValueError({
+            "error":{
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Erreur de type",
+                "details":[
+                    {
+                    "field": "pk",
+                    "error": "L'identifiant de l'analyse est un entier naturel."
+                    }
+                ]
+            },
+            "meta": {
+                "timestamp": datetime.now()
+            }
+        })
 
 def save_value(value, attribute, profile, instance=None):
+
     serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
     serializer.is_valid(raise_exception=True)
     serializer.save(attribute=attribute, profile=profile)

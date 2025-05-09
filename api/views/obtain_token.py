@@ -7,7 +7,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from ..utils import valid_response, error_response
+from ..utils import valid_response, error_response, get_partner_or_error
 from ..models import Partner
 
 class ObtainPairToken(APIView):
@@ -17,13 +17,7 @@ class ObtainPairToken(APIView):
     """
 
     def post(self, request, *args, **kwargs):
-        try:
-            partner = Partner.objects.get(apiKey=request.data['apiKey'])
-        except Partner.DoesNotExist:
-            return error_response(message="Clef API non trouvée.", details=[
-                {"error": 'Vous devez mettre une valeur "apiKey" valide dans les données envoyées.'}
-            ])
-        
+        partner = get_partner_or_error(request.data['apiKey'])
         class PartnerUserWrapper:
             """
                 Since I'm using django JWT I need to pass an User-like object to the RefreshToken object
@@ -40,7 +34,6 @@ class ObtainPairToken(APIView):
             def is_active(self): return True  # required by JWT
 
         partner_user = PartnerUserWrapper(partner.id)
-        
         refresh_token = RefreshToken.for_user(partner_user)
         refresh_expire = datetime.fromtimestamp(refresh_token['exp']).isoformat()
         

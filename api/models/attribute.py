@@ -39,3 +39,6 @@ class Attribute(models.Model):
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
+
+    def __str__(self):
+        return self.name
