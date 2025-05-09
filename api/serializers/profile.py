@@ -48,7 +48,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     createdAt = serializers.DateTimeField(read_only=True)
     pk = serializers.IntegerField(read_only=True)
-    externalReference = serializers.CharField(write_only=True)
+    externalReference = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = Profile

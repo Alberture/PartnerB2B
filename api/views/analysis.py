@@ -1,10 +1,10 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 
-from ..utils import get_profile_or_error, get_analysis_or_error, get_authenticated_partner, valid_response
-from ..serializers import AnalysisSerializer, AnalysisItemSerializer, AnalysisItemRetrieveSerializer
+from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
+from ..serializers import AnalysisSerializer, AnalysisItemRetrieveSerializer
 from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
 
 class AnalyseViewSet(ModelViewSet):
@@ -30,6 +30,12 @@ class AnalyseViewSet(ModelViewSet):
             'status': analysis.status   
         }, code=status.HTTP_201_CREATED)
   
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            return super().list(request, *args, **kwargs)
+        raise PermissionDenied()
+    
+    
     def get_object(self):
         analysis = get_analysis_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, get_profile_or_error(analysis.profile.id))

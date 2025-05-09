@@ -1,6 +1,6 @@
-from rest_framework import permissions, status
+from rest_framework import permissions
 
-from ..utils import get_authenticated_partner, get_profile_or_error
+from ..utils import get_authenticated_partner
 from ..models import Profile
 
 from datetime import datetime

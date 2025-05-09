@@ -1,7 +1,5 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from datetime import datetime
 
@@ -17,7 +15,7 @@ class ObtainPairToken(APIView):
     """
 
     def post(self, request, *args, **kwargs):
-        partner = get_partner_or_error(request.data['apiKey'])
+        partner = get_partner_or_error(request.data.get('apiKey'))
         class PartnerUserWrapper:
             """
                 Since I'm using django JWT I need to pass an User-like object to the RefreshToken object

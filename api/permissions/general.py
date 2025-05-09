@@ -1,9 +1,4 @@
-from rest_framework import permissions, status
-
-from ..utils import get_authenticated_partner, get_profile_or_error
-from ..models import Profile
-
-from datetime import datetime
+from rest_framework import permissions
 
 class IsAdminToDeletePut(permissions.BasePermission):
     

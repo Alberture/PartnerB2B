@@ -1,5 +1,4 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -8,8 +7,8 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, valid_response, save_value
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
-from ..models import Profile, ProfileAttribute, Attribute
+from ..serializers import ProfileSerializer, ProfileItemSerializer
+from ..models import Profile, ProfileAttribute
 from ..permissions import BelongsToPartnerToGetPatch, IsAdminToDeletePut
 
 class ProfileViewSet(ModelViewSet):
@@ -34,7 +33,12 @@ class ProfileViewSet(ModelViewSet):
 
             for name, value in attributes.items():
                 attribute = get_attribute_or_error(name)
-                save_value(value, attribute, profile)
+
+                if isinstance(value, list):
+                    for choice in value:
+                        save_value(choice, attribute, profile)
+                else:
+                    save_value(value, attribute, profile)
 
             return valid_response(serializer.data, code=status.HTTP_201_CREATED)
 
@@ -78,13 +82,7 @@ class ProfileViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        raise PermissionDenied(
-            {
-                "code": status.HTTP_403_FORBIDDEN,
-                "message": "Permission Error",
-                "details":[{ "error": "You"}]
-            }
-        )
+        raise PermissionDenied()
 
     def get_object(self):
         profile = get_profile_or_error(self.kwargs["pk"])
