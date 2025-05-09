@@ -5,6 +5,7 @@ from .profile import Profile
 from .profile_attribute import ProfileAttribute
 from .analysis import Analysis
 from .profile_attribute_document import ProfileAttributeDocument
+from .webhook import Webhook
 
 __all__ = [
     'Partner',
@@ -14,5 +15,6 @@ __all__ = [
     'Profil',
     'ProfileAttribute',
     'Analysis',
-    'ProfileAttributeDocument'
+    'ProfileAttributeDocument',
+    'Webhook'
 ]

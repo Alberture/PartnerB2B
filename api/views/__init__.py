@@ -4,6 +4,7 @@ from .metadata import Metadata
 from .profile import ProfileViewSet
 from .document import DocumentViewSet
 from .analysis import AnalyseViewSet
+from .webhook import WebhookViewSet
 
 __all__ = [
     'ObtainPairToken',
@@ -11,5 +12,6 @@ __all__ = [
     'Metadata',
     'ProfileViewSet',
     'DocumentViewSet',
-    'AnalyseViewSet'
+    'AnalyseViewSet',
+    'WebhookViewSet'
 ]

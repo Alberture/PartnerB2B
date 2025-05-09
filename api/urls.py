@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import ObtainPairToken, RefreshToken, Metadata,ProfileViewSet, DocumentViewSet, AnalyseViewSet
+from .views import ObtainPairToken, RefreshToken, Metadata,ProfileViewSet, DocumentViewSet, AnalyseViewSet, WebhookViewSet
 
 from rest_framework_nested import routers
 
@@ -15,6 +15,9 @@ document_domain_router.register(r'documents', DocumentViewSet, basename='documen
 analysis_domain_router = routers.SimpleRouter()
 analysis_domain_router.register(r'analyses', AnalyseViewSet, basename='analysis')
 
+webhook_domain_router = routers.SimpleRouter()
+webhook_domain_router.register(r'webhooks', WebhookViewSet, basename='webhooks')
+
 urlpatterns = [
     path('auth/token/', ObtainPairToken.as_view(), name='token'),
     path('auth/token/refresh/', RefreshToken.as_view(), name='token_refresh'),
@@ -22,5 +25,6 @@ urlpatterns = [
     path(r'', include(profile_domain_router.urls)),
     path(r'', include(profile_router.urls)),
     path(r'', include(document_domain_router.urls)),
-    path(r'', include(analysis_domain_router.urls))
+    path(r'', include(analysis_domain_router.urls)),
+    path(r'', include(webhook_domain_router.urls)),   
 ]
