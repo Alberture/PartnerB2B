@@ -21,7 +21,7 @@ def get_authenticated_partner(request):
     user = JWTAuthentication().get_user(validated_token)
     return Partner.objects.get(pk=user.id)
 
-def get_profile_or_error(pk, partner):
+def get_profile_or_error(pk):
     """
         Method that returns a Profile with the given id and partner
         or None if the Profile was not found
@@ -30,7 +30,7 @@ def get_profile_or_error(pk, partner):
         return: Profile
     """
     try:
-        return Profile.objects.get(pk=pk, partner=partner)
+        return Profile.objects.get(pk=pk)
     except Profile.DoesNotExist:
         raise ObjectDoesNotExist({
             "error":{

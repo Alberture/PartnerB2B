@@ -9,23 +9,22 @@ from django.core.exceptions import ValidationError
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import get_docuement_or_error, error_response, get_profile_or_error, get_authenticated_partner, get_attribute_or_error, valid_response
 from ..models import Attribute
+from ..permissions import BelongsToPartnerToGetPatch
 
 class DocumentViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, BelongsToPartnerToGetPatch]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     def retrieve(self, request, pk, *args, **kwargs):
-        docuement = get_docuement_or_error(pk)
-        partner = get_authenticated_partner(request)
-        get_profile_or_error(docuement.profile.id, partner)  
+        docuement = self.get_object()  
 
         serializer= self.serializer_class(instance=docuement)
         return valid_response(serializer.data)
     
     def create(self, request, profiles_pk=None, *args, **kwargs):
-        partner = get_authenticated_partner(request)
-        profile = get_profile_or_error(profiles_pk, partner)
+        profile = get_profile_or_error(profiles_pk)
+        self.check_object_permissions(request, profile)
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document_attribute = get_attribute_or_error(request.data['attribute'])
@@ -56,3 +55,7 @@ class DocumentViewSet(ModelViewSet):
             ]
         )
     
+    def get_object(self):
+        analysis = get_docuement_or_error(self.kwargs["pk"])
+        self.check_object_permissions(self.request, get_profile_or_error(analysis.profile.id))
+        return analysis

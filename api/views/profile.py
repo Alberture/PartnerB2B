@@ -10,7 +10,7 @@ from ..utils import get_authenticated_partner, get_profile_or_error, get_attribu
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeDocumentSerializer
 from ..models import Profile, ProfileAttribute, Attribute
-
+from ..permissions import BelongsToPartnerToGetPatch
 
 class ProfileViewSet(ModelViewSet):
     """
@@ -18,7 +18,10 @@ class ProfileViewSet(ModelViewSet):
     """
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [
+        IsAuthenticated, 
+        BelongsToPartnerToGetPatch
+    ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def create(self, request, *args, **kwargs):
@@ -35,14 +38,12 @@ class ProfileViewSet(ModelViewSet):
             return valid_response(serializer.data, code=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk, *args, **kwargs):
-        partner = get_authenticated_partner(request)
-        profile = get_profile_or_error(pk, partner)
+        profile = self.get_object()
         serializer = ProfileItemSerializer(profile)
         return valid_response(serializer.data)
 
     def partial_update(self, request, pk, *args, **kwargs):
-        partner = get_authenticated_partner(request)
-        profile = get_profile_or_error(pk, partner)
+        profile = self.get_object()
 
         serializer = self.get_serializer(instance=profile, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
@@ -64,8 +65,7 @@ class ProfileViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='submit')
     def submit(self, request, pk=None):
-        partner = get_authenticated_partner(request)
-        profile = get_profile_or_error(pk, partner)
+        profile = self.get_object()
         profile.status = 'complete'
         profile.save()
 
@@ -85,5 +85,9 @@ class ProfileViewSet(ModelViewSet):
             }
         )
 
+    def get_object(self):
+        profile = get_profile_or_error(self.kwargs["pk"])
+        self.check_object_permissions(self.request, profile)
 
+        return profile
     
