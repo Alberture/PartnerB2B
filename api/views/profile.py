@@ -122,7 +122,7 @@ class ProfileViewSet(ModelViewSet):
     def partial_update(self, request, pk, *args, **kwargs):
         profile = self.get_object()
 
-        serializer = self.get_serializer(instance=profile, data=request.data, partial=True)
+        serializer = self.get_serializer(instance=profile, data=request.data)
         if serializer.is_valid(raise_exception=True):
             profile = serializer.save()
             attributes = request.data.get('attributes', {})

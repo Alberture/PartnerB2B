@@ -68,4 +68,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         profile.save()
         return profile
+    
+    def update(self, instance, validated_data):
+        instance.externalReference = validated_data.get('externalReference', instance.externalReference)
+        return instance
 
