@@ -17,5 +17,5 @@ __all__ = [
     'ProfileItemSerializer',
     'AnalysisSerializer',
     'AnalysisItemRetrieveSerializer',
-    'WebhookSerializer'
+    'WebhookSerializer',
 ]

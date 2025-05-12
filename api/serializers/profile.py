@@ -44,6 +44,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
         Serializer to transform JSON format to a Profile object
     """
+    attributes = serializers.DictField(write_only=True)
     profileattribute_set = ProfileAttributeItemSerializer(read_only=True, many=True)
     status = serializers.CharField(read_only=True)
     createdAt = serializers.DateTimeField(read_only=True)
@@ -57,5 +58,14 @@ class ProfileSerializer(serializers.ModelSerializer):
             'status',
             'createdAt',
             'profileattribute_set',
-            'externalReference'
+            'externalReference',
+            'attributes'
         ]
+
+    def create(self, validated_data):
+        profile = Profile(
+            externalReference=validated_data['externalReference']
+        )
+        profile.save()
+        return profile
+
