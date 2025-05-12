@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemRetrieveSerializer
-from ..permissions import AnalysisBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
+from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
 from drf_spectacular.types import OpenApiTypes
@@ -14,7 +14,7 @@ from datetime import datetime
 
 class AnalyseViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch]
     serializer_class = AnalysisSerializer
     
 

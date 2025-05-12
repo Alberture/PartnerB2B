@@ -6,6 +6,9 @@ from datetime import datetime
 
 
 class IsAdminToDeletePutPatch(permissions.BasePermission):
+    """
+        Permission that ONLY allow the admin to DELETE, PUT or PATCH
+    """
     def has_permission(self, request, view):
         return True
     

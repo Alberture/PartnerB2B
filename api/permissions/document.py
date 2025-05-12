@@ -8,8 +8,11 @@ from django.core.exceptions import PermissionDenied
 from datetime import datetime
 
 
-class DocumentBelongsToPartnerToGetPatch(permissions.BasePermission):
-    
+class DocumentBelongsToPartnerToRead(permissions.BasePermission):
+    """
+        Permission that allows authenticated partners to retrieve documents of
+        THEIR Profiles ONLY.
+    """
     def has_permission(self, request, view):
         return True
     

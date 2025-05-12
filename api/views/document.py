@@ -8,7 +8,7 @@ from rest_framework.exceptions import PermissionDenied
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import get_docuement_or_error, get_profile_or_error, get_attribute_or_error, valid_response
 from ..models import Attribute
-from ..permissions import DocumentBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch
+from ..permissions import DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
 from drf_spectacular.types import OpenApiTypes
@@ -17,7 +17,7 @@ from datetime import datetime
 
 class DocumentViewSet(ModelViewSet):
 
-    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToGetPatch, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     @extend_schema(

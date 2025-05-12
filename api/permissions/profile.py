@@ -8,7 +8,10 @@ from django.core.exceptions import PermissionDenied
 from datetime import datetime
 
 class ProfileBelongsToPartnerToGetPatch(permissions.BasePermission):
-    
+    """
+        Permission that allows authenticated partners to retrieve or edit profiles that
+        belongs to them.
+    """
     def has_permission(self, request, view):
         return True
     
@@ -39,7 +42,9 @@ class ProfileBelongsToPartnerToGetPatch(permissions.BasePermission):
     
 
 class IsAdminToDeletePut(permissions.BasePermission):
-    
+    """
+        Permission that ONLY allows an admin to DELETE or PUT
+    """
     def has_permission(self, request, view):
         return True
     

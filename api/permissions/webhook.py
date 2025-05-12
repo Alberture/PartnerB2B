@@ -5,7 +5,9 @@ from django.core.exceptions import PermissionDenied
 from datetime import datetime
 
 class ConfigureOnlyIfPartner(permissions.BasePermission):
-    
+    """
+        Permission that ONLY allows a partner to configure a webkooh.
+    """
     def has_permission(self, request, view):
         if request.method == 'POST' and request.path == "/api/v1/webhooks/configure/" or request.user.is_staff:
             return True
