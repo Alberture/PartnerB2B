@@ -3,6 +3,10 @@ from rest_framework import serializers
 from ..models import ProfileAttributeDocument
 
 class ProfileDocumentSerializer(serializers.Serializer):
+    """
+        Serializer to transform a Profile object to JSON.
+        Mainly to avoid infinite include.
+    """
     pk = serializers.IntegerField(read_only=True)
     createdAt = serializers.DateTimeField(read_only=True)
     updatedAt = serializers.DateTimeField(read_only=True)
@@ -11,7 +15,7 @@ class ProfileDocumentSerializer(serializers.Serializer):
 
 class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform Document object to JSON format
+        Serializer to transform a ProfileAttributeDocument object to JSON format.
     """
     profile = ProfileDocumentSerializer(read_only=True)
     title = serializers.CharField(read_only=True)
@@ -33,7 +37,9 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
         ]
 
 class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
-   
+    """
+        Serializer to transform JSON to a ProfileAttributeDocument object.
+    """
     pk = serializers.IntegerField(read_only=True)
     status = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)

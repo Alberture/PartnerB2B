@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
-from ..serializers import AnalysisSerializer, AnalysisItemRetrieveSerializer
+from ..serializers import AnalysisSerializer, AnalysisItemSerializer
 from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch
 
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
@@ -36,12 +36,12 @@ class AnalyseViewSet(ModelViewSet):
             response_only=True
             )
         ],
-        responses=AnalysisItemRetrieveSerializer
+        responses=AnalysisItemSerializer
     )
     def retrieve(self, request, pk, *args, **kwargs):
         analysis = self.get_object()
 
-        serializer= AnalysisItemRetrieveSerializer(instance=analysis)
+        serializer= AnalysisItemSerializer(instance=analysis)
         return valid_response(serializer.data)
     
     @extend_schema(

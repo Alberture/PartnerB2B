@@ -5,14 +5,14 @@ from rest_framework import serializers
 
 class ProfileAttributeItemSerializer(serializers.Serializer):
     """
-        Serializer to transform a ProfileAttribute to JSON format 
+        Serializer to transform a ProfileAttribute to JSON. 
     """
     attribute = AttributeItemSerializer(read_only=True)
     value = serializers.CharField(read_only=True)
 
 class ProfileAttributeSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform Json to a ProfileAttribute object
+        Serializer to transform JSON to a ProfileAttribute object.
     """
     class Meta:
         model = ProfileAttribute

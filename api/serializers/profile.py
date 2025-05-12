@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform a Profile object to JSON format
+        Serializer to transform a Profile object to JSON.
     """
     createdAt = serializers.DateTimeField(read_only=True)
     updatedAt = serializers.DateTimeField(read_only=True)
@@ -29,6 +29,9 @@ class ProfileItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_last_analyse(self, obj):
+        """
+            Method to retrieve the last Analysis of a Profile.
+        """
         analyse = obj.analysis_set.order_by('-id')[:1].first()
         if analyse:
             return {
@@ -42,7 +45,7 @@ class ProfileItemSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform JSON format to a Profile object
+        Serializer to transform JSON to a Profile object.
     """
     attributes = serializers.DictField(write_only=True)
     profileattribute_set = ProfileAttributeItemSerializer(read_only=True, many=True)
