@@ -11,11 +11,8 @@ from drf_spectacular.types import OpenApiTypes
 
 class Metadata(APIView):
     """
-        APIView with only a get method that lists
-        all attributes in each category of attributes
-        and their specificities
+        ViewSet that lists all Attributes.
     """
-
     permission_classes = [IsAuthenticated]
 
     @extend_schema(

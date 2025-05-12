@@ -13,11 +13,9 @@ from drf_spectacular.types import OpenApiTypes
 from datetime import datetime
 
 class AnalyseViewSet(ModelViewSet):
-
     permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch]
     serializer_class = AnalysisSerializer
     
-
     @extend_schema(
         examples=[
             OpenApiExample(

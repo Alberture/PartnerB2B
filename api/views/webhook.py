@@ -15,6 +15,9 @@ from datetime import datetime
 
 @extend_schema()
 class WebhookViewSet(ModelViewSet):
+    """
+        ViewSet that manages Webhooks objects.
+    """
     serializer_class = WebhookSerializer
     permission_classes = [IsAuthenticated, ConfigureOnlyIfPartner]
     queryset = Webhook.objects.all()

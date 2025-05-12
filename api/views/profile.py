@@ -18,7 +18,7 @@ from datetime import datetime
 
 class ProfileViewSet(ModelViewSet):
     """
-    ViewSet for Profile management (CRUD)
+        ViewSet that manages Profile objects.
     """
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()

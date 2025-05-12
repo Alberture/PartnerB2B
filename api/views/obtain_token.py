@@ -16,8 +16,7 @@ from ..serializers import ProfileSerializer
 
 class ObtainPairToken(APIView):
     """
-        APIView to obtain refresh and access token 
-        for a partner with a valid APIKey
+        APIView to obtain refresh and access token for a partner with a valid APIKey.
     """
     @extend_schema(
         request=inline_serializer(

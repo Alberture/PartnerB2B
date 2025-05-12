@@ -16,7 +16,9 @@ from drf_spectacular.types import OpenApiTypes
 from datetime import datetime
 
 class DocumentViewSet(ModelViewSet):
-
+    """
+        ViewSet that manages ProfileAttributeDocument objects.
+    """
     permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
