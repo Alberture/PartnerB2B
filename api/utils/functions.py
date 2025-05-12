@@ -23,11 +23,12 @@ def get_authenticated_partner(request):
 
 def get_profile_or_error(pk):
     """
-        Method that returns a Profile with the given id and partner
-        or None if the Profile was not found
+        Method that returns a Profile with the given id, raises an
+        exception if the Profile was not found or pk is invalid.
 
         param: int pk, id of the Profile
         return: Profile
+        exceptions: ObjectDoesNotExist, ValueError
     """
     try:
         return Profile.objects.get(pk=pk)
@@ -66,11 +67,13 @@ def get_profile_or_error(pk):
 
 def get_attribute_or_error(name):
     """
-        Method that returns an Attribute with the given id
-        or None if the Profile was not found
+        Method that returns an Attribute with the given id or
+        raises an exception if the Attribute was not found
+        or pk is invalid.
 
         param: int pk, id of the Attribute
         return: Attribute
+        exceptions: ObjectDoesNotExist, ValueError
     """
     try:
         return Attribute.objects.get(name=name)
@@ -108,6 +111,15 @@ def get_attribute_or_error(name):
         })
 
 def get_docuement_or_error(pk):
+    """
+        Method that returns a ProfileAttributeDocument with the given id or 
+        raises an exception if the ProfileAttributeDocument was not found
+        or pk is invalid.
+
+        param: int pk, id of the ProfileAttributeDocument
+        return: ProfileAttributeDocument
+        exceptions: ObjectDoesNotExist, ValueError
+    """
     try:
         return ProfileAttributeDocument.objects.get(pk=pk)
     except ProfileAttributeDocument.DoesNotExist:
@@ -144,6 +156,15 @@ def get_docuement_or_error(pk):
         })
     
 def get_analysis_or_error(pk):
+    """
+        Method that returns an Analysis with the given id or 
+        raises an exception if the Analysis was not found
+        or pk is invalid.
+
+        param: int pk, id of the Analysis
+        return: Analysis
+        exceptions: ObjectDoesNotExist, ValueError
+    """
     try:
         return Analysis.objects.get(pk=pk)
     except Attribute.DoesNotExist:
@@ -180,6 +201,15 @@ def get_analysis_or_error(pk):
         })
     
 def get_partner_or_error(apiKey):
+    """
+        Method that returns a Partner with the given id or 
+        raises an exception if the AnalPartnerysis was not found
+        or pk is invalid.
+
+        param: int pk, id of the Partner
+        return: Partner
+        exceptions: ObjectDoesNotExist, ValueError
+    """
     try:
         return Partner.objects.get(apiKey=apiKey)
     except Partner.DoesNotExist:
@@ -216,12 +246,26 @@ def get_partner_or_error(apiKey):
         })
 
 def save_value(value, attribute, profile, instance=None):
+    """
+        Method that creates a ProfileAttribute with the given Attribute,
+        Profile and value or edits an instance of ProfileAttribute.
 
+        param: any value, Attribute attribute, Profile profile, ProfileAttribute instance 
+        return: ProfileAttribute
+        exceptions: ValidationError, ValueError
+    """
     serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
     serializer.is_valid(raise_exception=True)
-    serializer.save(attribute=attribute, profile=profile)
+    return serializer.save(attribute=attribute, profile=profile)
 
 def valid_response(data, code=status.HTTP_200_OK):
+    """
+        Method that returns a Response object that contains the data and status code
+        given in params.
+
+        param: dict data, status code
+        return: Response
+    """
     return Response(
         {
             "data":data,

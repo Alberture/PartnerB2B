@@ -146,6 +146,10 @@ class ProfileAttribute(models.Model):
         return super().save(*args, **kwargs)
     
     def value_is_in_choice_set(self):
+        """
+            Method that verifies if the value is in the choice set of an 
+            attribute that requires choice(s).
+        """
         choice_set = self.attribute.attributechoice_set.order_by("displayedName")
         exists = choice_set.filter(displayedName=self.value)
   
@@ -154,6 +158,9 @@ class ProfileAttribute(models.Model):
         return True
     
     def choice_is_unique(self):
+        """
+            Method that verifies if the chosen value is unique.
+        """
         if self.id:
             return True
         
