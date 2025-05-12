@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework import serializers
 from datetime import datetime
 
 from ..utils import valid_response
@@ -17,8 +18,30 @@ class RefreshToken(TokenRefreshView):
     serializer_class = TokenRefreshSerializer
 
     @extend_schema(
+        request=inline_serializer("ObtainPairTokenSerializer", fields={
+            'apiKey': serializers.CharField()
+        }),
         examples=[
-            OpenApiExample('Example', value={'user': 123}, request_only=True)
+            OpenApiExample(
+            name="Example request body for refresh token",
+            value={
+                'refresh': 'YOUR_REFRESH_TOKEN',
+            },
+            request_only=True
+            ),
+            OpenApiExample(
+            name="Exemple refresh token",
+            value={
+                "data": {
+                    "access": "YOUR_NEW_ACCESS_TOKEN",
+                    "access_expires": "2025-05-13T10:42:53"
+                },
+                "meta": {
+                    "timestamp": "2025-05-12T10:42:54.520677"
+                }
+            },
+            response_only=True
+            )
         ]
     )
     def post(self, request, *args, **kwargs):
