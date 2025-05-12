@@ -27,7 +27,16 @@ class ProfileAttribute(models.Model):
         attribute_type = self.attribute.type
      
         if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
-            raise ValidationError("Le format de la donnée n'est pas correcte")
+            raise ValidationError({
+                        "code": status.HTTP_400_BAD_REQUEST,
+                        "message": "Validation Error",
+                        "details":[
+                            {
+                            "field": "value", 
+                            "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
+                            }
+                        ]
+                    })
         
         match attribute_type:
             case 'choice':
@@ -35,11 +44,11 @@ class ProfileAttribute(models.Model):
                     choice_list = self.attribute.attributechoice_set.order_by('displayedName')
                     raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Donnée non autorisée",
+                            "message": "Validation Error",
                             "details":[
                                 {
                                 "field": "value", 
-                                "error": "La donnée doit être parmis les choix suivants : %s" % (list(choice_list))
+                                "error": "The value must be among the following choices : %s" % (list(choice_list))
                                 }
                             ]
                         }
@@ -50,11 +59,11 @@ class ProfileAttribute(models.Model):
                     if not self.choice_is_unique():
                         raise ValidationError({
                                 "status": status.HTTP_400_BAD_REQUEST,
-                                "message": "Nombre de choix non autorisé",
+                                "message": "Validation Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée ne peut prendre qu'une valeur parmis les choix suivants : %s" % (list(choice_list))
+                                    "error": "The value must unique among the following choices : %s" % (list(choice_list))
                                     }
                                 ]
                             }
@@ -67,11 +76,11 @@ class ProfileAttribute(models.Model):
                 except ValueError:
                     raise ValidationError({
                                 "status":status.HTTP_400_BAD_REQUEST,
-                                "message":"Erreur de type",
+                                "message":"Type Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée doit être un entier."
+                                    "error": "The value must be an integer."
                                     }
                                 ]
                             }
@@ -83,11 +92,11 @@ class ProfileAttribute(models.Model):
                 except ValueError:
                     raise ValidationError({
                                 "status":status.HTTP_400_BAD_REQUEST,
-                                "message":"Erreur de type",
+                                "message":"Type Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée doit être un decimal."
+                                    "error": "The value must be a float."
                                     }
                                 ]
                             }
@@ -97,11 +106,11 @@ class ProfileAttribute(models.Model):
                 if not self.value in ('True', 'False'):
                     raise ValidationError({
                                 "status":status.HTTP_400_BAD_REQUEST,
-                                "message":"Erreur de type",
+                                "message":"Type Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée doit être un booléen (True, False)."
+                                    "error": "The value must be a boolean."
                                     }
                                 ]
                             }
@@ -113,11 +122,11 @@ class ProfileAttribute(models.Model):
                 except ValueError:
                     raise ValidationError({
                                 "status":status.HTTP_400_BAD_REQUEST,
-                                "message":"Erreur de type",
+                                "message":"Type Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée doit être une date sous la forme yyyy-mm-dd."
+                                    "error": "The value must be in a correct yyyy-mm-dd format."
                                     }
                                 ]
                             }
@@ -130,11 +139,11 @@ class ProfileAttribute(models.Model):
                 except json.JSONDecodeError:
                     raise ValidationError({
                                 "status":status.HTTP_400_BAD_REQUEST,
-                                "message":"Erreur de type",
+                                "message":"Type Error",
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "La donnée doit être au format JSON."
+                                    "error": "The value must be JSON."
                                     }
                                 ]
                             }
