@@ -7,12 +7,14 @@ from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
 from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 from datetime import datetime
 
 class AnalyseViewSet(ModelViewSet):
+    """
+        ViewSet that manages Analysis objects.
+    """
     permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch]
     serializer_class = AnalysisSerializer
     

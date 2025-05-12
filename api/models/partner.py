@@ -3,8 +3,6 @@ import os
 
 from django.db import models
 
-from rest_framework.authtoken.models import Token
-
 STATUS_CHOICE = [
     ('pending', 'en attente'),
     ('in progress', 'en cours'),

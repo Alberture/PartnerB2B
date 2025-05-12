@@ -6,8 +6,7 @@ from ..models import Attribute
 from ..serializers import AttributeSerializer
 from ..utils import valid_response
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer, OpenApiResponse
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
 
 class Metadata(APIView):
     """

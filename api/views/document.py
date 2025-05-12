@@ -10,8 +10,7 @@ from ..utils import get_docuement_or_error, get_profile_or_error, get_attribute_
 from ..models import Attribute
 from ..permissions import DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 from datetime import datetime
 

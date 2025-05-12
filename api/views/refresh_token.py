@@ -6,8 +6,7 @@ from datetime import datetime
 
 from ..utils import valid_response
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer, extend_schema_serializer
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
 
 class RefreshToken(TokenRefreshView):
     """

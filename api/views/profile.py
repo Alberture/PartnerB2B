@@ -11,8 +11,7 @@ from ..serializers import ProfileSerializer, ProfileItemSerializer
 from ..models import Profile, ProfileAttribute
 from ..permissions import ProfileBelongsToPartnerToGetPatch, IsAdminToDeletePut
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 from datetime import datetime
 

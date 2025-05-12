@@ -9,8 +9,7 @@ from django.contrib.auth.models import User
 from ..utils import valid_response, get_partner_or_error
 from ..models import Partner
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer, OpenApiResponse
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
 
 from ..serializers import ProfileSerializer
 

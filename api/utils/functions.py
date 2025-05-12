@@ -167,7 +167,7 @@ def get_analysis_or_error(pk):
     """
     try:
         return Analysis.objects.get(pk=pk)
-    except Attribute.DoesNotExist:
+    except Analysis.DoesNotExist:
         raise ObjectDoesNotExist({
             "error":{
                 "code": status.HTTP_404_NOT_FOUND,
