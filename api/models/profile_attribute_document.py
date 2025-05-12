@@ -22,6 +22,10 @@ TITLE_CHOICE = [
 ]
 
 class ProfileAttributeDocument(models.Model):
+    """
+        Model that represents a document related to a user and attribute.
+        This model is to make attributes dynamic a Documents. 
+    """
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(choices=TITLE_CHOICE)

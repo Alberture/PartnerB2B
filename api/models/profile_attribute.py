@@ -12,6 +12,10 @@ from datetime import datetime
 import json
 
 class ProfileAttribute(models.Model):
+    """
+        Model that contains the value of an attribute related to a profile.
+        This model is to make attributes dynamic for Profiles. 
+    """
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
     value = models.CharField()

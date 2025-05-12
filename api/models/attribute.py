@@ -31,6 +31,10 @@ VALIDATION_CHOICE = [
 ]
 
 class Attribute(models.Model):
+    """
+        Model that represents a specificity of a Profile or Document.
+    """
+
     name = models.CharField(max_length=255, unique=True)
     displayedName = models.CharField(max_length=255)
     type = models.CharField(choices=TYPE_CHOICE)

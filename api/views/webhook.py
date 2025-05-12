@@ -32,8 +32,8 @@ class WebhookViewSet(ModelViewSet):
             OpenApiExample(
             name="Exemple config Webhook",
             value={
-                "pk": 6,
-                "url": "url"
+                "pk": 0,
+                "url": "https://localhost/webhook/"
             },
             response_only=True
             )

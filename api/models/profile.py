@@ -11,6 +11,9 @@ PROFILE_STATUS_CHOICE = [
 ]
 
 class Profile(models.Model):
+    """
+        Model that represents the partner's client that will be analysed.
+    """
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE, null=True, blank=True)

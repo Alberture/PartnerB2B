@@ -13,6 +13,9 @@ STATUS_CHOICE = [
 ]
 
 class Partner(models.Model):
+    """
+        Model that represents a partner that will use the API.
+    """
     name = models.CharField(max_length=255)
     apiKey = models.CharField(max_length=512, null=True, blank=True)
     activationStatus = models.CharField(choices=STATUS_CHOICE, default='pending', max_length=11)
