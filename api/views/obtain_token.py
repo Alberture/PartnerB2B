@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from ..utils import valid_response, get_partner_or_error
 from ..models import Partner
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer, OpenApiResponse
 from drf_spectacular.types import OpenApiTypes
 
 from ..serializers import ProfileSerializer
@@ -20,31 +20,47 @@ class ObtainPairToken(APIView):
         for a partner with a valid APIKey
     """
     @extend_schema(
-        request=inline_serializer("ObtainPairTokenSerializer", fields={
-            'apiKey': serializers.CharField()
-        }),
+        request=inline_serializer(
+            name="ObtainPairTokenSerializer",
+            fields={
+                'apiKey': serializers.CharField()
+            }
+        ),
+        responses=OpenApiResponse(
+            response=inline_serializer(
+                name="ObtainPairTokenResponse",
+                fields={
+                    "data": serializers.DictField(
+                        child=serializers.CharField()
+                    ),
+                    "meta": serializers.DictField(
+                        child=serializers.CharField()
+                    )
+                }
+            ),
+            examples=[
+                OpenApiExample(
+                    name="Exemple obtain token",
+                    value={
+                        "data": {
+                            "access": "YOUR_ACCESS_TOKEN",
+                            "refresh": "YOUR_REFRESH_TOKEN",
+                            "access_expire": "2025-05-13T09:12:06",
+                            "refesh_expire": "2025-05-19T09:12:06"
+                        },
+                        "meta": {
+                            "timestamp": "2025-05-12T09:12:06.926977"
+                        }
+                    },
+                    response_only=True
+                )
+            ]
+        ),
         examples=[
             OpenApiExample(
-            name="Example request body for obtain token",
-            value={
-                'apiKey': 'YOUR_API_KEY',
-            },
-            request_only=True
-            ),
-            OpenApiExample(
-            name="Exemple obtain token",
-            value={
-                "data": {
-                    "access": "YOUR_ACCESS_TOKEN",
-                    "refresh": "YOUR_REFRESH_TOKEN",
-                    "access_expire": "2025-05-13T09:12:06",
-                    "refesh_expire": "2025-05-19T09:12:06"
-                },
-                "meta": {
-                    "timestamp": "2025-05-12T09:12:06.926977"
-                }
-            },
-            response_only=True
+                name="Example request body for obtain token",
+                value={"apiKey": "YOUR_API_KEY"},
+                request_only=True
             )
         ]
     )
