@@ -5,6 +5,9 @@ from datetime import datetime
 
 from ..utils import valid_response
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer, extend_schema_serializer
+from drf_spectacular.types import OpenApiTypes
+
 class RefreshToken(TokenRefreshView):
     """
         Class that inherit from TokenRefreshView (used to 
@@ -13,6 +16,11 @@ class RefreshToken(TokenRefreshView):
     """
     serializer_class = TokenRefreshSerializer
 
+    @extend_schema(
+        examples=[
+            OpenApiExample('Example', value={'user': 123}, request_only=True)
+        ]
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -1,6 +1,7 @@
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from rest_framework import serializers
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -8,12 +9,17 @@ from django.contrib.auth.models import User
 from ..utils import valid_response, get_partner_or_error
 from ..models import Partner
 
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
+from drf_spectacular.types import OpenApiTypes
+
+from ..serializers import ProfileSerializer
+
 class ObtainPairToken(APIView):
     """
         APIView to obtain refresh and access token 
         for a partner with a valid APIKey
     """
-
+    
     def post(self, request, *args, **kwargs):
         partner = get_partner_or_error(request.data.get('apiKey'))
         class PartnerUserWrapper:

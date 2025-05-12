@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -10,6 +10,9 @@ from ..utils import get_authenticated_partner, get_profile_or_error, get_attribu
 from ..serializers import ProfileSerializer, ProfileItemSerializer
 from ..models import Profile, ProfileAttribute
 from ..permissions import ProfileBelongsToPartnerToGetPatch, IsAdminToDeletePut
+
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, inline_serializer
+from drf_spectacular.types import OpenApiTypes
 
 class ProfileViewSet(ModelViewSet):
     """
@@ -24,6 +27,74 @@ class ProfileViewSet(ModelViewSet):
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    @extend_schema(
+        request=inline_serializer(
+            name="ProfileAttributeSerializer",
+            fields={
+                "external_reference": serializers.CharField(required=False),
+                "attributes": serializers.DictField(),
+            },
+        ),
+        examples=[
+            OpenApiExample(
+            name="Exemple de création d’utilisateur",
+            value={
+                'external_reference': 'reference',
+                'attributes': {
+                    'firstname': 'Jean',
+                    'lastname': 'Dupont',
+                    'means_of_movement': [
+                        'bike',
+                        'motobike',
+                        'walking'
+                    ]
+                }
+            },
+            request_only=True
+            ),
+            OpenApiExample(
+            name="Exemple de création d’utilisateur",
+            value={
+                "pk": 0,
+                "status": "draft",
+                "createdAt": "2025-05-12T09:06:36.335Z",
+                "profileattribute_set": [
+                    {
+                        "attribute": {
+                            "name": "firstname"
+                        },
+                        "value": "Jean"
+                    },
+                    {
+                        "attribute": {
+                            "name": "lastname"
+                        },
+                        "value": "Dupont"
+                    },
+                    {
+                        "attribute": {
+                            "name": "means_of_movement"
+                        },
+                        "value": "bike"
+                    },
+                    {
+                        "attribute": {
+                            "name": "means_of_movement"
+                        },
+                        "value": "motobike"
+                    },
+                    {
+                        "attribute": {
+                            "name": "means_of_movement"
+                        },
+                        "value": "walking"
+                    },
+                ]
+            },
+            response_only=True
+            )
+        ]
+    )
     def create(self, request, *args, **kwargs):
         partner = get_authenticated_partner(request)
         serializer = self.get_serializer(data=request.data)
@@ -46,6 +117,7 @@ class ProfileViewSet(ModelViewSet):
         profile = self.get_object()
         serializer = ProfileItemSerializer(profile)
         return valid_response(serializer.data)
+
 
     def partial_update(self, request, pk, *args, **kwargs):
         profile = self.get_object()
