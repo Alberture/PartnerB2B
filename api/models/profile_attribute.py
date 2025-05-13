@@ -23,7 +23,6 @@ class ProfileAttribute(models.Model):
 
     def clean(self):
         attribute_type = self.attribute.type
-        errors = []
      
         if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
             raise ValidationError({

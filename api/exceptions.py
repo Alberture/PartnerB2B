@@ -30,45 +30,34 @@ def custom_exception_handler(exc, context):
     return response
 
 def _handle_authentication_error(exc, context, response):
-    if response : 
-        json_response = error_response_template(
-            'Authentication Error',
-              response.status_code,
-              [{'error': "The token either expired, invalid or isn't set in the headers."}],
-            )
-        json_response["meta"]["request_id"] = context['request'].id
-        response.data = json_response
+    json_response = error_response_template(
+        'Authentication Error',
+            response.status_code,
+            [{'error': "The token either expired, invalid or isn't set in the headers."}],
+        )
+    json_response["meta"]["request_id"] = context['request'].id
+    response.data = json_response
 
     return response
 
 def _handle_validation_error(exc, context, response):
-    if response:
+    if response.data.get('message'):
         json_response = exc.args[0]
-        json_response["meta"] = {
-            "timestamp": datetime.now(),
-            "request_id": context['request'].id
-        }
+        json_response = {"error":exc.args[0], "meta": {"timestamp": datetime.now(), "request_id": context['request'].id}}
         return Response(json_response)
-    """
+
     fields = response.data.keys()
-    response.data = error_response_template(
-        'Validation Error.',
-        response.status_code,
-        [
+    return Response(error_response_template("Validation Error", response.status_code, [
             {
                 "field": next(iter(fields)),
                 'error': response.data[next(iter(fields))]
             }
-        ]
-    )
-    """
-    return response
+        ]))
 
 def _handle_permission_error(exc, context, response):
-    if response:
-        json_response = exc.args[0]
-        json_response["meta"]["request_id"] = context['request'].id
-        return Response(json_response)
+    json_response = exc.args[0]
+    json_response["meta"]["request_id"] = context['request'].id
+    return Response(json_response)
     
     """
     return Response(error_response_template(

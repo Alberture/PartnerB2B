@@ -2,7 +2,8 @@ from ..models import Profile
 from .profile_attribute import ProfileAttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
@@ -75,4 +76,4 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.externalReference = validated_data.get('externalReference', instance.externalReference)
         return instance
-
+    

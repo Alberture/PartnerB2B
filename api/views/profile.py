@@ -233,4 +233,3 @@ class ProfileViewSet(ModelViewSet):
         self.check_object_permissions(self.request, profile)
 
         return profile
-    
