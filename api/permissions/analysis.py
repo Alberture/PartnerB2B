@@ -17,7 +17,7 @@ class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff:
+        if request.user.is_staff or isinstance(obj, Profile):
             return True
         
         if request.method in ['GET', 'PATCH', 'POST']:
@@ -41,5 +41,17 @@ class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
             
         return True
 
+class IsAdminOrHasEnoughTries(permissions.BasePermission):
+    """
+        Permission that allows to do analysis if the partner has enough
+        permissions or is admin.
+    """
+    def has_permission(self, request, view):
+        if request.user.is_staff:
+            return True
+        
+        if request.method == 'POST':
+            partner = get_authenticated_partner(request)
+            return partner.limitUsage > 0
 
-    
+        return True

@@ -3,9 +3,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
-from ..utils import get_profile_or_error, get_analysis_or_error, valid_response
+from ..utils import get_profile_or_error, get_analysis_or_error, valid_response, get_authenticated_partner
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch
+from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries,ProfileBelongsToPartnerToGetPatch
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -15,7 +15,7 @@ class AnalyseViewSet(ModelViewSet):
     """
         ViewSet that manages Analysis objects.
     """
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartnerToGetPatch]
     serializer_class = AnalysisSerializer
     
     @extend_schema(
@@ -69,6 +69,10 @@ class AnalyseViewSet(ModelViewSet):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         analysis = serializer.save(profile=profile)
+        partner = get_authenticated_partner(request)
+        if partner.limitUsage:
+            partner.limitUsage -= 1
+            partner.save()
         return valid_response({
             'message': "Vous venez de faire une demande d\'analyse pour le profile %s" % (profiles_pk),
             'pk': analysis.id,

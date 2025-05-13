@@ -11,9 +11,8 @@ ANALYSIS_STATUS_CHOICE = [
 
 class Analysis(models.Model):
     """
-        Model that represents an analysis of a Profile
+        Model that represents an analysis of a Profile.
     """
-
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     completedAt = models.DateTimeField(null=True, blank=True)

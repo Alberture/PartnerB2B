@@ -76,6 +76,7 @@ class ProfileViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             profile = serializer.save(partner=partner)
+            dd(profile.partner)
             attributes = request.data.get('attributes', {})
 
             for name, value in attributes.items():

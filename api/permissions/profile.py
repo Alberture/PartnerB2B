@@ -1,7 +1,7 @@
 from rest_framework import permissions, status
 
 from ..utils import get_authenticated_partner
-from ..models import Profile
+from ..models import Profile, Analysis, ProfileAttributeDocument
 
 from django.core.exceptions import PermissionDenied
 
@@ -16,7 +16,7 @@ class ProfileBelongsToPartnerToGetPatch(permissions.BasePermission):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff:
+        if request.user.is_staff or isinstance(obj, ProfileAttributeDocument) or isinstance(obj, Analysis):
             return True
         
         if request.method in ['GET', 'PATCH', 'POST']:
@@ -43,7 +43,7 @@ class ProfileBelongsToPartnerToGetPatch(permissions.BasePermission):
 
 class IsAdminToDeletePut(permissions.BasePermission):
     """
-        Permission that ONLY allows an admin to DELETE or PUT
+        Permission that ONLY allows an admin to DELETE or PUT.
     """
     def has_permission(self, request, view):
         return True

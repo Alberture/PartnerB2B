@@ -22,7 +22,7 @@ class ProfileAttribute(models.Model):
     source = models.CharField(null=True, blank=True) 
 
     def clean(self):
-        if self.attribute:    
+        if self.attribute: 
             attribute_type = self.attribute.type
         
             if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
@@ -147,6 +147,7 @@ class ProfileAttribute(models.Model):
                                     ]
                                 }
                             )
+            
            
 
     def save(self, *args, **kwargs):
