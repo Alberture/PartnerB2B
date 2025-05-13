@@ -19,7 +19,11 @@ class IsAdminToDeletePutPatch(permissions.BasePermission):
                         "code": status.HTTP_403_FORBIDDEN,
                         "message": "Permission Error",
                         "details":[
-                            {"error": "You must be an admin to perform this action."}
+                            {
+                                "error": "You must be an admin to perform this action.",
+                                "action": request.method,
+                                "path": request.path
+                            }
                         ]
                     })
             

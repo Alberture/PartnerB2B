@@ -33,7 +33,8 @@ class ProfileAttribute(models.Model):
                     "code": status.HTTP_400_BAD_REQUEST,
                     "message": "Validation Error",
                     "details": [{
-                        "field": "value", 
+                        "field": "value",
+                        "attribute": self.attribute.name, 
                         "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
                     }]
                     }
@@ -48,6 +49,7 @@ class ProfileAttribute(models.Model):
                             "message": "Validation Error",
                             "details": [{
                                 "field": "value", 
+                                "attribute": self.attribute.name,
                                 "error": "The value must be among the following choices : %s" % (list(map(str, choice_list)))
                                 }]
                             }
@@ -62,6 +64,7 @@ class ProfileAttribute(models.Model):
                                 "message": "Validation Error",
                                 "details": [{
                                         "field": "value", 
+                                        "attribute": self.attribute.name,
                                         "error": "The value must unique among the following choices : %s" %  (list(map(str, choice_list)))
                                     }]
                                 }
@@ -76,6 +79,7 @@ class ProfileAttribute(models.Model):
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 
+                                        "attribute": self.attribute.name,
                                         "error": "The value must be an integer."
                                     }]
                                 }
@@ -90,6 +94,7 @@ class ProfileAttribute(models.Model):
                             "message": "Type Error",
                             "details": [{
                                     "field": "value", 
+                                    "attribute": self.attribute.name,
                                     "error": "The value must be a float."
                                     }]
                                 }
@@ -102,6 +107,7 @@ class ProfileAttribute(models.Model):
                             "message": "Type Error",
                             "details": [{
                                     "field": "value", 
+                                    "attribute": self.attribute.name,
                                     "error": "The value must be a boolean."
                                     }]
                                 }
@@ -116,6 +122,7 @@ class ProfileAttribute(models.Model):
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 
+                                        "attribute": self.attribute.name,
                                         "error": "The value must be in a correct yyyy-mm-dd format."
                                     }]
                                 }
@@ -130,6 +137,7 @@ class ProfileAttribute(models.Model):
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 
+                                        "attribute": self.attribute.name,
                                         "error": "The value must be JSON."
                                     }]
                                 }

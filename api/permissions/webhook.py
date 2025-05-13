@@ -16,24 +16,27 @@ class ConfigureOnlyIfPartner(permissions.BasePermission):
                 "code": status.HTTP_403_FORBIDDEN,
                 "message": "Permission Error",
                 "details":[
-                    {"error": "You must be an admin to perform this action."}
+                    {
+                        "error": "You must be an admin to perform this action.",
+                        "action": request.method,
+                        "path": request.path
+                    }
                 ] 
             })
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_staff:
             return True
-        
-        {
-            "error":{
+
+        raise PermissionDenied({
                 "code": status.HTTP_403_FORBIDDEN,
                 "message": "Permission Error",
                 "details":[
-                    {"error": "You must be an admin to perform this action."}
+                    {
+                        "error": "You must be an admin to perform this action.",
+                        "action": request.method,
+                        "path": request.path
+                    }
                 ] 
-            },
-            "meta":{
-                "timestamp": datetime.now(),
-                "request_id": request.id
-            }
-        }
+            })
+

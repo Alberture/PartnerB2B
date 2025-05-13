@@ -29,7 +29,11 @@ class DocumentBelongsToPartnerToRead(permissions.BasePermission):
                         "code": status.HTTP_403_FORBIDDEN,
                         "message": "Permission Error",
                         "details":[
-                            {"error": "The document you are trying to retrieve or edit does not belong to you."}
+                            {
+                                "error": "The document you are trying to retrieve or edit does not belong to you.",
+                                "action": request.method,
+                                "path": request.path
+                            }
                         ]
                     })
             

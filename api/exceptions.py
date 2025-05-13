@@ -32,7 +32,11 @@ def _handle_authentication_error(exc, context, response):
     response.data = error_response_template({
             "code": response.status_code,
             "message": 'Authentication Error',
-            "details": [{'error': "Your token is either expired, invalid or isn't set in the headers."}],
+            "details": [
+                {
+                    'error': "Your token is either expired, invalid or wasn't set in headers."
+                }
+            ],
     }, context.get('request'))
     return response
 

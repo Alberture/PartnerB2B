@@ -27,7 +27,11 @@ class ProfileBelongsToPartner(permissions.BasePermission):
                     "code": status.HTTP_403_FORBIDDEN,
                     "message": "Permission Error",
                     "details":[
-                        {"error": "The profile you are trying to retrieve or edit does not belong to you."}
+                        {
+                            "error": "The profile you are trying to retrieve or edit does not belong to you.",
+                            "action": request.method,
+                            "path": request.path
+                        }
                     ]
                 })
             
@@ -48,7 +52,11 @@ class IsAdminToDeletePut(permissions.BasePermission):
                         "code": status.HTTP_403_FORBIDDEN,
                         "message": "Permission Error",
                         "details":[
-                            {"error": "You must be an admin to perform this action."}
+                            {
+                                "error": "You must be an admin to perform this action.",
+                                "action": request.method,
+                                "path": request.path
+                            }
                         ]
                     })
             
