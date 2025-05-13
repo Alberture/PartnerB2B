@@ -80,12 +80,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
         
-        required_attributes = Attribute.objects.filter(isRequired=True)
+        required_attributes = Attribute.objects.filter(isRequired=True).exclude(category="document")
         for name, value in data['attributes'].items():
             required_attributes = required_attributes.exclude(name=name)
         
         if required_attributes:
-            raise ValidationError({
+            raise serializers.ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,
                 "message": "Missing required attributes.",
                 "details":[

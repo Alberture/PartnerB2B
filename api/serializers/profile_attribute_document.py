@@ -1,6 +1,6 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 
-from ..models import ProfileAttributeDocument
+from ..models import ProfileAttributeDocument, Attribute
 
 class ProfileDocumentSerializer(serializers.Serializer):
     """
@@ -44,6 +44,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)
     file = serializers.ImageField(write_only=True)
+    attribute = serializers.CharField(write_only=True)
 
     class Meta:
         model = ProfileAttributeDocument
@@ -51,5 +52,10 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
             'pk',
             'status',
             'downloadedAt',
-            'file'
+            'file',
+            'attribute'
         ]
+
+    def create(self, validated_data):
+        return super().create(validated_data.pop("attribute"))
+    
