@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import ValidationError
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -33,37 +34,23 @@ def get_profile_or_error(pk):
     try:
         return Profile.objects.get(pk=pk)
     except Profile.DoesNotExist:
-        raise ObjectDoesNotExist({
-            "error":{
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "Profile Not Found",
-                "details":[
-                    {
-                    "field": "pk",
-                    "error": "This profile id does not exist. Please try again."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+        raise ObjectDoesNotExist(error_response_template(
+                "Profile Not Found", 
+                status.HTTP_404_NOT_FOUND, [{
+                "field": "pk",
+                "error": "This profile id does not exist. Please try again."
+                }]
+            )
+        )
     except ValueError:
-        raise ValueError({
-            "error":{
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Type Error",
-                "details":[
-                    {
-                    "field": "pk",
-                    "error": "The profile id must be an integer."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+        raise ValidationError(error_response_template(
+            "Type Error", 
+            status.HTTP_400_BAD_REQUEST,[{
+                "field": "pk",
+                "error": "The profile id must be an integer."
+                }]
+            )
+        )
 
 def get_attribute_or_error(name):
     """
@@ -78,37 +65,23 @@ def get_attribute_or_error(name):
     try:
         return Attribute.objects.get(name=name)
     except Attribute.DoesNotExist:
-        raise ObjectDoesNotExist({
-            "error":{
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "Attribute Not Found",
-                "details":[
-                    {
-                    "field": "name",
-                    "error": "This attribute name does not exist. Please try again"
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+        raise ObjectDoesNotExist(error_response_template(
+            "Attribute Not Found",
+            status.HTTP_404_NOT_FOUND,[{
+                "field": "name",
+                "error": "This attribute name does not exist. Please try again"
+                }]
+            )
+        )
     except ValueError:
-        raise ValueError({
-            "error":{
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Type Error",
-                "details":[
-                    {
+        raise ValidationError(error_response_template(
+            "Type Error",
+            status.HTTP_400_BAD_REQUEST,[{
                     "field": "name",
                     "error": "The attribute name must be a string."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )
+            )
 
 def get_docuement_or_error(pk):
     """
@@ -123,37 +96,24 @@ def get_docuement_or_error(pk):
     try:
         return ProfileAttributeDocument.objects.get(pk=pk)
     except ProfileAttributeDocument.DoesNotExist:
-        raise ObjectDoesNotExist({
-            "error":{
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "ProfileAttributeDocument Not Found",
-                "details":[
-                    {
+        raise ObjectDoesNotExist(error_response_template(
+            "ProfileAttributeDocument Not Found",
+            status.HTTP_404_NOT_FOUND,[{
                     "field": "pk",
                     "error": "This document id does not exist. Please try again"
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )    
+            )
+
     except ValueError:
-        raise ValueError({
-            "error":{
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "TypeError",
-                "details":[
-                    {
+        raise ValidationError(error_response_template(
+            "TypeError",
+            status.HTTP_400_BAD_REQUEST,[{
                     "field": "pk",
                     "error": "The document id must be an integer"
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )
+            )
     
 def get_analysis_or_error(pk):
     """
@@ -168,37 +128,24 @@ def get_analysis_or_error(pk):
     try:
         return Analysis.objects.get(pk=pk)
     except Analysis.DoesNotExist:
-        raise ObjectDoesNotExist({
-            "error":{
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "Analyse non trouvé",
-                "details":[
-                    {
+        raise ObjectDoesNotExist(error_response_template(
+            "Analysis not found",
+            status.HTTP_404_NOT_FOUND,[{
                     "field": "pk",
                     "error": "This analysis does not exist. Please try again."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )
+            )
+    
     except ValueError:
-        raise ValueError({
-            "error":{
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Erreur de type",
-                "details":[
-                    {
+        raise ValidationError(error_response_template(
+            "Type Error",
+            status.HTTP_400_BAD_REQUEST,[{
                     "field": "pk",
                     "error": "The analysis id must be an integer."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )
+            )
     
 def get_partner_or_error(apiKey):
     """
@@ -213,37 +160,26 @@ def get_partner_or_error(apiKey):
     try:
         return Partner.objects.get(apiKey=apiKey)
     except Partner.DoesNotExist:
-        raise ObjectDoesNotExist({
-            "error":{
-                "code": status.HTTP_404_NOT_FOUND,
-                "message": "Partner not found",
-                "details":[
-                    {
+        raise ObjectDoesNotExist(error_response_template(
+            "Partner not found",
+            status.HTTP_404_NOT_FOUND,[{
                     "field": "apiKey",
                     "error": "The API key was not found."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+                    }]
+                )
+            )
+    
     except ValueError:
-        raise ValueError({
-            "error":{
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Type Error",
-                "details":[
-                    {
-                    "field": "pk",
-                    "error": "The partner id must be an integer."
-                    }
-                ]
-            },
-            "meta": {
-                "timestamp": datetime.now()
-            }
-        })
+        raise ValidationError(error_response_template(
+            "Type Error",
+            status.HTTP_400_BAD_REQUEST,[
+                {
+                "field": "pk",
+                "error": "The partner id must be an integer."
+                }
+            ]
+            )
+        )
 
 def save_value(value, attribute, profile, instance=None):
     """
@@ -275,3 +211,22 @@ def valid_response(data, code=status.HTTP_200_OK):
         },
         status=code
     )
+
+def error_response_template(message, status, details):
+    """
+        Method that to avoid rewritting the JSON for message 
+        error.
+
+        param: str message, status status, array details
+        return: dict
+    """
+    return {
+            "error": {
+                'code' : status,
+                'message' : message,
+                'details': details
+            },
+            "meta":{
+                "timestamp": datetime.now()
+            }
+        }

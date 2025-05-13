@@ -1,20 +1,8 @@
 from rest_framework.views import exception_handler
-from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError, NotFound
 
-from datetime import datetime
-
-def error_response_template(message, status, details):
-    return {
-            "error": {
-                'message' : message,
-                'code' : status,
-                'details': details
-            },
-            "meta":{
-                "timestamp": datetime.now()
-            }
-        }
+from .utils import error_response_template
 
 def custom_exception_handler(exc, context):
 
@@ -23,7 +11,7 @@ def custom_exception_handler(exc, context):
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_permission_error,
         'ObjectDoesNotExist': _handle_object_does_not_exist,
-        'ValueError': _handle_value_error,
+        'NotFound': _handle_not_found_error,
     }
 
     # Call REST framework's default exception handler first,
@@ -45,15 +33,15 @@ def _handle_authentication_error(exc, context, response):
         response.data = error_response_template(
             'Authentication Error',
               response.status_code,
-              [{'error': "The token either expired or is invalid."}]
+              [{'error': "The token either expired, invalid or isn't set in the headers."}]
             )
 
     return response
 
 def _handle_validation_error(exc, context, response):
-    if not response:
+    if response:
         return Response(exc.args[0])
-
+    
     fields = response.data.keys()
     response.data = error_response_template(
         'Validation Error.',
@@ -78,12 +66,8 @@ def _handle_permission_error(exc, context, response):
     ))
 
 def _handle_object_does_not_exist(exc, context, response):
-    if not response:
-        return Response(exc.args[0])
-    return response
+    return Response(exc.args[0])
 
-def _handle_value_error(exc, context, response):
-    if not response:
-        return Response(exc.args[0])
+def _handle_not_found_error(exc, context, response):
+    dd("ok")
     return response
-

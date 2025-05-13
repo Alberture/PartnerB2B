@@ -1,9 +1,8 @@
 from django.db import models
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 
 from .profile import Profile
 from .attribute import Attribute
-#from ..utils import get_expception_error_template
 
 from rest_framework import status
 
@@ -25,6 +24,7 @@ class ProfileAttribute(models.Model):
 
     def clean(self):
         attribute_type = self.attribute.type
+        errors = []
      
         if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
             raise ValidationError({
