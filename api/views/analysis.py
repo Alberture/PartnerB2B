@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..utils import get_profile_or_error, get_analysis_or_error, valid_response, get_authenticated_partner
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries,ProfileBelongsToPartnerToGetPatch
+from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartnerToGetPatch
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
