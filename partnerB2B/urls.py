@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 handler404 = "partnerB2B.views.custom_404_view"
+handler500 = 'partnerB2B.views.custom_500_view'
 
 from django.contrib import admin
 from django.urls import path, include

@@ -8,3 +8,11 @@ def custom_404_view(request, exception=None):
         "This url doesn't exist."),
         status=404
     )
+
+def custom_500_view(request, exception=None):
+    return JsonResponse(error_response_template(
+        "Internal Error",
+        500,
+        "There is an internal problem. Please try again."),
+        status=500
+    )

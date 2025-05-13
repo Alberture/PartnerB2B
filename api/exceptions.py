@@ -12,7 +12,6 @@ def custom_exception_handler(exc, context):
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_raised_error,
         'NotFound': _handle_raised_error,
-        'Throttled': _handle_raised_error
     }
 
     # Call REST framework's default exception handler first,
