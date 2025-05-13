@@ -17,7 +17,7 @@ class DocumentBelongsToPartnerToRead(permissions.BasePermission):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff:
+        if request.user.is_staff or isinstance(obj, Profile):
             return True
         
         if request.method in ['GET', 'PATCH', 'POST']:
