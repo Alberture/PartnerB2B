@@ -12,6 +12,7 @@ def custom_exception_handler(exc, context):
         'PermissionDenied': _handle_permission_error,
         'ObjectDoesNotExist': _handle_object_does_not_exist,
         'NotFound': _handle_not_found_error,
+        'AuthenticationFailed': _handle_authentication_failed
     }
 
     # Call REST framework's default exception handler first,
@@ -65,9 +66,9 @@ def _handle_permission_error(exc, context, response):
         [{'error': "You are not allowed to perform this action."}]
     ))
 
-def _handle_object_does_not_exist(exc, context, response):
-    return Response(exc.args[0])
-
 def _handle_not_found_error(exc, context, response):
     dd("ok")
     return response
+
+def _handle_authentication_failed(exc, context, response):
+    return Response(exc.args[0])

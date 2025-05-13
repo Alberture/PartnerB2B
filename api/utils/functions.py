@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, NotFound
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -29,12 +29,12 @@ def get_profile_or_error(pk):
 
         param: int pk, id of the Profile
         return: Profile
-        exceptions: ObjectDoesNotExist, ValueError
+        exceptions: NotFound, ValueError
     """
     try:
         return Profile.objects.get(pk=pk)
     except Profile.DoesNotExist:
-        raise ObjectDoesNotExist(error_response_template(
+        raise NotFound(error_response_template(
                 "Profile Not Found", 
                 status.HTTP_404_NOT_FOUND, [{
                 "field": "pk",
@@ -60,12 +60,12 @@ def get_attribute_or_error(name):
 
         param: int pk, id of the Attribute
         return: Attribute
-        exceptions: ObjectDoesNotExist, ValueError
+        exceptions: NotFound, ValueError
     """
     try:
         return Attribute.objects.get(name=name)
     except Attribute.DoesNotExist:
-        raise ObjectDoesNotExist(error_response_template(
+        raise NotFound(error_response_template(
             "Attribute Not Found",
             status.HTTP_404_NOT_FOUND,[{
                 "field": "name",
@@ -91,12 +91,12 @@ def get_docuement_or_error(pk):
 
         param: int pk, id of the ProfileAttributeDocument
         return: ProfileAttributeDocument
-        exceptions: ObjectDoesNotExist, ValueError
+        exceptions: NotFound, ValueError
     """
     try:
         return ProfileAttributeDocument.objects.get(pk=pk)
     except ProfileAttributeDocument.DoesNotExist:
-        raise ObjectDoesNotExist(error_response_template(
+        raise NotFound(error_response_template(
             "ProfileAttributeDocument Not Found",
             status.HTTP_404_NOT_FOUND,[{
                     "field": "pk",
@@ -123,12 +123,12 @@ def get_analysis_or_error(pk):
 
         param: int pk, id of the Analysis
         return: Analysis
-        exceptions: ObjectDoesNotExist, ValueError
+        exceptions: NotFound, ValueError
     """
     try:
         return Analysis.objects.get(pk=pk)
     except Analysis.DoesNotExist:
-        raise ObjectDoesNotExist(error_response_template(
+        raise NotFound(error_response_template(
             "Analysis not found",
             status.HTTP_404_NOT_FOUND,[{
                     "field": "pk",
@@ -155,12 +155,12 @@ def get_partner_or_error(apiKey):
 
         param: int pk, id of the Partner
         return: Partner
-        exceptions: ObjectDoesNotExist, ValueError
+        exceptions: NotFound, ValueError
     """
     try:
         return Partner.objects.get(apiKey=apiKey)
     except Partner.DoesNotExist:
-        raise ObjectDoesNotExist(error_response_template(
+        raise NotFound(error_response_template(
             "Partner not found",
             status.HTTP_404_NOT_FOUND,[{
                     "field": "apiKey",
@@ -188,7 +188,7 @@ def save_value(value, attribute, profile, instance=None):
 
         param: any value, Attribute attribute, Profile profile, ProfileAttribute instance 
         return: ProfileAttribute
-        exceptions: ValidationError, ValueError
+        exceptions: ValidationError, NotFound
     """
     serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
     serializer.is_valid(raise_exception=True)

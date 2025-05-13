@@ -48,7 +48,7 @@ class ProfileAttribute(models.Model):
                             "details":[
                                 {
                                 "field": "value", 
-                                "error": "The value must be among the following choices : %s" % (list(choice_list))
+                                "error": "The value must be among the following choices : %s" % (list(map(str, choice_list)))
                                 }
                             ]
                         }
@@ -63,7 +63,7 @@ class ProfileAttribute(models.Model):
                                 "details":[
                                     {
                                     "field": "value", 
-                                    "error": "The value must unique among the following choices : %s" % (list(choice_list))
+                                    "error": "The value must unique among the following choices : %s" %  (list(map(str, choice_list)))
                                     }
                                 ]
                             }
