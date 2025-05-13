@@ -1,6 +1,5 @@
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError, NotFound
 
 from .utils import error_response_template
 
@@ -10,7 +9,6 @@ def custom_exception_handler(exc, context):
         'ValidationError' : _handle_validation_error,
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_permission_error,
-        'ObjectDoesNotExist': _handle_object_does_not_exist,
         'NotFound': _handle_not_found_error,
         'AuthenticationFailed': _handle_authentication_failed
     }
@@ -67,8 +65,7 @@ def _handle_permission_error(exc, context, response):
     ))
 
 def _handle_not_found_error(exc, context, response):
-    dd("ok")
-    return response
+    return Response(exc.args[0])
 
 def _handle_authentication_failed(exc, context, response):
     return Response(exc.args[0])

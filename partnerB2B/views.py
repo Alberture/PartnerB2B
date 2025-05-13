@@ -7,4 +7,4 @@ def custom_404_view(request, exception=None):
         404,
         "This url doesn't exist."),
         status=404
-        )
+    )
