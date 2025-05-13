@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import get_docuement_or_error, get_profile_or_error, get_attribute_or_error, valid_response
@@ -91,11 +91,12 @@ class DocumentViewSet(ModelViewSet):
                     "details":[
                         { 
                             "field": "attribute",
-                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(document_attributes))
+                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(map(str,document_attributes)))
                         }
                     ]
                 })
-            serializer.save(attribute=document_attribute, profile=profile)
+            type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
+            serializer.save(attribute=document_attribute, profile=profile, type=type)
             return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
         
     @extend_schema(exclude=True)
