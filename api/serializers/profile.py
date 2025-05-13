@@ -1,4 +1,4 @@
-from ..models import Profile
+from ..models import Profile, Attribute
 from .profile_attribute import ProfileAttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
@@ -76,4 +76,24 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.externalReference = validated_data.get('externalReference', instance.externalReference)
         return instance
+    
+    def validate(self, data):
+        data = super().validate(data)
+        
+        required_attributes = Attribute.objects.filter(isRequired=True)
+        for name, value in data['attributes'].items():
+            required_attributes = required_attributes.exclude(name=name)
+        
+        if required_attributes:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Missing required attributes.",
+                "details":[
+                    {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
+                ]
+            })
+
+        return data
+
+        
     
