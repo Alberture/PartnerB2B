@@ -35,7 +35,8 @@ class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
                         ]
                     },
                     "meta":{
-                        "timestamp": datetime.now()
+                        "timestamp": datetime.now(),
+                        "request_id": request.id
                     }
                 })
             
@@ -52,6 +53,22 @@ class IsAdminOrHasEnoughTries(permissions.BasePermission):
         
         if request.method == 'POST':
             partner = get_authenticated_partner(request)
-            return partner.limitUsage > 0
+            if not partner.limitUsage > 0:
+                raise PermissionDenied({
+                   "error":{
+                        "code": status.HTTP_403_FORBIDDEN,
+                        "message": "Permission Error",
+                        "details":[
+                            {
+                                "field": "limitUsage",
+                                "error": "You have reached the limit usage you have."
+                            }
+                        ]
+                    },
+                    "meta":{
+                        "timestamp": datetime.now(),
+                        "request_id": request.id
+                    } 
+                })
 
         return True
