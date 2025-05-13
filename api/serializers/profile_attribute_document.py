@@ -43,6 +43,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(read_only=True)
     status = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)
+    file = serializers.ImageField(write_only=True)
 
     class Meta:
         model = ProfileAttributeDocument
@@ -50,5 +51,5 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
             'pk',
             'status',
             'downloadedAt',
-            'type',
+            'file'
         ]
