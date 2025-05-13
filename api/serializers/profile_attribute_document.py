@@ -1,6 +1,6 @@
-from rest_framework import serializers, status
+from rest_framework import serializers
 
-from ..models import ProfileAttributeDocument, Attribute
+from ..models.profile_attribute_document import ProfileAttributeDocument
 
 class ProfileDocumentSerializer(serializers.Serializer):
     """
@@ -18,7 +18,6 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
         Serializer to transform a ProfileAttributeDocument object to JSON format.
     """
     profile = ProfileDocumentSerializer(read_only=True)
-    title = serializers.CharField(read_only=True)
     file = serializers.CharField(read_only=True)
     type = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)
@@ -28,7 +27,6 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
         model = ProfileAttributeDocument
         fields = [
             'profile',
-            'title',
             'file',
             'type',
             'downloadedAt',

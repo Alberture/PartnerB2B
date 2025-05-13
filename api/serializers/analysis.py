@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Analysis
+from ..models.analysis import Analysis
 
 class AnalysisItemSerializer(serializers.Serializer):
     """

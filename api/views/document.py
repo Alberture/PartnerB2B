@@ -3,12 +3,12 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from ..utils import get_docuement_or_error, get_profile_or_error, get_attribute_or_error, valid_response
-from ..models import Attribute
-from ..permissions import DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch
+from ..utils import valid_response
+from ..models import Attribute, Profile, ProfileAttributeDocument
+from ..permissions import DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch, ProfileBelongsToPartner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -18,7 +18,7 @@ class DocumentViewSet(ModelViewSet):
     """
         ViewSet that manages ProfileAttributeDocument objects.
     """
-    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch]
+    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch, ProfileBelongsToPartner]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     @extend_schema(
@@ -78,11 +78,11 @@ class DocumentViewSet(ModelViewSet):
         responses=ProfileAttributeDocumentSerializer
     )
     def create(self, request, profiles_pk=None, *args, **kwargs):
-        profile = get_profile_or_error(profiles_pk)
+        profile = Profile.get_profile_or_error(profiles_pk)
         self.check_object_permissions(request, profile)
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            document_attribute = get_attribute_or_error(request.data['attribute'])
+            document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
             if document_attribute.category != 'documents':
                 document_attributes = Attribute.objects.filter(category="documents")
                 raise ValidationError({
@@ -98,13 +98,19 @@ class DocumentViewSet(ModelViewSet):
             type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
             serializer.save(attribute=document_attribute, profile=profile, type=type)
             return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
-        
+
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        raise PermissionDenied()
-    
+        raise PermissionDenied({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Permission Denied",
+            "details": [
+                {"error": "You must be an admin to perform this action."}
+            ]
+        })
+
     @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):
         return super().destroy(request, pk, *args, **kwargs)
@@ -118,6 +124,6 @@ class DocumentViewSet(ModelViewSet):
         return super().partial_update(request, pk, *args, **kwargs)
     
     def get_object(self):
-        document = get_docuement_or_error(self.kwargs["pk"])
+        document = ProfileAttributeDocument.get_docuement_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, document)
         return document

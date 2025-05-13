@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 
-from ..utils import valid_response, get_partner_or_error
+from ..utils import valid_response
 from ..models import Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
@@ -63,7 +63,7 @@ class ObtainPairToken(APIView):
         ]
     )
     def post(self, request, *args, **kwargs):
-        partner = get_partner_or_error(request.data.get('apiKey'))
+        partner = Partner.get_partner_or_error(request.data.get('apiKey'))
         class PartnerUserWrapper:
             """
                 Since I'm using django JWT I need to pass an User-like object to the RefreshToken object

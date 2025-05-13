@@ -10,9 +10,8 @@ def custom_exception_handler(exc, context):
     handlers = {
         'ValidationError' : _handle_validation_error,
         'NotAuthenticated' : _handle_authentication_error,
-        'PermissionDenied': _handle_permission_error,
-        'NotFound': _handle_not_found_error,
-        'AuthenticationFailed': _handle_authentication_failed
+        'PermissionDenied': _handle_raised_error,
+        'NotFound': _handle_raised_error,
     }
 
     # Call REST framework's default exception handler first,
@@ -30,41 +29,29 @@ def custom_exception_handler(exc, context):
     return response
 
 def _handle_authentication_error(exc, context, response):
-    json_response = error_response_template(
-        'Authentication Error',
-            response.status_code,
-            [{'error': "The token either expired, invalid or isn't set in the headers."}],
-        )
-    json_response["meta"]["request_id"] = context['request'].id
-    response.data = json_response
-
+    response.data = error_response_template({
+            "code": response.status_code,
+            "message": 'Authentication Error',
+            "details": [{'error': "Your token is either expired, invalid or isn't set in the headers."}],
+    }, context.get('request'))
     return response
 
 def _handle_validation_error(exc, context, response):
     if response.data.get('message'):
-        json_response = exc.args[0]
-        json_response = {"error":exc.args[0], "meta": {"timestamp": datetime.now(), "request_id": context['request'].id}}
-        return Response(json_response)
+        return Response(error_response_template(exc.args[0], context.get('request')))
 
     fields = response.data.keys()
-    return Response(error_response_template("Validation Error", response.status_code, [
+    return Response(error_response_template({
+        "code": response.status_code, 
+        "message": "Validation Error", 
+        "details": [
             {
                 "field": next(iter(fields)),
                 'error': response.data[next(iter(fields))]
             }
-        ]))
+        ]
+    }, context.get('request')))
 
-def _handle_permission_error(exc, context, response):
-    json_response = exc.args[0]
-    json_response["meta"]["request_id"] = context['request'].id
-    return Response(json_response)
+def _handle_raised_error(exc, context, response):
+    return Response(error_response_template(exc.args[0], context.get('request')))
 
-def _handle_not_found_error(exc, context, response):
-    json_response = exc.args[0]
-    json_response["meta"]["request_id"] = context['request'].id
-    return Response(json_response)
-
-def _handle_authentication_failed(exc, context, response):
-    json_response = exc.args[0]
-    json_response["meta"]["request_id"] = context['request'].id
-    return Response(json_response)

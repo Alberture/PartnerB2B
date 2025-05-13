@@ -1,4 +1,4 @@
-from ..models import Attribute
+from ..models.attribute import Attribute
 from .attribute_choice import AttributeChoiceSerializer
 
 from rest_framework import serializers

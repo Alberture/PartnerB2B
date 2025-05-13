@@ -1,7 +1,6 @@
 from rest_framework import permissions, status
 
-from ..utils import get_authenticated_partner
-from ..models import Profile
+from ..models import Profile, Partner
 
 from django.core.exceptions import PermissionDenied
 
@@ -21,24 +20,19 @@ class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
             return True
         
         if request.method in ['GET', 'PATCH', 'POST']:
-            partner = get_authenticated_partner(request)
+            partner = Partner.get_authenticated_partner(request)
             try:
                 Profile.objects.get(pk=obj.profile.id, partner=partner)
                 return True
             except Profile.DoesNotExist:
                 raise PermissionDenied({
-                    "error":{
                         "code": status.HTTP_403_FORBIDDEN,
                         "message": "Permission Error",
                         "details":[
                             {"error": "The analysis you are trying to retrieve or edit does not belong to you."}
                         ]
                     },
-                    "meta":{
-                        "timestamp": datetime.now(),
-                        "request_id": request.id
-                    }
-                })
+                )
             
         return True
 
@@ -52,23 +46,17 @@ class IsAdminOrHasEnoughTries(permissions.BasePermission):
             return True
         
         if request.method == 'POST':
-            partner = get_authenticated_partner(request)
+            partner = Partner.get_authenticated_partner(request)
             if not partner.limitUsage > 0:
                 raise PermissionDenied({
-                   "error":{
-                        "code": status.HTTP_403_FORBIDDEN,
+                        "code": status.HTTP_429_TOO_MANY_REQUESTS,
                         "message": "Permission Error",
                         "details":[
                             {
                                 "field": "limitUsage",
-                                "error": "You have reached the limit usage you have."
+                                "error": "You have reached the limit usage you had."
                             }
                         ]
-                    },
-                    "meta":{
-                        "timestamp": datetime.now(),
-                        "request_id": request.id
-                    } 
-                })
+                    })
 
         return True

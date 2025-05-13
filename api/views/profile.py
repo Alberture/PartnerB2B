@@ -5,13 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import PermissionDenied
 
-from ..utils import get_authenticated_partner, get_profile_or_error, get_attribute_or_error, valid_response, save_value
+from ..utils import valid_response
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer
-from ..models import Profile, ProfileAttribute
-from ..permissions import ProfileBelongsToPartnerToGetPatch, IsAdminToDeletePut
+from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer
+from ..models import Profile, ProfileAttribute, Attribute, Partner
+from ..permissions import ProfileBelongsToPartner, IsAdminToDeletePut
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
+
 
 from datetime import datetime
 
@@ -23,7 +24,7 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = [
         IsAuthenticated, 
-        ProfileBelongsToPartnerToGetPatch,
+        ProfileBelongsToPartner,
         IsAdminToDeletePut
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -72,22 +73,23 @@ class ProfileViewSet(ModelViewSet):
         ]
     )
     def create(self, request, *args, **kwargs):
-        partner = get_authenticated_partner(request)
+        partner = Partner.get_authenticated_partner(request)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             profile = serializer.save(partner=partner)
             attributes = request.data.get('attributes', {})
 
             for name, value in attributes.items():
-                attribute = get_attribute_or_error(name)
+                attribute = Attribute.get_attribute_or_error(name)
 
                 if isinstance(value, list):
                     for choice in value:
-                        save_value(choice, attribute, profile)
+                        self.save_value(choice, attribute, profile)
                 else:
-                    save_value(value, attribute, profile)
+                    self.save_value(value, attribute, profile)
 
             return valid_response(serializer.data, request.id, code=status.HTTP_201_CREATED)
+    
 
     @extend_schema(
         examples=[
@@ -174,14 +176,14 @@ class ProfileViewSet(ModelViewSet):
             attributes = request.data.get('attributes', {})
 
             for name, value in attributes.items():
-                attribute = get_attribute_or_error(name)
+                attribute = Attribute.get_attribute_or_error(name)
                 profile_attribute_qs = ProfileAttribute.objects.filter(profile=profile, attribute=attribute)
                 if isinstance(value, list):
                     profile_attribute_qs.delete()
                     for choice in value:
-                        save_value(choice, attribute, profile)
+                        self.save_value(choice, attribute, profile)
                 else:
-                    save_value(value, attribute, profile, profile_attribute_qs.first())
+                    self.save_value(value, attribute, profile, profile_attribute_qs.first())
 
             return valid_response(serializer.data, request.id)
         
@@ -218,7 +220,13 @@ class ProfileViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        raise PermissionDenied()
+        raise PermissionDenied({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Permission Denied",
+            "details": [
+                {"error": "You must be an admin to perform this action."}
+            ]
+        })
     
     @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):
@@ -229,7 +237,20 @@ class ProfileViewSet(ModelViewSet):
         return super().update(request, pk, *args, **kwargs)
 
     def get_object(self):
-        profile = get_profile_or_error(self.kwargs["pk"])
+        profile = Profile.get_profile_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, profile)
 
         return profile
+    
+    def save_value(self, value, attribute, profile, instance=None):
+        """
+            Method that creates a ProfileAttribute with the given Attribute,
+            Profile and value or edits an instance of ProfileAttribute.
+
+            param: any value, Attribute attribute, Profile profile, ProfileAttribute instance 
+            return: ProfileAttribute
+            exceptions: ValidationError, NotFound
+        """
+        serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
+        serializer.is_valid(raise_exception=True)
+        return serializer.save(attribute=attribute, profile=profile)

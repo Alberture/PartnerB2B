@@ -16,17 +16,11 @@ class IsAdminToDeletePutPatch(permissions.BasePermission):
         if request.method in ['PUT', 'PATCH', 'DELETE']:
             if not request.user.is_staff:
                 raise PermissionDenied({
-                    "error":{
                         "code": status.HTTP_403_FORBIDDEN,
                         "message": "Permission Error",
                         "details":[
                             {"error": "You must be an admin to perform this action."}
                         ]
-                    },
-                    "meta":{
-                        "timestamp": datetime.now(),
-                        "request_id": request.id
-                    }
-                })
+                    })
             
         return True

@@ -2,11 +2,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework import status
 
-from ..utils import valid_response, get_authenticated_partner
+from ..utils import valid_response
 from ..serializers import WebhookSerializer
 from ..permissions import ConfigureOnlyIfPartner
-from ..models import Webhook
+from ..models import Webhook, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -43,7 +44,7 @@ class WebhookViewSet(ModelViewSet):
     )
     @action(detail=False, methods=['post'], url_path='configure')
     def config(self, request, *args, **kwargs):
-        partner = get_authenticated_partner(request)
+        partner = Partner.get_authenticated_partner(request)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(partner=partner)
@@ -56,7 +57,13 @@ class WebhookViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        raise PermissionDenied()
+        raise PermissionDenied({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Permission Denied",
+            "details": [
+                {"error": "You must be an admin to perform this action."}
+            ]
+        })
     
     @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):

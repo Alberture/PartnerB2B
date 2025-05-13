@@ -1,4 +1,5 @@
-from ..models import Profile, Attribute
+from ..models import Profile
+from ..models.attribute import Attribute
 from .profile_attribute import ProfileAttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 

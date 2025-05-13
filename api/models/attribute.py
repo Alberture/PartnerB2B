@@ -1,5 +1,10 @@
 from django.db import models
 
+from rest_framework import status
+from rest_framework.exceptions import NotFound, ValidationError
+
+from ..utils import error_response_template
+
 TYPE_CHOICE = [
     ('string', 'Texte'),
     ('integer', 'Entier'),
@@ -46,3 +51,36 @@ class Attribute(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_attribute_or_error(name):
+        """
+            Method that returns an Attribute with the given id or
+            raises an exception if the Attribute was not found
+            or pk is invalid.
+
+            param: int pk, id of the Attribute
+            return: Attribute
+            exceptions: NotFound, ValueError
+        """
+        try:
+            return Attribute.objects.get(name=name)
+        except Attribute.DoesNotExist:
+            raise NotFound({
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Attribute Not Found",
+                "details": [{
+                    "field": "name",
+                    "error": "This attribute name does not exist. Please try again"
+                    }]
+                }
+            )
+        except ValueError:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Type Error",
+                "details": [{
+                        "field": "name",
+                        "error": "The attribute name must be a string."
+                        }]
+                    }
+                )

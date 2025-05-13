@@ -3,9 +3,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 
-from ..utils import get_profile_or_error, get_analysis_or_error, valid_response, get_authenticated_partner
+from ..utils import valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartnerToGetPatch
+from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartner
+from ..models import Profile, Analysis, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -15,9 +16,9 @@ class AnalyseViewSet(ModelViewSet):
     """
         ViewSet that manages Analysis objects.
     """
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartnerToGetPatch]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartner]
     serializer_class = AnalysisSerializer
-    
+
     @extend_schema(
         examples=[
             OpenApiExample(
@@ -63,13 +64,13 @@ class AnalyseViewSet(ModelViewSet):
         ],
         responses=AnalysisSerializer
     )
-    def create(self, request, profiles_pk=None, *args, **kwargs):
-        profile = get_profile_or_error(profiles_pk)
+    def create(self, request, profiles_pk, *args, **kwargs):
+        profile = Profile.get_profile_or_error(profiles_pk)
         self.check_object_permissions(request, profile)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         analysis = serializer.save(profile=profile)
-        partner = get_authenticated_partner(request)
+        partner = Partner.get_authenticated_partner(request)
         if partner.limitUsage:
             partner.limitUsage -= 1
             partner.save()
@@ -78,12 +79,18 @@ class AnalyseViewSet(ModelViewSet):
             'pk': analysis.id,
             'status': analysis.status   
         }, request.id, code=status.HTTP_201_CREATED)
-    
+
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
         if request.user.is_staff:
             return super().list(request, *args, **kwargs)
-        raise PermissionDenied()
+        raise PermissionDenied({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Permission Denied",
+            "details": [
+                {"error": "You must be an admin to perform this action."}
+            ]
+        })
     
     @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):
@@ -99,6 +106,6 @@ class AnalyseViewSet(ModelViewSet):
     
     
     def get_object(self):
-        analysis = get_analysis_or_error(self.kwargs["pk"])
+        analysis = Analysis.get_analysis_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, analysis)
         return analysis
