@@ -87,7 +87,7 @@ class ProfileViewSet(ModelViewSet):
                 else:
                     save_value(value, attribute, profile)
 
-            return valid_response(serializer.data, code=status.HTTP_201_CREATED)
+            return valid_response(serializer.data, request.id, code=status.HTTP_201_CREATED)
 
     @extend_schema(
         examples=[
@@ -125,7 +125,7 @@ class ProfileViewSet(ModelViewSet):
     def retrieve(self, request, pk, *args, **kwargs):
         profile = self.get_object()
         serializer = ProfileItemSerializer(profile)
-        return valid_response(serializer.data)
+        return valid_response(serializer.data, request.id)
 
 
     @extend_schema(
@@ -183,7 +183,7 @@ class ProfileViewSet(ModelViewSet):
                 else:
                     save_value(value, attribute, profile, profile_attribute_qs.first())
 
-            return valid_response(serializer.data)
+            return valid_response(serializer.data, request.id)
         
 
     @extend_schema(
@@ -212,7 +212,7 @@ class ProfileViewSet(ModelViewSet):
         return valid_response({
             'status': 'Complet',
             'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
-        })
+        }, request.id)
 
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):

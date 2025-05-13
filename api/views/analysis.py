@@ -42,7 +42,7 @@ class AnalyseViewSet(ModelViewSet):
         analysis = self.get_object()
 
         serializer= AnalysisItemSerializer(instance=analysis)
-        return valid_response(serializer.data)
+        return valid_response(serializer.data, request.id)
     
     @extend_schema(
         examples=[
@@ -73,7 +73,7 @@ class AnalyseViewSet(ModelViewSet):
             'message': "Vous venez de faire une demande d\'analyse pour le profile %s" % (profiles_pk),
             'pk': analysis.id,
             'status': analysis.status   
-        }, code=status.HTTP_201_CREATED)
+        }, request.id, code=status.HTTP_201_CREATED)
     
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):

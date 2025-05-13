@@ -3,6 +3,8 @@ from rest_framework.response import Response
 
 from .utils import error_response_template
 
+from datetime import datetime
+
 def custom_exception_handler(exc, context):
 
     handlers = {
@@ -29,18 +31,25 @@ def custom_exception_handler(exc, context):
 
 def _handle_authentication_error(exc, context, response):
     if response : 
-        response.data = error_response_template(
+        json_response = error_response_template(
             'Authentication Error',
               response.status_code,
-              [{'error': "The token either expired, invalid or isn't set in the headers."}]
+              [{'error': "The token either expired, invalid or isn't set in the headers."}],
             )
+        json_response["meta"]["request_id"] = context['request'].id
+        response.data = json_response
 
     return response
 
 def _handle_validation_error(exc, context, response):
     if response:
-        return Response(exc.args[0])
-    
+        json_response = exc.args[0]
+        json_response["meta"] = {
+            "timestamp": datetime.now(),
+            "request_id": context['request'].id
+        }
+        return Response(json_response)
+    """
     fields = response.data.keys()
     response.data = error_response_template(
         'Validation Error.',
@@ -52,20 +61,30 @@ def _handle_validation_error(exc, context, response):
             }
         ]
     )
+    """
     return response
 
 def _handle_permission_error(exc, context, response):
     if response:
-        return Response(exc.args[0])
+        json_response = exc.args[0]
+        json_response["meta"]["request_id"] = context['request'].id
+        return Response(json_response)
     
+    """
     return Response(error_response_template(
         'Permission Error.',
         response.status_code,
         [{'error': "You are not allowed to perform this action."}]
     ))
+    """
+    return response
 
 def _handle_not_found_error(exc, context, response):
-    return Response(exc.args[0])
+    json_response = exc.args[0]
+    json_response["meta"]["request_id"] = context['request'].id
+    return Response(json_response)
 
 def _handle_authentication_failed(exc, context, response):
-    return Response(exc.args[0])
+    json_response = exc.args[0]
+    json_response["meta"]["request_id"] = context['request'].id
+    return Response(json_response)

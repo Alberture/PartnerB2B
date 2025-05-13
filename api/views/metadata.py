@@ -93,6 +93,6 @@ class Metadata(APIView):
             serializer = AttributeSerializer(attributes, many=True)
             result[categorie['category']] = serializer.data
         
-        return valid_response(result)
+        return valid_response(result, request.id)
 
         

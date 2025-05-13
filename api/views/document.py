@@ -54,7 +54,7 @@ class DocumentViewSet(ModelViewSet):
         docuement = self.get_object()  
 
         serializer= self.serializer_class(instance=docuement)
-        return valid_response(serializer.data)
+        return valid_response(serializer.data, request.id)
     
     @extend_schema(
         request=ProfileAttributeDocumentSerializer,
@@ -96,7 +96,7 @@ class DocumentViewSet(ModelViewSet):
                     ]
                 })
             serializer.save(attribute=document_attribute, profile=profile)
-            return valid_response(serializer.data, status.HTTP_201_CREATED)
+            return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
         
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):

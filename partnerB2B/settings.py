@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_dump_die.middleware.DumpAndDieMiddleware',
+    'partnerB2B.middlewares.RequestIDMiddleware'
 ]
 
 ROOT_URLCONF = 'partnerB2B.urls'

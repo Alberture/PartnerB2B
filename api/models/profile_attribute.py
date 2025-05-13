@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 
 from .profile import Profile
 from .attribute import Attribute
-
 from rest_framework import status
 
 import re

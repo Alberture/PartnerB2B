@@ -55,4 +55,4 @@ class RefreshToken(TokenRefreshView):
         return valid_response({
                 'access': access_token_str,
                 'access_expires': access_exp
-            })
+            }, request.id)
