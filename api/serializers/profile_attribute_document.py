@@ -45,6 +45,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
     downloadedAt = serializers.DateTimeField(read_only=True)
     file = serializers.ImageField(write_only=True)
     attribute = serializers.CharField(write_only=True)
+    type = serializers.CharField(read_only=True)
 
     class Meta:
         model = ProfileAttributeDocument
@@ -53,9 +54,8 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
             'status',
             'downloadedAt',
             'file',
-            'attribute'
+            'attribute',
+            'type'
         ]
 
-    def create(self, validated_data):
-        return super().create(validated_data.pop("attribute"))
     
