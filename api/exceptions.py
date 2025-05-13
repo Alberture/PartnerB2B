@@ -58,15 +58,6 @@ def _handle_permission_error(exc, context, response):
     json_response = exc.args[0]
     json_response["meta"]["request_id"] = context['request'].id
     return Response(json_response)
-    
-    """
-    return Response(error_response_template(
-        'Permission Error.',
-        response.status_code,
-        [{'error': "You are not allowed to perform this action."}]
-    ))
-    """
-    return response
 
 def _handle_not_found_error(exc, context, response):
     json_response = exc.args[0]
