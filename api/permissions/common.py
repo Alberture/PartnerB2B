@@ -2,9 +2,6 @@ from rest_framework import permissions, status
 
 from django.core.exceptions import PermissionDenied
 
-from datetime import datetime
-
-
 class IsAdminToDeletePutPatch(permissions.BasePermission):
     """
         Permission that ONLY allow the admin to DELETE, PUT or PATCH.

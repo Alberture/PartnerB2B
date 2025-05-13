@@ -5,8 +5,6 @@ from .profile import Profile
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
 
-from ..utils import error_response_template
-
 ANALYSIS_STATUS_CHOICE = [
     ('pending', 'En attente'),
     ('in progress', 'En cours'),

@@ -1,8 +1,6 @@
 from rest_framework import permissions, status
 
-from django.core.exceptions import PermissionDenied
-
-from datetime import datetime
+from rest_framework.exceptions import PermissionDenied
 
 class ConfigureOnlyIfPartner(permissions.BasePermission):
     """

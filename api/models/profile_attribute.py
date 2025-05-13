@@ -6,8 +6,6 @@ from .attribute import Attribute
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 
-from ..utils import error_response_template
-
 import re
 from datetime import datetime
 import json

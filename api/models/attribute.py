@@ -3,8 +3,6 @@ from django.db import models
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
 
-from ..utils import error_response_template
-
 TYPE_CHOICE = [
     ('string', 'Texte'),
     ('integer', 'Entier'),

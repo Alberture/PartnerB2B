@@ -2,10 +2,7 @@ from rest_framework import permissions, status
 
 from ..models import Profile, Partner
 
-from django.core.exceptions import PermissionDenied
-
-from datetime import datetime
-
+from rest_framework.exceptions import PermissionDenied, Throttled
 
 class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
     """

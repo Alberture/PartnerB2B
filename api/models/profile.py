@@ -5,8 +5,6 @@ from .partner import Partner
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
 
-from ..utils.responses import error_response_template
-
 PROFILE_STATUS_CHOICE = [
     ('draft', 'Brouillon'),
     ('pending', 'En attente'),

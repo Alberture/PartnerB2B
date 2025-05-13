@@ -7,8 +7,6 @@ from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import NotFound, ValidationError
 
-from ..utils import error_response_template
-
 STATUS_CHOICE = [
     ('pending', 'en attente'),
     ('in progress', 'en cours'),
