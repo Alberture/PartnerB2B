@@ -11,10 +11,11 @@ router.register(r'analyses', AnalyseViewSet, basename='analysis')
 router.register(r'documents', DocumentViewSet, basename='documents')
 router.register(r'webhooks', WebhookViewSet, basename='webhooks')
 
+"""
 profile_router = routers.NestedDefaultRouter(router, r'profiles', lookup='profiles')
 profile_router.register(r'documents', DocumentViewSet, basename='profiles-documents')
 profile_router.register(r'analyses', AnalyseViewSet, basename='profiles-analysis')
-
+"""
 
 urlpatterns = [
     path('auth/token/', ObtainPairToken.as_view(), name='token'),
@@ -27,4 +28,4 @@ urlpatterns = [
     path('docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
-urlpatterns += router.urls + profile_router.urls
+urlpatterns += router.urls# + profile_router.urls

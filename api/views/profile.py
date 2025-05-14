@@ -3,11 +3,11 @@ from rest_framework import status, serializers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
+from rest_framework.exceptions import MethodNotAllowed, ValidationError
 
 from ..utils import valid_response
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer
+from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
 from ..permissions import ProfileBelongsToPartner
 
@@ -88,7 +88,85 @@ class ProfileViewSet(ModelViewSet):
                     self.save_value(value, attribute, profile)
 
             return valid_response(serializer.data, request.id, code=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+            name="Exemple create Analysis",
+            value={
+                "data": {
+                    "message": "Vous venez de faire une demande d'analyse pour le profile 297",
+                    "pk": 13,
+                    "status": "pending"
+                },
+                "meta": {
+                    "timestamp": "2025-05-12T12:04:24.219023"
+                }
+            },
+            response_only=True
+            )
+        ],
+        responses=AnalysisSerializer,
+    )
+    @action(detail=True, methods=['post'], url_path='analyses')
+    def create_analysis(self, request, pk=None):
+        profile = Profile.get_profile_or_error(pk)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        analysis = serializer.save(profile=profile)
+        partner = Partner.get_authenticated_partner(request)
+        if partner.limitUsage:
+            partner.limitUsage -= 1
+            partner.save()
+        return valid_response({
+            'message': "Vous venez de faire une demande d\'analyse pour le profile %s" % (pk),
+            'pk': analysis.id,
+            'status': analysis.status   
+        }, request.id, code=status.HTTP_201_CREATED)
     
+    @extend_schema(
+        request=ProfileAttributeDocumentSerializer,
+        examples=[
+            OpenApiExample(
+            name="Exemple create Document",
+            value={
+                "data": {
+                    "pk": 13,
+                    "status": "pending",
+                    "downloadedAt": "2025-05-12T12:10:37.486892Z",
+                    "type": "png"
+                },
+                "meta": {
+                    "timestamp": "2025-05-12T12:10:37.538076"
+                }
+            },
+            response_only=True
+            )
+        ],
+        responses=ProfileAttributeDocumentSerializer
+    )
+    @action(detail=True, methods=['post'], url_path='documents')
+    def create_document(self, request, pk=None):
+        profile = Profile.get_profile_or_error(pk)
+        self.check_object_permissions(request, profile)
+        serializer = ProfileAttributeDocumentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
+            if document_attribute.category != 'documents':
+                document_attributes = Attribute.objects.filter(category="documents")
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Erreur de validation",
+                    "details":[
+                        { 
+                            "field": "attribute",
+                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(map(str,document_attributes)))
+                        }
+                    ]
+                })
+            type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
+            serializer.save(attribute=document_attribute, profile=profile, type=type)
+            return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
 
     @extend_schema(
         examples=[

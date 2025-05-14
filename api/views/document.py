@@ -3,17 +3,24 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound
+from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound, MethodNotAllowed
 
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import valid_response
 from ..models import Attribute, Profile, ProfileAttributeDocument
 from ..permissions import DocumentBelongsToPartnerToRead, ProfileBelongsToPartner
 
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
 from datetime import datetime
 
+@extend_schema_view(
+    create=extend_schema(exclude=True),
+    list=extend_schema(exclude=True),
+    update=extend_schema(exclude=True),
+    destroy=extend_schema(exclude=True),
+    partial_update=extend_schema(exclude=True),
+)
 class DocumentViewSet(ModelViewSet):
     """
         ViewSet that manages ProfileAttributeDocument objects.
@@ -56,72 +63,65 @@ class DocumentViewSet(ModelViewSet):
         serializer= self.serializer_class(instance=docuement)
         return valid_response(serializer.data, request.id)
     
-    @extend_schema(
-        request=ProfileAttributeDocumentSerializer,
-        examples=[
-            OpenApiExample(
-            name="Exemple create Document",
-            value={
-                "data": {
-                    "pk": 13,
-                    "status": "pending",
-                    "downloadedAt": "2025-05-12T12:10:37.486892Z",
-                    "type": "png"
-                },
-                "meta": {
-                    "timestamp": "2025-05-12T12:10:37.538076"
-                }
-            },
-            response_only=True
-            )
-        ],
-        responses=ProfileAttributeDocumentSerializer
-    )
     def create(self, request, profiles_pk=None, *args, **kwargs):
-        profile = Profile.get_profile_or_error(profiles_pk)
-        self.check_object_permissions(request, profile)
-        serializer = ProfileAttributeDocumentSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
-            if document_attribute.category != 'documents':
-                document_attributes = Attribute.objects.filter(category="documents")
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Erreur de validation",
-                    "details":[
-                        { 
-                            "field": "attribute",
-                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(map(str,document_attributes)))
-                        }
-                    ]
-                })
-            type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
-            serializer.save(attribute=document_attribute, profile=profile, type=type)
-            return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
-
-    @extend_schema(exclude=True)
-    def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        raise PermissionDenied({
+        raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
-            "message": "Permission Denied",
-            "details": [
-                {"error": "You must be an admin to perform this action."}
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to POST.",
+                    "path": request.path
+                }
+            ]
+        })
+    
+    def list(self, request, *args, **kwargs):
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to GET.",
+                    "path": request.path
+                }
             ]
         })
 
-    @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):
-        return super().destroy(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to DELETE.",
+                    "path": request.path
+                }
+            ]
+        })
     
-    @extend_schema(exclude=True)
     def update(self, request, pk, *args, **kwargs):
-        return super().update(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to PUT.",
+                    "path": request.path
+                }
+            ]
+        })
     
-    @extend_schema(exclude=True)
     def partial_update(self, request, pk, *args, **kwargs):
-        return super().partial_update(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to PATCH.",
+                    "path": request.path
+                }
+            ]
+        })
     
     def get_object(self):
         document = ProfileAttributeDocument.get_docuement_or_error(self.kwargs["pk"])
