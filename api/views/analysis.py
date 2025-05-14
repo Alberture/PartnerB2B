@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 
 from ..utils import valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
@@ -66,7 +66,6 @@ class AnalyseViewSet(ModelViewSet):
     )
     def create(self, request, profiles_pk, *args, **kwargs):
         profile = Profile.get_profile_or_error(profiles_pk)
-        self.check_object_permissions(request, profile)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         analysis = serializer.save(profile=profile)
@@ -82,27 +81,61 @@ class AnalyseViewSet(ModelViewSet):
 
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        raise PermissionDenied({
+        raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
-            "message": "Permission Denied",
-            "details": [
-                {"error": "You must be an admin to perform this action."}
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to GET.",
+                    "path": request.path
+                }
             ]
         })
     
     @extend_schema(exclude=True)
     def destroy(self, request, pk, *args, **kwargs):
-        return super().destroy(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to DELETE.",
+                    "path": request.path
+                }
+            ]
+        })
     
     @extend_schema(exclude=True)
     def update(self, request, pk, *args, **kwargs):
-        return super().update(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to PUT.",
+                    "path": request.path
+                }
+            ]
+        })
     
     @extend_schema(exclude=True)
     def partial_update(self, request, pk, *args, **kwargs):
-        return super().partial_update(request, pk, *args, **kwargs)
+        """
+        analysis = self.get_object()
+        serializer = self.serializer_class(data=request.data, instance=analysis)
+        serializer.is_valid(raise_exception=True)
+        analysis = serializer.save(profile=analysis.profile)
+        partner = Partner.get_authenticated_partner(request)
+        if partner.limitUsage:
+            partner.limitUsage -= 1
+            partner.save()
+        
+        return valid_response({
+            'message': "Vous venez de faire une nouvelle demande d\'analyse pour le profile %s" % (profiles_pk),
+            'status': analysis.status   
+        }, request.id)
+        """
+        pass
     
     
     def get_object(self):

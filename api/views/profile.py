@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -11,7 +11,7 @@ from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttri
 from ..models import Profile, ProfileAttribute, Attribute, Partner
 from ..permissions import ProfileBelongsToPartner
 
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
 
 
 from datetime import datetime
@@ -215,6 +215,24 @@ class ProfileViewSet(ModelViewSet):
             'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
         }, request.id)
 
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+            name="Example delete Profile",
+            value={
+                "data": {
+                    "message": "Le profil à bien été supprimé."
+                },
+                "meta": {
+                    "timestamp": "2025-05-14T07:31:59.463958",
+                    "request_id": "cd21c104-756b-44a2-b5f0-f25bccd7cb0a"
+                }
+            },
+            response_only=True
+            )
+        ],
+        responses=200
+    )
     def destroy(self, request, pk, *args, **kwargs):
         super().destroy(request, pk, *args, **kwargs)
         return valid_response({
