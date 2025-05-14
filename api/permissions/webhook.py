@@ -25,7 +25,7 @@ class WebhookBelongsToParnter(permissions.BasePermission):
                 "message": "Permission Error",
                 "details":[
                     {
-                        "error": "The webhook you are trying to edit or delete does not belong to you.",
+                        "error": "The webhook you are trying to edit, retrieve or delete does not belong to you.",
                         "action": request.method,
                         "path": request.path
                     }

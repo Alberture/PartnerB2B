@@ -5,7 +5,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
 
 from ..utils import valid_response
-from ..serializers import WebhookSerializer
+from ..serializers import WebhookSerializer, WebhookItemSerializer
 from ..permissions import WebhookBelongsToParnter
 from ..models import Webhook, Partner
 
@@ -161,17 +161,26 @@ class WebhookViewSet(ModelViewSet):
             ]
         })
     
-    @extend_schema(exclude=True)
-    def retrieve(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to GET.",
-                    "path": request.path
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+            name="Exemple retrieve Webhook",
+            value={
+                "data": {
+                    "url": "url"
+                },
+                "meta": {
+                    "timestamp": "2025-05-14T08:08:41.902521",
+                    "request_id": "c02218c5-bb9c-4ef9-9b99-e821bf62be79"
                 }
-            ]
-        })
+            },
+            response_only=True
+            )
+        ]
+    )
+    def retrieve(self, request, pk, *args, **kwargs):
+        webhook = self.get_object()
+        serializer = WebhookItemSerializer(webhook)
+        return valid_response(serializer.data, request.id)
     
     

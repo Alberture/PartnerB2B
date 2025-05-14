@@ -4,7 +4,7 @@ from .profile import ProfileSerializer, ProfileItemSerializer
 from .profile_attribute import ProfileAttributeSerializer
 from .analysis import AnalysisItemSerializer, AnalysisSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
-from .webhook import WebhookSerializer
+from .webhook import WebhookSerializer, WebhookItemSerializer
 
 __all__ = [
     'AttributeSerializer',
@@ -17,4 +17,5 @@ __all__ = [
     'ProfileItemSerializer',
     'AnalysisSerializer',
     'WebhookSerializer',
+    'WebhookItemSerializer'
 ]
