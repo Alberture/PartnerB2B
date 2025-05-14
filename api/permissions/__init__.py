@@ -1,14 +1,11 @@
-from .profile import ProfileBelongsToPartner, IsAdminToDeletePut
-from .common import IsAdminToDeletePutPatch
-from .analysis import AnalysisBelongsToPartnerToRead, IsAdminOrHasEnoughTries
+from .profile import ProfileBelongsToPartner
+from .analysis import AnalysisBelongsToPartner, IsAdminOrHasEnoughTries
 from .document import DocumentBelongsToPartnerToRead
 from .webhook import ConfigureOnlyIfPartner
 
 __all__ = [
     'ProfileBelongsToPartner',
-    'IsAdminToDeletePut',
-    'IsAdminToDeletePutPatch',
-    "AnalysisBelongsToPartnerToRead",
+    "AnalysisBelongsToPartner",
     'DocumentBelongsToPartnerToRead',
     'ConfigureOnlyIfPartner',
     'IsAdminOrHasEnoughTries'

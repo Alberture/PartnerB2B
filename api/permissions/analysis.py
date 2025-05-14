@@ -4,9 +4,9 @@ from ..models import Profile, Partner
 
 from rest_framework.exceptions import PermissionDenied, Throttled
 
-class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
+class AnalysisBelongsToPartner(permissions.BasePermission):
     """
-        Permission that allows authenticated partners to retrieve analysis of
+        Permission that allows authenticated partners to retrieve and edit analysis of
         THEIR Profiles ONLY.
     """
     def has_permission(self, request, view):
@@ -16,7 +16,7 @@ class AnalysisBelongsToPartnerToRead(permissions.BasePermission):
         if request.user.is_staff or isinstance(obj, Profile):
             return True
         
-        if request.method in ['GET', 'PATCH', 'POST']:
+        if request.method in ['GET', 'PATCH']:
             partner = Partner.get_authenticated_partner(request)
             try:
                 Profile.objects.get(pk=obj.profile.id, partner=partner)

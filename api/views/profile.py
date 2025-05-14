@@ -3,13 +3,13 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 
 from ..utils import valid_response
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
-from ..permissions import ProfileBelongsToPartner, IsAdminToDeletePut
+from ..permissions import ProfileBelongsToPartner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -24,8 +24,7 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = [
         IsAuthenticated, 
-        ProfileBelongsToPartner,
-        IsAdminToDeletePut
+        ProfileBelongsToPartner
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
@@ -216,25 +215,31 @@ class ProfileViewSet(ModelViewSet):
             'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
         }, request.id)
 
+    def destroy(self, request, pk, *args, **kwargs):
+        super().destroy(request, pk, *args, **kwargs)
+        return valid_response({
+            "message": "Le profil à bien été supprimé.",
+        }, request.id)
+
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        raise PermissionDenied({
+        raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
-            "message": "Permission Denied",
-            "details": [
-                {"error": "You must be an admin to perform this action."}
+            "message": "Not allowed",
+            "details":[
+                {"error": "You are not allowed to PUT on this URL"}
             ]
         })
     
     @extend_schema(exclude=True)
-    def destroy(self, request, pk, *args, **kwargs):
-        return super().destroy(request, pk, *args, **kwargs)
-    
-    @extend_schema(exclude=True)
     def update(self, request, pk, *args, **kwargs):
-        return super().update(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not allowed",
+            "details":[
+                {"error": "You are not allowed to PUT on this URL"}
+            ]
+        })
 
     def get_object(self):
         profile = Profile.get_profile_or_error(self.kwargs["pk"])

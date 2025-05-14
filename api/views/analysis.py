@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from ..utils import valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartner
+from ..permissions import AnalysisBelongsToPartner, IsAdminOrHasEnoughTries, ProfileBelongsToPartner
 from ..models import Profile, Analysis, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
@@ -16,7 +16,7 @@ class AnalyseViewSet(ModelViewSet):
     """
         ViewSet that manages Analysis objects.
     """
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartnerToRead, IsAdminToDeletePutPatch, IsAdminOrHasEnoughTries, ProfileBelongsToPartner]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartner, IsAdminOrHasEnoughTries, ProfileBelongsToPartner]
     serializer_class = AnalysisSerializer
 
     @extend_schema(

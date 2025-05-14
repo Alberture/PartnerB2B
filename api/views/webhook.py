@@ -35,8 +35,13 @@ class WebhookViewSet(ModelViewSet):
             OpenApiExample(
             name="Exemple config Webhook",
             value={
-                "pk": 0,
-                "url": "https://localhost/webhook/"
+                "data": {
+                    "message": "Votre url a bien été configurée."
+                },
+                "meta": {
+                    "timestamp": "2025-05-13T21:50:38.073740",
+                    "request_id": "f547e99b-b05e-4913-b0ee-5d3c5492b352"
+                }
             },
             response_only=True
             )

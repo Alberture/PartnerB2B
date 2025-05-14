@@ -27,6 +27,10 @@ class Partner(models.Model):
     limitUsage = models.PositiveIntegerField()
 
     def save(self, *args, **kwargs):
+        """
+            Method that saves a Partner and creates a new APIkey 
+            if doesn't exist.
+        """
         if not self.apiKey:
             self.apiKey = binascii.hexlify(os.urandom(20)).decode()
             partner = Partner.objects.filter(apiKey=self.apiKey)

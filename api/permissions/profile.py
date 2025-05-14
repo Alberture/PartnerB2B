@@ -26,7 +26,7 @@ class ProfileBelongsToPartner(permissions.BasePermission):
                     "message": "Permission Error",
                     "details":[
                         {
-                            "error": "The profile you are trying to retrieve or edit does not belong to you.",
+                            "error": "The profile you are trying to retrieve, delete or edit does not belong to you.",
                             "action": request.method,
                             "path": request.path
                         }
@@ -36,28 +36,5 @@ class ProfileBelongsToPartner(permissions.BasePermission):
         return True
     
 
-class IsAdminToDeletePut(permissions.BasePermission):
-    """
-        Permission that ONLY allows an admin to DELETE or PUT.
-    """
-    def has_permission(self, request, view):
-        return True
-    
-    def has_object_permission(self, request, view, obj):
-        if request.method in ['PUT', 'DELETE']:
-            if not request.user.is_staff:
-                raise PermissionDenied({
-                        "code": status.HTTP_403_FORBIDDEN,
-                        "message": "Permission Error",
-                        "details":[
-                            {
-                                "error": "You must be an admin to perform this action.",
-                                "action": request.method,
-                                "path": request.path
-                            }
-                        ]
-                    })
-            
-        return True
     
 

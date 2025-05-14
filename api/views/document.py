@@ -8,7 +8,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError, NotFoun
 from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
 from ..utils import valid_response
 from ..models import Attribute, Profile, ProfileAttributeDocument
-from ..permissions import DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch, ProfileBelongsToPartner
+from ..permissions import DocumentBelongsToPartnerToRead, ProfileBelongsToPartner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
@@ -18,7 +18,7 @@ class DocumentViewSet(ModelViewSet):
     """
         ViewSet that manages ProfileAttributeDocument objects.
     """
-    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, IsAdminToDeletePutPatch, ProfileBelongsToPartner]
+    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, ProfileBelongsToPartner]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     @extend_schema(
