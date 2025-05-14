@@ -5,7 +5,7 @@ from datetime import datetime
 
 def valid_response(data, request_id, code=status.HTTP_200_OK):
     """
-        Method that returns a Response object that contains the data and status code
+        Method that returns a Response object that contains the data, request id and status code
         given in params.
 
         param: dict data, status code, str request_id
@@ -24,8 +24,7 @@ def valid_response(data, request_id, code=status.HTTP_200_OK):
 
 def error_response_template(data, request):
     """
-        Method that to avoid rewritting the JSON for message 
-        error.
+        Method that to avoid rewritting the JSON for error messages.
 
         param: str message, status status, array details, str request_id
         return: dict

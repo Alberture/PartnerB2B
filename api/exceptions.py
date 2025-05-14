@@ -12,7 +12,8 @@ def custom_exception_handler(exc, context):
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_raised_error,
         'NotFound': _handle_raised_error,
-        'MethodNotAllowed': _handle_raised_error
+        'MethodNotAllowed': _handle_raised_error,
+        'ParseError': _handle_parse_error,
     }
 
     # Call REST framework's default exception handler first,
@@ -60,3 +61,13 @@ def _handle_validation_error(exc, context, response):
 def _handle_raised_error(exc, context, response):
     return Response(error_response_template(exc.args[0], context.get('request')))
 
+def _handle_parse_error(exc, context, response):
+    return Response(error_response_template({
+        "code": response.status_code,
+        "message": "Parse Error",
+        "details":[
+            {
+                "error": response.data.get('detail')
+            }
+        ]
+    }, context.get('request')))
