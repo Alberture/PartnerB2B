@@ -9,7 +9,7 @@ from ..utils import valid_response
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
-from ..permissions import ProfileBelongsToPartner
+from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -28,9 +28,10 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     permission_classes = [
         IsAuthenticated, 
-        ProfileBelongsToPartner
+        ProfileBelongsToPartner,
+        IsAdminOrHasEnoughTries,
     ]
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser, ]
 
     @extend_schema(
         request=ProfileSerializer,

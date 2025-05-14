@@ -1,8 +1,5 @@
 from django.db import models
 
-from rest_framework import status
-from rest_framework.exceptions import NotFound, ValidationError
-
 TYPE_CHOICE = [
     ('string', 'Texte'),
     ('integer', 'Entier'),
@@ -27,6 +24,12 @@ CATEGORIES_CHOICE = [
     ('documents', 'Documents'),
 ]
 
+IS_REQUIRED_CHOICE = [
+    ("yes", "Oui"),
+    ("no", "Non"),
+    ("conditionally obligatory", "Conditionnellement obligatoire"),
+]
+
 VALIDATION_CHOICE = [
     ('regex', 'Expression régulière'),
     ('unique choice', 'Choix unique'),
@@ -42,7 +45,8 @@ class Attribute(models.Model):
     displayedName = models.CharField(max_length=255)
     type = models.CharField(choices=TYPE_CHOICE)
     category = models.CharField(choices=CATEGORIES_CHOICE)
-    isRequired = models.BooleanField()
+    isRequiredFor = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    isRequired = models.CharField(choices=IS_REQUIRED_CHOICE)
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()

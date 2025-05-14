@@ -39,10 +39,10 @@ class IsAdminOrHasEnoughTries(permissions.BasePermission):
         permissions or is admin.
     """
     def has_permission(self, request, view):
-        if request.user.is_staff:
+        if request.user.is_staff :
             return True
         
-        if request.method == 'POST':
+        if request.method == 'POST' and "analyses" in request.path:
             partner = Partner.get_authenticated_partner(request)
             if not partner.limitUsage > 0:
                 raise PermissionDenied({
