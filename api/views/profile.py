@@ -110,8 +110,8 @@ class ProfileViewSet(ModelViewSet):
     )
     @action(detail=True, methods=['post'], url_path='analyses')
     def create_analysis(self, request, pk=None):
-        profile = Profile.get_profile_or_error(pk)
-        serializer = self.serializer_class(data=request.data)
+        profile = self.get_object()
+        serializer = AnalysisSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         analysis = serializer.save(profile=profile)
         partner = Partner.get_authenticated_partner(request)
@@ -147,8 +147,7 @@ class ProfileViewSet(ModelViewSet):
     )
     @action(detail=True, methods=['post'], url_path='documents')
     def create_document(self, request, pk=None):
-        profile = Profile.get_profile_or_error(pk)
-        self.check_object_permissions(request, profile)
+        profile = self.get_object()
         serializer = ProfileAttributeDocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
