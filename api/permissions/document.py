@@ -2,7 +2,10 @@ from rest_framework import permissions, status
 
 from ..models import Profile, Partner
 
-from rest_framework.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied
+
+from datetime import datetime
+
 
 class DocumentBelongsToPartnerToRead(permissions.BasePermission):
     """
@@ -13,7 +16,7 @@ class DocumentBelongsToPartnerToRead(permissions.BasePermission):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff:
+        if request.user.is_staff or isinstance(obj, Profile):
             return True
         
         if request.method in ['GET', 'PATCH', 'POST']:

@@ -91,7 +91,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                         {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
                     ]
                 })
-
+        
         return data
 
         
