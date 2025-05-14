@@ -2,7 +2,7 @@ from rest_framework import permissions, status
 
 from ..models import Profile, Partner
 
-from rest_framework.exceptions import PermissionDenied, Throttled
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 
 class AnalysisBelongsToPartner(permissions.BasePermission):
     """
@@ -16,22 +16,19 @@ class AnalysisBelongsToPartner(permissions.BasePermission):
         if request.user.is_staff:
             return True
         
-        if request.method in ['GET', 'PATCH']:
-            partner = Partner.get_authenticated_partner(request)
-            try:
-                Profile.objects.get(pk=obj.profile.id, partner=partner)
-                return True
-            except Profile.DoesNotExist:
-                raise PermissionDenied({
-                        "code": status.HTTP_403_FORBIDDEN,
-                        "message": "Permission Error",
-                        "details":[
-                            {"error": "The analysis you are trying to retrieve or edit does not belong to you."}
-                        ]
-                    },
-                )
-            
-        return True
+        partner = Partner.get_authenticated_partner(request)
+        try:
+            Profile.objects.get(pk=obj.profile.id, partner=partner)
+            return True
+        except Profile.DoesNotExist:
+            raise PermissionDenied({
+                    "code": status.HTTP_403_FORBIDDEN,
+                    "message": "Permission Error",
+                    "details":[
+                        {"error": "The analysis you are trying to retrieve or edit does not belong to you."}
+                    ]
+                },
+            )
 
 class IsAdminOrHasEnoughTries(permissions.BasePermission):
     """

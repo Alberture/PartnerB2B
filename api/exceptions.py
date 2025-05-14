@@ -12,7 +12,7 @@ def custom_exception_handler(exc, context):
         'NotAuthenticated' : _handle_authentication_error,
         'PermissionDenied': _handle_raised_error,
         'NotFound': _handle_raised_error,
-        'MethodNotAllowed': _handle_raised_error,
+        'MethodNotAllowed': _handle_method_not_allowed_error,
         'ParseError': _handle_parse_error,
     }
 
@@ -58,8 +58,23 @@ def _handle_validation_error(exc, context, response):
         ]
     }, context.get('request')))
 
-def _handle_raised_error(exc, context, response):
+def _handle_method_not_allowed_error(exc, context, response):
+    if exc.args[0] in ['PUT', 'DELETE','PATCH', 'GET', 'POST']:
+        return Response(error_response_template({
+            "code": response.status_code,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": response.data['detail'],
+                    "path": context.get('request').path
+                }
+            ]
+        }, context.get('request')))
+
     return Response(error_response_template(exc.args[0], context.get('request')))
+
+def _handle_raised_error(exc, context, response):
+   return Response(error_response_template(exc.args[0], context.get('request')))
 
 def _handle_parse_error(exc, context, response):
     return Response(error_response_template({

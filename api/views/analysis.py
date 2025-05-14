@@ -5,7 +5,7 @@ from rest_framework.exceptions import MethodNotAllowed
 
 from ..utils import valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartner, ProfileBelongsToPartner
+from ..permissions import AnalysisBelongsToPartner, RetrieveOnly
 from ..models import Analysis
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
@@ -21,7 +21,7 @@ class AnalyseViewSet(ModelViewSet):
     """
         ViewSet that manages Analysis objects.
     """
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartner]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartner, RetrieveOnly]
     serializer_class = AnalysisSerializer
 
     @extend_schema(
@@ -49,54 +49,6 @@ class AnalyseViewSet(ModelViewSet):
 
         serializer= AnalysisItemSerializer(instance=analysis)
         return valid_response(serializer.data, request.id)
-
-    def create(self, request, profiles_pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to DELETE.",
-                    "path": request.path
-                }
-            ]
-        })
-
-    def list(self, request, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to GET.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def destroy(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to DELETE.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def update(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PUT.",
-                    "path": request.path
-                }
-            ]
-        })
     
     def partial_update(self, request, pk, *args, **kwargs):
         """
@@ -114,18 +66,8 @@ class AnalyseViewSet(ModelViewSet):
             'status': analysis.status   
         }, request.id)
         """
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PATCH.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    
+        pass
+
     def get_object(self):
         analysis = Analysis.get_analysis_or_error(self.kwargs["pk"])
         self.check_object_permissions(self.request, analysis)

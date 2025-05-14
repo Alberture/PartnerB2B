@@ -9,7 +9,7 @@ from ..utils import valid_response
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
-from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries
+from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateAndListNotAllowed
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -30,6 +30,7 @@ class ProfileViewSet(ModelViewSet):
         IsAuthenticated, 
         ProfileBelongsToPartner,
         IsAdminOrHasEnoughTries,
+        UpdateAndListNotAllowed,
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser, ]
 
@@ -320,30 +321,6 @@ class ProfileViewSet(ModelViewSet):
         return valid_response({
             "message": "Le profil à bien été supprimé.",
         }, request.id)
-
-    def list(self, request, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PUT on this URL",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def update(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PUT on this URL",
-                    "path": request.path
-                }
-            ]
-        })
 
     def get_object(self):
         profile = Profile.get_profile_or_error(self.kwargs["pk"])

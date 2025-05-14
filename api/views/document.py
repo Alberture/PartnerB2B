@@ -8,7 +8,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from ..serializers import ProfileAttributeDocumentItemSerializer
 from ..utils import valid_response
 from ..models import ProfileAttributeDocument
-from ..permissions import DocumentBelongsToPartnerToRead, ProfileBelongsToPartner
+from ..permissions import DocumentBelongsToPartnerToRead, RetrieveOnly
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -23,7 +23,11 @@ class DocumentViewSet(ModelViewSet):
     """
         ViewSet that manages ProfileAttributeDocument objects.
     """
-    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead]
+    permission_classes = [
+        IsAuthenticated, 
+        DocumentBelongsToPartnerToRead,
+        RetrieveOnly
+    ]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     @extend_schema(
@@ -59,66 +63,6 @@ class DocumentViewSet(ModelViewSet):
         docuement = self.get_object()  
         serializer= self.serializer_class(instance=docuement)
         return valid_response(serializer.data, request.id)
-    
-    def create(self, request, profiles_pk=None, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to POST.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def list(self, request, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to GET.",
-                    "path": request.path
-                }
-            ]
-        })
-
-    def destroy(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to DELETE.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def update(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PUT.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    def partial_update(self, request, pk, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PATCH.",
-                    "path": request.path
-                }
-            ]
-        })
     
     def get_object(self):
         document = ProfileAttributeDocument.get_docuement_or_error(self.kwargs["pk"])

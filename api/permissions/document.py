@@ -2,10 +2,7 @@ from rest_framework import permissions, status
 
 from ..models import Profile, Partner
 
-from django.core.exceptions import PermissionDenied
-
-from datetime import datetime
-
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 
 class DocumentBelongsToPartnerToRead(permissions.BasePermission):
     """
@@ -18,23 +15,20 @@ class DocumentBelongsToPartnerToRead(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_staff or isinstance(obj, Profile):
             return True
-        
-        if request.method in ['GET', 'PATCH', 'POST']:
-            partner = Partner.get_authenticated_partner(request)
-            try:
-                Profile.objects.get(pk=obj.profile.id, partner=partner)
-                return True
-            except Profile.DoesNotExist:
-                raise PermissionDenied({
-                        "code": status.HTTP_403_FORBIDDEN,
-                        "message": "Permission Error",
-                        "details":[
-                            {
-                                "error": "The document you are trying to retrieve or edit does not belong to you.",
-                                "action": request.method,
-                                "path": request.path
-                            }
-                        ]
-                    })
-            
-        return True
+    
+        partner = Partner.get_authenticated_partner(request)
+        try:
+            Profile.objects.get(pk=obj.profile.id, partner=partner)
+            return True
+        except Profile.DoesNotExist:
+            raise PermissionDenied({
+                    "code": status.HTTP_403_FORBIDDEN,
+                    "message": "Permission Error",
+                    "details":[
+                        {
+                            "error": "The document you are trying to retrieve or edit does not belong to you.",
+                            "action": request.method,
+                            "path": request.path
+                        }
+                    ]
+                })

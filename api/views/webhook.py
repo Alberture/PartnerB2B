@@ -6,7 +6,7 @@ from rest_framework import status
 
 from ..utils import valid_response
 from ..serializers import WebhookSerializer, WebhookItemSerializer
-from ..permissions import WebhookBelongsToParnter
+from ..permissions import WebhookBelongsToParnter, CantListUpdateCreate
 from ..models import Webhook, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
@@ -19,7 +19,7 @@ class WebhookViewSet(ModelViewSet):
         ViewSet that manages Webhooks objects.
     """
     serializer_class = WebhookSerializer
-    permission_classes = [IsAuthenticated, WebhookBelongsToParnter]
+    permission_classes = [IsAuthenticated, WebhookBelongsToParnter, CantListUpdateCreate]
     queryset = Webhook.objects.all()
 
     @extend_schema(
@@ -122,44 +122,6 @@ class WebhookViewSet(ModelViewSet):
         self.check_object_permissions(self.request, webhook)
 
         return webhook
-    
-    @extend_schema(exclude=True)
-    def list(self, request, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to GET.",
-                    "path": request.path
-                }
-            ]
-        })
-
-    @extend_schema(exclude=True)
-    def update(self, request, pk, *args, **kwargs):raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to PUT.",
-                    "path": request.path
-                }
-            ]
-        })
-    
-    @extend_schema(exclude=True)
-    def create(self, request, *args, **kwargs):
-        raise MethodNotAllowed({
-            "code": status.HTTP_403_FORBIDDEN,
-            "message": "Not Allowed",
-            "details":[
-                {
-                    "error": "You are not allowed to POST.",
-                    "path": request.path
-                }
-            ]
-        })
     
     @extend_schema(
         examples=[
