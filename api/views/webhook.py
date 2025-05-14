@@ -9,11 +9,15 @@ from ..serializers import WebhookSerializer, WebhookItemSerializer
 from ..permissions import WebhookBelongsToParnter, CantListUpdateCreate
 from ..models import Webhook, Partner
 
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
 from datetime import datetime
 
-@extend_schema()
+@extend_schema_view(
+    create=extend_schema(exclude=True),
+    update=extend_schema(exclude=True),
+    list=extend_schema(exclude=True),
+)
 class WebhookViewSet(ModelViewSet):
     """
         ViewSet that manages Webhooks objects.

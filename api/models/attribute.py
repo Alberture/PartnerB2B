@@ -39,7 +39,7 @@ VALIDATION_CHOICE = [
     ('is equal to', 'Est égal à'),
     ('min/max date', 'Date minimale et maximale'),
     ('min/max size', 'Taille minimale et maximale'),
-    """
+"""
 
 class Attribute(models.Model):
     """
