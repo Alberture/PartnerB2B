@@ -31,6 +31,13 @@ VALIDATION_CHOICE = [
     ('regex', 'Expression régulière'),
     ('unique choice', 'Choix unique'),
     ('multiple choice', 'Choix multiple'),
+    """
+    ('min/max value', 'Valeur minmale et maximale'),
+    ('min/max length', 'Longueur minmale et maximale'),
+    ('is equal to', 'Est égal à'),
+    ('min/max date', 'Date minimale et maximale'),
+    ('min/max size', 'Taille minimale et maximale'),
+    """
 ]
 
 class Attribute(models.Model):
@@ -54,7 +61,6 @@ class Attribute(models.Model):
     => Problème ne marche que pour un seul attribut
     isRequiredFor = models.ManyToManyField('self', symmetrical=False, related_name='related_to')
     
-
     Pour la validation des types données 
     maxLength = models.IntegerField(null=True, blank=True)
     minLength = models.IntegerField(null=True, blank=True)
