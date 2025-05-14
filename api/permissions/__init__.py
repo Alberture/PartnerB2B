@@ -1,12 +1,12 @@
 from .profile import ProfileBelongsToPartner
 from .analysis import AnalysisBelongsToPartner, IsAdminOrHasEnoughTries
 from .document import DocumentBelongsToPartnerToRead
-from .webhook import ConfigureOnlyIfPartner
+from .webhook import WebhookBelongsToParnter
 
 __all__ = [
     'ProfileBelongsToPartner',
     "AnalysisBelongsToPartner",
     'DocumentBelongsToPartnerToRead',
-    'ConfigureOnlyIfPartner',
+    'WebhookBelongsToParnter',
     'IsAdminOrHasEnoughTries'
 ]

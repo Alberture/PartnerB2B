@@ -1,40 +1,36 @@
 from rest_framework import permissions, status
-
 from rest_framework.exceptions import PermissionDenied
 
-class ConfigureOnlyIfPartner(permissions.BasePermission):
+from ..models.partner import Partner
+from ..models.webhook import Webhook
+
+class WebhookBelongsToParnter(permissions.BasePermission):
     """
         Permission that ONLY allows a partner to configure a webkooh.
     """
     def has_permission(self, request, view):
-        if request.method == 'POST' and request.path == "/api/v1/webhooks/configure/" or request.user.is_staff:
-            return True
-        
-        raise PermissionDenied({
-                "code": status.HTTP_403_FORBIDDEN,
-                "message": "Permission Error",
-                "details":[
-                    {
-                        "error": "You must be an admin to perform this action.",
-                        "action": request.method,
-                        "path": request.path
-                    }
-                ] 
-            })
+        return True
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_staff:
             return True
-
-        raise PermissionDenied({
+        
+        partner = Partner.get_authenticated_partner(request)
+        try:
+            Webhook.objects.get(pk=obj.id, partner=partner)
+            return True
+        except Webhook.DoesNotExist:
+            raise PermissionDenied({
                 "code": status.HTTP_403_FORBIDDEN,
                 "message": "Permission Error",
                 "details":[
                     {
-                        "error": "You must be an admin to perform this action.",
+                        "error": "The webhook you are trying to edit or delete does not belong to you.",
                         "action": request.method,
                         "path": request.path
                     }
                 ] 
             })
+
+        
 

@@ -1,12 +1,12 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
 
 from ..utils import valid_response
 from ..serializers import WebhookSerializer
-from ..permissions import ConfigureOnlyIfPartner
+from ..permissions import WebhookBelongsToParnter
 from ..models import Webhook, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample
@@ -19,7 +19,7 @@ class WebhookViewSet(ModelViewSet):
         ViewSet that manages Webhooks objects.
     """
     serializer_class = WebhookSerializer
-    permission_classes = [IsAuthenticated, ConfigureOnlyIfPartner]
+    permission_classes = [IsAuthenticated, WebhookBelongsToParnter]
     queryset = Webhook.objects.all()
 
     @extend_schema(
@@ -57,37 +57,121 @@ class WebhookViewSet(ModelViewSet):
         return valid_response({
                 'message': "Votre url a bien été configurée.",
             }, request.id)
+
+    @extend_schema(
+        examples=[
+            OpenApiExample(
+            name="Example delete Webhook",
+            value={
+                "data": {
+                    "message": "Votre webhook a bien été supprimé."
+                },
+                "meta": {
+                    "timestamp": "2025-05-14T07:31:59.463958",
+                    "request_id": "cd21c104-756b-44a2-b5f0-f25bccd7cb0a"
+                }
+            },
+            response_only=True
+            )
+        ],
+        responses=200
+    )
+    def destroy(self, request, pk, *args, **kwargs):
+        super().destroy(request, pk, *args, **kwargs)
+        return valid_response({
+            "message": "Votre webhook a bien été supprimé."
+        }, request.id)
+    
+    @extend_schema(
+        request=WebhookSerializer,
+        examples=[
+            OpenApiExample(
+            name="Example request body for PATCH Webhook",
+            value={
+                'url': 'https://localhost/webhook/',
+            },
+            request_only=True
+            ),
+            OpenApiExample(
+            name="Exemple PATCH Webhook",
+            value={
+                "data": {
+                    'message': "Votre url a bien été modifée."
+                },
+                "meta": {
+                    "timestamp": "2025-05-13T21:50:38.073740",
+                    "request_id": "f547e99b-b05e-4913-b0ee-5d3c5492b352"
+                }
+            },
+            response_only=True
+            )
+        ]
+    )
+    def partial_update(self, request, pk, *args, **kwargs):
+        partner = Partner.get_authenticated_partner(request)
+        serializer = self.serializer_class(data=request.data, instance=self.get_object())
+        serializer.is_valid(raise_exception=True)
+        serializer.save(partner=partner)
+
+        return valid_response({
+                'message': "Votre url a bien été modifée.",
+            }, request.id)
+    
+    def get_object(self):
+        webhook = Webhook.get_webhook_or_error(self.kwargs["pk"])
+        self.check_object_permissions(self.request, webhook)
+
+        return webhook
     
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
-            return super().list(request, *args, **kwargs)
-        raise PermissionDenied({
+        raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
-            "message": "Permission Denied",
-            "details": [
-                {"error": "You must be an admin to perform this action."}
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to GET.",
+                    "path": request.path
+                }
+            ]
+        })
+
+    @extend_schema(exclude=True)
+    def update(self, request, pk, *args, **kwargs):raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to PUT.",
+                    "path": request.path
+                }
             ]
         })
     
     @extend_schema(exclude=True)
-    def destroy(self, request, pk, *args, **kwargs):
-        return super().destroy(request, pk, *args, **kwargs)
-    
-    @extend_schema(exclude=True)
-    def update(self, request, pk, *args, **kwargs):
-        return super().update(request, pk, *args, **kwargs)
-    
-    @extend_schema(exclude=True)
-    def partial_update(self, request, pk, *args, **kwargs):
-        return super().partial_update(request, pk, *args, **kwargs)
-    
-    @extend_schema(exclude=True)
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to POST.",
+                    "path": request.path
+                }
+            ]
+        })
     
     @extend_schema(exclude=True)
     def retrieve(self, request, pk, *args, **kwargs):
-        return super().retrieve(request, pk, *args, **kwargs)
+        raise MethodNotAllowed({
+            "code": status.HTTP_403_FORBIDDEN,
+            "message": "Not Allowed",
+            "details":[
+                {
+                    "error": "You are not allowed to GET.",
+                    "path": request.path
+                }
+            ]
+        })
     
     
