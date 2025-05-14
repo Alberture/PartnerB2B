@@ -3,8 +3,6 @@ from rest_framework.response import Response
 
 from .utils import error_response_template
 
-from datetime import datetime
-
 def custom_exception_handler(exc, context):
 
     handlers = {

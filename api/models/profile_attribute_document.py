@@ -17,6 +17,7 @@ FILE_TYPE = [
     ('jpeg', 'JPEG'),
     ('png', 'PNG'),
     ('txt', 'TXT'),
+    ('ODT', 'TXT'),
 ]
 
 class ProfileAttributeDocument(models.Model):

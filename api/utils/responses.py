@@ -24,7 +24,8 @@ def valid_response(data, request_id, code=status.HTTP_200_OK):
 
 def error_response_template(data, request):
     """
-        Method that to avoid rewritting the JSON for error messages.
+        Method that return a dict of the error response format
+        to avoid rewritting the dict for error messages.
 
         param: str message, status status, array details, str request_id
         return: dict
