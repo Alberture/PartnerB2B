@@ -42,7 +42,7 @@ class Partner(models.Model):
     def get_partner_or_error(apiKey):
         """
             Method that returns a Partner with the given id or 
-            raises an exception if the AnalPartnerysis was not found
+            raises an exception if the Partner was not found
             or pk is invalid.
 
             param: int pk, id of the Partner

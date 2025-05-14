@@ -11,11 +11,15 @@ from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttri
 from ..models import Profile, ProfileAttribute, Attribute, Partner
 from ..permissions import ProfileBelongsToPartner
 
-from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
 
 from datetime import datetime
 
+@extend_schema_view(
+    list=extend_schema(exclude=True),
+    update=extend_schema(exclude=True),
+)
 class ProfileViewSet(ModelViewSet):
     """
         ViewSet that manages Profile objects.
@@ -316,23 +320,27 @@ class ProfileViewSet(ModelViewSet):
             "message": "Le profil à bien été supprimé.",
         }, request.id)
 
-    @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
         raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
             "message": "Not allowed",
             "details":[
-                {"error": "You are not allowed to PUT on this URL"}
+                {
+                    "error": "You are not allowed to PUT on this URL",
+                    "path": request.path
+                }
             ]
         })
     
-    @extend_schema(exclude=True)
     def update(self, request, pk, *args, **kwargs):
         raise MethodNotAllowed({
             "code": status.HTTP_403_FORBIDDEN,
             "message": "Not allowed",
             "details":[
-                {"error": "You are not allowed to PUT on this URL"}
+                {
+                    "error": "You are not allowed to PUT on this URL",
+                    "path": request.path
+                }
             ]
         })
 

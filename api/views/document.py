@@ -3,16 +3,14 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied, ValidationError, NotFound, MethodNotAllowed
+from rest_framework.exceptions import MethodNotAllowed
 
-from ..serializers import ProfileAttributeDocumentItemSerializer, ProfileAttributeDocumentSerializer
+from ..serializers import ProfileAttributeDocumentItemSerializer
 from ..utils import valid_response
-from ..models import Attribute, Profile, ProfileAttributeDocument
+from ..models import ProfileAttributeDocument
 from ..permissions import DocumentBelongsToPartnerToRead, ProfileBelongsToPartner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
-
-from datetime import datetime
 
 @extend_schema_view(
     create=extend_schema(exclude=True),
@@ -25,7 +23,7 @@ class DocumentViewSet(ModelViewSet):
     """
         ViewSet that manages ProfileAttributeDocument objects.
     """
-    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead, ProfileBelongsToPartner]
+    permission_classes = [IsAuthenticated, DocumentBelongsToPartnerToRead]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
     @extend_schema(
@@ -59,7 +57,6 @@ class DocumentViewSet(ModelViewSet):
     )
     def retrieve(self, request, pk, *args, **kwargs):
         docuement = self.get_object()  
-
         serializer= self.serializer_class(instance=docuement)
         return valid_response(serializer.data, request.id)
     

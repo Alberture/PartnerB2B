@@ -6,20 +6,19 @@ from rest_framework.exceptions import PermissionDenied
 
 class ProfileBelongsToPartner(permissions.BasePermission):
     """
-        Permission that allows authenticated partners to retrieve or edit profiles that
+        Permission that allows authenticated partners to retrieve, delete or edit profiles that
         belongs to them.
     """
     def has_permission(self, request, view):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff or isinstance(obj, ProfileAttributeDocument) or isinstance(obj, Analysis):
+        if request.user.is_staff:
             return True
         
         partner = Partner.get_authenticated_partner(request)
         try:
             Profile.objects.get(pk=obj.id, partner=partner)
-            return True
         except Profile.DoesNotExist:
             raise PermissionDenied({
                     "code": status.HTTP_403_FORBIDDEN,
@@ -34,7 +33,3 @@ class ProfileBelongsToPartner(permissions.BasePermission):
                 })
             
         return True
-    
-
-    
-

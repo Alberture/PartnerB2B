@@ -13,7 +13,7 @@ class AnalysisBelongsToPartner(permissions.BasePermission):
         return True
     
     def has_object_permission(self, request, view, obj):
-        if request.user.is_staff or isinstance(obj, Profile):
+        if request.user.is_staff:
             return True
         
         if request.method in ['GET', 'PATCH']:
