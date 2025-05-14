@@ -46,6 +46,31 @@ class Attribute(models.Model):
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
+    """
+    champs en plus :
+
+    Pour les obligations conditionnelles
+    isRequiredFor = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
+    => Problème ne marche que pour un seul attribut
+    isRequiredFor = models.ManyToManyField('self', symmetrical=False, related_name='related_to')
+    
+
+    Pour la validation des types données 
+    maxLength = models.IntegerField(null=True, blank=True)
+    minLength = models.IntegerField(null=True, blank=True)
+    
+    maxValue = models.FloatField(null=True, blank=True)
+    minValue = models.FloatField(null=True, blank=True)
+    isEqualTo = models.FloatField(null=True, blank=True)
+
+    maxDate = models.DateTimeField(null=True, blank=True)
+    minDate = models.DateTimeField(null=True, blank=True)
+    
+    maxSize = models.IntegerField(null=True, blank=True)
+    minSize = models.IntegerField(null=True, blank=True)
+
+    Pour les choix de format faire une nouvelle table FormatChoice. 
+    """
 
     def __str__(self):
         return self.name

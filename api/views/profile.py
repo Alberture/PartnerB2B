@@ -13,7 +13,6 @@ from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, Upda
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
-
 from datetime import datetime
 
 @extend_schema_view(
@@ -30,7 +29,7 @@ class ProfileViewSet(ModelViewSet):
         IsAuthenticated, 
         ProfileBelongsToPartner,
         IsAdminOrHasEnoughTries,
-        UpdateAndListNotAllowed,
+        UpdateAndListNotAllowed
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser, ]
 

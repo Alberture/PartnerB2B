@@ -25,7 +25,7 @@ class ProfileAttribute(models.Model):
     def clean(self):
         if self.attribute: 
             attribute_type = self.attribute.type
-        
+            
             if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
                 raise ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,
@@ -66,7 +66,18 @@ class ProfileAttribute(models.Model):
                                         "error": "The value must unique among the following choices : %s" %  (list(map(str, choice_list)))
                                     }]
                                 }
-                            )    
+                            )
+                    elif self.choice_is_unique():
+                        raise ValidationError({
+                                "code": status.HTTP_400_BAD_REQUEST,
+                                "message": "Validation Error",
+                                "details": [{
+                                        "field": "value", 
+                                        "attribute": self.attribute.name,
+                                        "error": "There must be multiple values among the following choices : %s" %  (list(map(str, choice_list)))
+                                    }]
+                                }
+                            )
         
                 case 'integer':
                     try:
