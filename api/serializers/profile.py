@@ -129,13 +129,17 @@ class ProfileSerializer(serializers.ModelSerializer):
                             ]
                         })
                     elif attribute.validation == 'multiple choice' and len(value) < 2:
-                        raise serializers.ValidationError([
+                        raise serializers.ValidationError({
+                            "code": status.HTTP_400_BAD_REQUEST,
+                            "message": "Validation Error.",
+                            "details":[
                                 {
                                     "field": "value",
                                     "error": "There must be multiple choices be unique among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
                                     "attribute": attribute.name
                                 }
-                            ])
+                            ]
+                        })
                 else:
                     raise serializers.ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,

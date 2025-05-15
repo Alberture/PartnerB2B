@@ -29,7 +29,6 @@ class ProfileAttribute(models.Model):
                 case 'regex':
                     if not re.match(self.attribute.regex, self.value):
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
                             "details": [{
                                 "field": "value",
@@ -42,7 +41,6 @@ class ProfileAttribute(models.Model):
                 case 'min/max value':
                     if not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
                             "details": [{
                                 "field": "value",
@@ -55,7 +53,6 @@ class ProfileAttribute(models.Model):
                 case'min/max length': 
                     if not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
                             "details": [{
                                 "field": "value",
@@ -68,7 +65,6 @@ class ProfileAttribute(models.Model):
                 case 'min/max date':
                     if not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
                             "details": [{
                                 "field": "value",
@@ -84,7 +80,6 @@ class ProfileAttribute(models.Model):
                         int(self.value)
                     except ValueError:
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 
@@ -98,7 +93,6 @@ class ProfileAttribute(models.Model):
                         float(self.value)
                     except ValueError:
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Type Error",
                             "details": [{
                                     "field": "value", 
@@ -110,7 +104,6 @@ class ProfileAttribute(models.Model):
                 case 'boolean':
                     if not self.value in ('True', 'False'):
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Type Error",
                             "details": [{
                                     "field": "value", 
@@ -124,7 +117,6 @@ class ProfileAttribute(models.Model):
                         datetime.strptime(self.value, "%Y-%m-%d")
                     except ValueError:
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 
@@ -138,7 +130,6 @@ class ProfileAttribute(models.Model):
                         json.loads(self.value)
                     except json.JSONDecodeError:
                         raise ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Type Error",
                             "details": [{
                                         "field": "value", 

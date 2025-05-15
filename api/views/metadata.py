@@ -36,7 +36,7 @@ class Metadata(APIView):
                                 "isRequired": True,
                                 "validation": None,
                                 "sensitiveData": False,
-                                "attributechoice_set": []
+                                "choices": []
                             },
                             {
                                 "pk": 10,
@@ -46,7 +46,7 @@ class Metadata(APIView):
                                 "isRequired": True,
                                 "validation": "unique choice",
                                 "sensitiveData": False,
-                                "attributechoice_set": [
+                                "choices": [
                                 {"displayedName": "M"},
                                 {"displayedName": "F"},
                                 {"displayedName": "Autre"}
@@ -62,7 +62,7 @@ class Metadata(APIView):
                                 "isRequired": False,
                                 "validation": None,
                                 "sensitiveData": True,
-                                "attributechoice_set": []
+                                "choices": []
                             },
                             {
                                 "pk": 15,
@@ -72,7 +72,7 @@ class Metadata(APIView):
                                 "isRequired": False,
                                 "validation": None,
                                 "sensitiveData": True,
-                                "attributechoice_set": []
+                                "choices": []
                             }
                             ],
                         },
