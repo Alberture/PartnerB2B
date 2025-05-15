@@ -12,7 +12,7 @@ class ProfileAttributeItemSerializer(serializers.Serializer):
 
 class ProfileAttributeSerializer(serializers.ModelSerializer):
     """
-        Serializer to transform JSON to a ProfileAttribute object.
+        Serializer to transform Json to a ProfileAttribute object
     """
     class Meta:
         model = ProfileAttribute

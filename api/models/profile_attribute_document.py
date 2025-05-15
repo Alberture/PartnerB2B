@@ -33,6 +33,23 @@ class ProfileAttributeDocument(models.Model):
     status = models.CharField(choices=DOCUMENT_STATUS_CHOICE, default='pending')
     metadata = models.CharField(null=True, blank=True)
 
+    def clean(self):
+        if not self.type in self.attribute.acceptedFormat:
+            raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Validation Error",
+                    "details": [{
+                        "field": "type",
+                        "attribute": self.attribute.name, 
+                        "error": "accepted file types are : %s" % (self.attribute.acceptedFormat)
+                    }]
+                    }
+                )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     def get_docuement_or_error(pk):
         """
             Method that returns a ProfileAttributeDocument with the given id or 

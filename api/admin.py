@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.models import Partner, Attribute, AttributeChoice, Profile, ProfileAttribute, Analysis, ProfileAttributeDocument, Webhook
+from api.models import Partner, Attribute, AttributeChoice, AttributeAttributeChoice, Profile, ProfileAttribute, Analysis, ProfileAttributeDocument, Webhook
 
 # Register your models here.
 
@@ -11,3 +11,4 @@ admin.site.register(ProfileAttribute)
 admin.site.register(Analysis)
 admin.site.register(ProfileAttributeDocument)
 admin.site.register(Webhook)
+admin.site.register(AttributeAttributeChoice)

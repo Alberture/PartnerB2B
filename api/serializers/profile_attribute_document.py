@@ -56,4 +56,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
             'type'
         ]
 
+    def validate(self, data):
+        pass
+
     

@@ -2,6 +2,7 @@ from django.db import models
 
 from .profile import Profile
 from .attribute import Attribute
+from ..utils import value_is_between
 
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -37,7 +38,43 @@ class ProfileAttribute(models.Model):
                     }]
                     }
                 )
-                    
+            
+            elif self.attribute.validation == 'min/max value' and not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Validation Error",
+                    "details": [{
+                        "field": "value",
+                        "attribute": self.attribute.name, 
+                        "error": "the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                    }]
+                    }
+                )
+
+            elif self.attribute.validation == 'min/max length' and not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Validation Error",
+                    "details": [{
+                        "field": "value",
+                        "attribute": self.attribute.name, 
+                        "error": "the length of the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                    }]
+                    }
+                )  
+
+            elif self.attribute.validation == 'min/max date' and not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Validation Error",
+                    "details": [{
+                        "field": "value",
+                        "attribute": self.attribute.name, 
+                        "error": "the date must be between %s and %s." % (self.attribute.minDate, self.attribute.maxDate) 
+                    }]
+                    }
+                )  
+
             match attribute_type:
                 case 'choice':
                     if not self.value_is_in_choice_set():
@@ -179,3 +216,4 @@ class ProfileAttribute(models.Model):
         if values:
             return False
         return True
+    

@@ -80,6 +80,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         data = super().validate(data)
         if not self.instance:
             required_attributes = Attribute.objects.filter(isRequired=True).exclude(category="document")
+            
             for name, value in data['attributes'].items():
                 required_attributes = required_attributes.exclude(name=name)
             

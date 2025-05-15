@@ -31,15 +31,19 @@ VALIDATION_CHOICE = [
     ('regex', 'Expression régulière'),
     ('unique choice', 'Choix unique'),
     ('multiple choice', 'Choix multiple'),
-    
-]
-"""
     ('min/max value', 'Valeur minmale et maximale'),
     ('min/max length', 'Longueur minmale et maximale'),
-    ('is equal to', 'Est égal à'),
     ('min/max date', 'Date minimale et maximale'),
-    ('min/max size', 'Taille minimale et maximale'),
-"""
+]
+
+class AttributeChoice(models.Model):
+    """
+        Model that represents a choice related to an attriute.
+    """
+    displayedName = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.displayedName
 
 class Attribute(models.Model):
     """
@@ -52,33 +56,19 @@ class Attribute(models.Model):
     category = models.CharField(choices=CATEGORIES_CHOICE)
     isRequired = models.BooleanField()
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
+    choices = models.ManyToManyField(AttributeChoice, through='AttributeAttributeChoice')
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
-    """
-    champs en plus :
-
-    Pour les obligations conditionnelles
-    isRequiredFor = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True)
-    => Problème ne marche que pour un seul attribut
-    isRequiredFor = models.ManyToManyField('self', symmetrical=False, related_name='related_to')
-    
-    Pour la validation des types données 
     maxLength = models.IntegerField(null=True, blank=True)
     minLength = models.IntegerField(null=True, blank=True)
-    
     maxValue = models.FloatField(null=True, blank=True)
     minValue = models.FloatField(null=True, blank=True)
     isEqualTo = models.FloatField(null=True, blank=True)
-
     maxDate = models.DateTimeField(null=True, blank=True)
     minDate = models.DateTimeField(null=True, blank=True)
-    
     maxSize = models.IntegerField(null=True, blank=True)
-    minSize = models.IntegerField(null=True, blank=True)
-
-    Pour les choix de format faire une nouvelle table FormatChoice. 
-    """
-
+    acceptedFormat = models.CharField(null=True, blank=True)
+    
     def __str__(self):
         return self.name
     
@@ -114,3 +104,12 @@ class Attribute(models.Model):
                         }]
                     }
                 )
+
+class AttributeAttributeChoice(models.Model):
+    """
+        Intermediate table to create either link a choice to an attribute
+        or tell what attributes is required upon chosing an attribute choice.
+    """
+    attribute_choice = models.ForeignKey(AttributeChoice, on_delete=models.CASCADE)
+    requires = models.BooleanField() #If false then the attribute is has attribute_choice in its choice field
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
