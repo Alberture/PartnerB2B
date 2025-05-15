@@ -6,6 +6,8 @@ from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 
+from ..utils import value_is_in_attribute_choice_set
+
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
         Serializer to transform a Profile object to JSON.
@@ -99,8 +101,21 @@ class ProfileSerializer(serializers.ModelSerializer):
             
         for name, value in data['attributes'].items():
             if isinstance(value, list):
-                attribute = Attribute.get_attribute_or_error(name=name)
+                attribute = Attribute.get_attribute_or_error(name=name)                
                 if attribute.type == "choice":
+                    for choice in value:   
+                        if not value_is_in_attribute_choice_set(attribute, choice):
+                            raise serializers.ValidationError({
+                            "code": status.HTTP_400_BAD_REQUEST,
+                            "message": "Validation Error.",
+                            "details":[
+                                {
+                                    "field": "value",
+                                    "error": "The choice must among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
+                                    "attribute": attribute.name,
+                                }
+                            ]
+                        })
                     if attribute.validation == 'unique choice' and len(value) != 1:
                         raise serializers.ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
@@ -114,17 +129,13 @@ class ProfileSerializer(serializers.ModelSerializer):
                             ]
                         })
                     elif attribute.validation == 'multiple choice' and len(value) < 2:
-                        raise serializers.ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error.",
-                            "details":[
+                        raise serializers.ValidationError([
                                 {
                                     "field": "value",
                                     "error": "There must be multiple choices be unique among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
                                     "attribute": attribute.name
                                 }
-                            ]
-                        })
+                            ])
                 else:
                     raise serializers.ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,

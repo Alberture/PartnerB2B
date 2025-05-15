@@ -34,7 +34,7 @@ class ProfileAttributeDocument(models.Model):
     metadata = models.CharField(null=True, blank=True)
 
     def clean(self):
-        if not self.type in self.attribute.acceptedFormat:
+        if not self.type in self.attribute.acceptedFormat and self.attribute.acceptedFormat:
             raise ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,
                     "message": "Validation Error",

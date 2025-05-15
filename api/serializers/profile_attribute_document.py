@@ -1,6 +1,8 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
 from ..models.profile_attribute_document import ProfileAttributeDocument
+from ..models.attribute import Attribute
 
 class ProfileDocumentSerializer(serializers.Serializer):
     """
@@ -57,6 +59,18 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        pass
-
+        data = super().validate(data)
+        attribute = Attribute.objects.get(name=data['attribute'])
+        if attribute.maxSize and data['file'].size > attribute.maxSize:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Validation Error",
+                "details":[
+                    {
+                        "field": "value",
+                        "error": "The file size must be bellow %s byte(s)." % (attribute.maxSize),
+                        "attribute": attribute.name,
+                    }
+                ]
+            })
     
