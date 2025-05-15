@@ -64,8 +64,8 @@ class Attribute(models.Model):
     maxValue = models.FloatField(null=True, blank=True)
     minValue = models.FloatField(null=True, blank=True)
     isEqualTo = models.FloatField(null=True, blank=True)
-    maxDate = models.DateTimeField(null=True, blank=True)
-    minDate = models.DateTimeField(null=True, blank=True)
+    maxDate = models.DateField(null=True, blank=True)
+    minDate = models.DateField(null=True, blank=True)
     maxSize = models.IntegerField(null=True, blank=True)
     acceptedFormat = models.CharField(null=True, blank=True)
     

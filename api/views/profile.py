@@ -336,6 +336,7 @@ class ProfileViewSet(ModelViewSet):
             return: ProfileAttribute
             exceptions: ValidationError, NotFound
         """
+        
         serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
         serializer.is_valid(raise_exception=True)
         return serializer.save(attribute=attribute, profile=profile)

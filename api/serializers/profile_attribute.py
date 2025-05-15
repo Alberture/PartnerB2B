@@ -18,5 +18,6 @@ class ProfileAttributeSerializer(serializers.ModelSerializer):
         model = ProfileAttribute
         fields = '__all__'
 
+    
 
 

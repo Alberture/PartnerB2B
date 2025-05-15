@@ -24,56 +24,53 @@ class ProfileAttribute(models.Model):
     source = models.CharField(null=True, blank=True) 
 
     def clean(self):
+        match self.attribute.validation:
+            case 'regex':
+                if not re.match(self.attribute.regex, self.value):
+                    raise ValidationError({
+                        "message": "Validation Error",
+                        "details": [{
+                            "field": "value",
+                            "attribute": self.attribute.name, 
+                            "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
+                        }]
+                        }
+                    )
+            case 'min/max value':
+                if not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
+                    raise ValidationError({
+                        "message": "Validation Error",
+                        "details": [{
+                            "field": "value",
+                            "attribute": self.attribute.name, 
+                            "error": "the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                        }]
+                        }
+                    )
+            case'min/max length': 
+                if not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
+                    raise ValidationError({
+                        "message": "Validation Error",
+                        "details": [{
+                            "field": "value",
+                            "attribute": self.attribute.name, 
+                            "error": "the length of the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                        }]
+                        }
+                    )  
+            case 'min/max date':
+                if not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
+                    raise ValidationError({
+                        "message": "Validation Error",
+                        "details": [{
+                            "field": "value",
+                            "attribute": self.attribute.name, 
+                            "error": "the date must be between %s and %s." % (self.attribute.minDate, self.attribute.maxDate) 
+                        }]
+                        }
+                    )  
+                
         if self.attribute: 
-            match self.attribute.validation:
-                case 'regex':
-                    if not re.match(self.attribute.regex, self.value):
-                        raise ValidationError({
-                            "message": "Validation Error",
-                            "details": [{
-                                "field": "value",
-                                "attribute": self.attribute.name, 
-                                "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
-                            }]
-                            }
-                        )
-            
-                case 'min/max value':
-                    if not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
-                        raise ValidationError({
-                            "message": "Validation Error",
-                            "details": [{
-                                "field": "value",
-                                "attribute": self.attribute.name, 
-                                "error": "the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
-                            }]
-                            }
-                        )
-
-                case'min/max length': 
-                    if not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
-                        raise ValidationError({
-                            "message": "Validation Error",
-                            "details": [{
-                                "field": "value",
-                                "attribute": self.attribute.name, 
-                                "error": "the length of the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
-                            }]
-                            }
-                        )  
-
-                case 'min/max date':
-                    if not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
-                        raise ValidationError({
-                            "message": "Validation Error",
-                            "details": [{
-                                "field": "value",
-                                "attribute": self.attribute.name, 
-                                "error": "the date must be between %s and %s." % (self.attribute.minDate, self.attribute.maxDate) 
-                            }]
-                            }
-                        )  
-
             match self.attribute.type:       
                 case 'integer':
                     try:
