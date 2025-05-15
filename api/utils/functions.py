@@ -12,7 +12,7 @@ def value_is_between(value, minValue, maxValue, is_date=False):
     if is_date:
         d = date(int(value[:4]), int(value[5:7]), int(value[8:]))
         return d >= minValue and d <= maxValue
-    return value >= minValue and value <= maxValue
+    return float(value) >= minValue and float(value) <= maxValue
 
 def value_is_in_attribute_choice_set(attribute, value):
     """
