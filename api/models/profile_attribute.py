@@ -77,8 +77,8 @@ class ProfileAttribute(models.Model):
 
             match attribute_type:
                 case 'choice':
+                    choice_list = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__is_choice=True)
                     if not self.value_is_in_choice_set():
-                        choice_list = self.attribute.attributechoice_set.order_by('displayedName')
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
@@ -89,10 +89,7 @@ class ProfileAttribute(models.Model):
                                 }]
                             }
                         )
-                    
-                
                     if self.attribute.validation == 'unique choice':
-                        choice_list = self.attribute.attributechoice_set.order_by('displayedName')
                         if not self.choice_is_unique():
                             raise ValidationError({
                                 "code": status.HTTP_400_BAD_REQUEST,
@@ -104,18 +101,7 @@ class ProfileAttribute(models.Model):
                                     }]
                                 }
                             )
-                    elif self.choice_is_unique():
-                        raise ValidationError({
-                                "code": status.HTTP_400_BAD_REQUEST,
-                                "message": "Validation Error",
-                                "details": [{
-                                        "field": "value", 
-                                        "attribute": self.attribute.name,
-                                        "error": "There must be multiple values among the following choices : %s" %  (list(map(str, choice_list)))
-                                    }]
-                                }
-                            )
-        
+
                 case 'integer':
                     try:
                         int(self.value)
@@ -129,8 +115,7 @@ class ProfileAttribute(models.Model):
                                         "error": "The value must be an integer."
                                     }]
                                 }
-                            )
-                    
+                            ) 
                 case 'float':
                     try:
                         float(self.value)
@@ -145,7 +130,6 @@ class ProfileAttribute(models.Model):
                                     }]
                                 }
                             )
-                    
                 case 'boolean':
                     if not self.value in ('True', 'False'):
                         raise ValidationError({
@@ -158,7 +142,6 @@ class ProfileAttribute(models.Model):
                                     }]
                                 }
                             )
-                    
                 case 'date':
                     try:
                         datetime.strptime(self.value, "%Y-%m-%d")
@@ -172,8 +155,7 @@ class ProfileAttribute(models.Model):
                                         "error": "The value must be in a correct yyyy-mm-dd format."
                                     }]
                                 }
-                            )
-                    
+                            )          
                 case 'json':
                     try:
                         json.loads(self.value)
@@ -188,8 +170,7 @@ class ProfileAttribute(models.Model):
                                     }]
                                 }
                             )
-
-
+                    
     def save(self, *args, **kwargs):
         self.clean()
         return super().save(*args, **kwargs)
@@ -199,8 +180,7 @@ class ProfileAttribute(models.Model):
             Method that verifies if the value is in the choice set of an 
             attribute that requires choice(s).
         """
-        exists = AttributeAttributeChoice.objects.filter(is_choice=False, attribute_choice__displayedName=self.value, attribute=self.attribute)
-        dd(exists.displayedName)
+        exists = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__is_choice=True, displayedName=self.value)
         if not exists:
             return False
         return True
