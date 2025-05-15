@@ -25,83 +25,60 @@ class ProfileAttribute(models.Model):
 
     def clean(self):
         if self.attribute: 
-            attribute_type = self.attribute.type
-            
-            if self.attribute.validation == 'regex' and not re.match(self.attribute.regex, self.value):
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error",
-                    "details": [{
-                        "field": "value",
-                        "attribute": self.attribute.name, 
-                        "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
-                    }]
-                    }
-                )
-            
-            elif self.attribute.validation == 'min/max value' and not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error",
-                    "details": [{
-                        "field": "value",
-                        "attribute": self.attribute.name, 
-                        "error": "the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
-                    }]
-                    }
-                )
-
-            elif self.attribute.validation == 'min/max length' and not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error",
-                    "details": [{
-                        "field": "value",
-                        "attribute": self.attribute.name, 
-                        "error": "the length of the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
-                    }]
-                    }
-                )  
-
-            elif self.attribute.validation == 'min/max date' and not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error",
-                    "details": [{
-                        "field": "value",
-                        "attribute": self.attribute.name, 
-                        "error": "the date must be between %s and %s." % (self.attribute.minDate, self.attribute.maxDate) 
-                    }]
-                    }
-                )  
-
-            match attribute_type:
-                case 'choice':
-                    choice_list = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__isChoice=True)
-                    if not self.value_is_in_choice_set():
+            match self.attribute.validation:
+                case 'regex':
+                    if not re.match(self.attribute.regex, self.value):
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
                             "message": "Validation Error",
                             "details": [{
-                                "field": "value", 
-                                "attribute": self.attribute.name,
-                                "error": "The value must be among the following choices : %s" % (list(map(str, choice_list)))
-                                }]
+                                "field": "value",
+                                "attribute": self.attribute.name, 
+                                "error": "the value doesn't match the following regex : %s" % (self.attribute.regex)
+                            }]
                             }
                         )
-                    if self.attribute.validation == 'unique choice':
-                        if not self.choice_is_unique():
-                            raise ValidationError({
-                                "code": status.HTTP_400_BAD_REQUEST,
-                                "message": "Validation Error",
-                                "details": [{
-                                        "field": "value", 
-                                        "attribute": self.attribute.name,
-                                        "error": "The value must unique among the following choices : %s" %  (list(map(str, choice_list)))
-                                    }]
-                                }
-                            )
+            
+                case 'min/max value':
+                    if not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
+                        raise ValidationError({
+                            "code": status.HTTP_400_BAD_REQUEST,
+                            "message": "Validation Error",
+                            "details": [{
+                                "field": "value",
+                                "attribute": self.attribute.name, 
+                                "error": "the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                            }]
+                            }
+                        )
 
+                case'min/max length': 
+                    if not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
+                        raise ValidationError({
+                            "code": status.HTTP_400_BAD_REQUEST,
+                            "message": "Validation Error",
+                            "details": [{
+                                "field": "value",
+                                "attribute": self.attribute.name, 
+                                "error": "the length of the value must be between %s and %s." % (self.attribute.minValue, self.attribute.maxValue) 
+                            }]
+                            }
+                        )  
+
+                case 'min/max date':
+                    if not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
+                        raise ValidationError({
+                            "code": status.HTTP_400_BAD_REQUEST,
+                            "message": "Validation Error",
+                            "details": [{
+                                "field": "value",
+                                "attribute": self.attribute.name, 
+                                "error": "the date must be between %s and %s." % (self.attribute.minDate, self.attribute.maxDate) 
+                            }]
+                            }
+                        )  
+
+            match self.attribute.type:       
                 case 'integer':
                     try:
                         int(self.value)
@@ -174,26 +151,4 @@ class ProfileAttribute(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         return super().save(*args, **kwargs)
-    
-    def value_is_in_choice_set(self):
-        """
-            Method that verifies if the value is in the choice set of an 
-            attribute that requires choice(s).
-        """
-        exists = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__isChoice=True, displayedName=self.value)
-        if not exists:
-            return False
-        return True
-    
-    def choice_is_unique(self):
-        """
-            Method that verifies if the chosen value is unique.
-        """
-        if self.id:
-            return True
-        
-        values = ProfileAttribute.objects.filter(attribute=self.attribute, profile=self.profile)
-        if values:
-            return False
-        return True
     
