@@ -77,7 +77,7 @@ class ProfileAttribute(models.Model):
 
             match attribute_type:
                 case 'choice':
-                    choice_list = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__is_choice=True)
+                    choice_list = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__isChoice=True)
                     if not self.value_is_in_choice_set():
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
@@ -180,7 +180,7 @@ class ProfileAttribute(models.Model):
             Method that verifies if the value is in the choice set of an 
             attribute that requires choice(s).
         """
-        exists = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__is_choice=True, displayedName=self.value)
+        exists = self.attribute.choices.order_by("displayedName").filter(attributeattributechoice__isChoice=True, displayedName=self.value)
         if not exists:
             return False
         return True

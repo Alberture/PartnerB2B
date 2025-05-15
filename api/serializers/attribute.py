@@ -28,6 +28,6 @@ class AttributeSerializer(serializers.ModelSerializer):
         ]
 
     def get_choices(self, attribute):
-        qs = attribute.choices.filter(attributeattributechoice__is_choice=True)
+        qs = attribute.choices.filter(attributeattributechoice__isChoice=True)
         serializer = AttributeChoiceSerializer(instance=qs, many=True)
         return serializer.data

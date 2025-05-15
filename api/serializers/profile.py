@@ -1,5 +1,5 @@
 from ..models import Profile
-from ..models.attribute import Attribute
+from ..models.attribute import Attribute, AttributeAttributeChoice, AttributeChoice
 from .profile_attribute import ProfileAttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 
@@ -76,13 +76,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         return instance
     
     def validate(self, data):
-        
         data = super().validate(data)
         if not self.instance:
             required_attributes = Attribute.objects.filter(isRequired=True).exclude(category="document")
-            
             for name, value in data['attributes'].items():
-                required_attributes = required_attributes.exclude(name=name)
+                if isinstance(value, list):
+                    for choice in value:
+                        required_attribute = Attribute.objects.filter(choices__displayedName=choice, attributeattributechoice__isChoice=False)
+                        required_attributes = required_attributes.union(required_attribute)
+            
+            required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
             
             if required_attributes:
                 raise serializers.ValidationError({
@@ -92,7 +95,8 @@ class ProfileSerializer(serializers.ModelSerializer):
                         {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
                     ]
                 })
-        
+            
+
         return data
 
         
