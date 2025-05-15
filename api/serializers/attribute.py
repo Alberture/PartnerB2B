@@ -1,4 +1,4 @@
-from ..models.attribute import Attribute
+from ..models.attribute import Attribute, AttributeChoice
 from .attribute_choice import AttributeChoiceSerializer
 
 from rest_framework import serializers
@@ -13,7 +13,7 @@ class AttributeSerializer(serializers.ModelSerializer):
     """
         Serializer to transform JSON to an Attribute object.
     """
-    attributechoice_set = AttributeChoiceSerializer(many=True, read_only=True)
+    choices = serializers.SerializerMethodField()
     class Meta:
         model = Attribute
         fields = [
@@ -24,5 +24,10 @@ class AttributeSerializer(serializers.ModelSerializer):
             'isRequired',
             'validation',
             'sensitiveData',
-            'attributechoice_set'
+            'choices'
         ]
+
+    def get_choices(self, attribute):
+        qs = attribute.choices.filter(attributeattributechoice__is_choice=True)
+        serializer = AttributeChoiceSerializer(instance=qs, many=True)
+        return serializer.data

@@ -94,5 +94,3 @@ class Metadata(APIView):
             result[categorie['category']] = serializer.data
         
         return valid_response(result, request.id)
-
-        
