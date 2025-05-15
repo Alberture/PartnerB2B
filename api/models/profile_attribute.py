@@ -1,7 +1,7 @@
 from django.db import models
 
 from .profile import Profile
-from .attribute import Attribute
+from .attribute import Attribute, AttributeAttributeChoice
 from ..utils import value_is_between
 
 from rest_framework import status
@@ -199,9 +199,8 @@ class ProfileAttribute(models.Model):
             Method that verifies if the value is in the choice set of an 
             attribute that requires choice(s).
         """
-        choice_set = self.attribute.attributechoice_set.order_by("displayedName")
-        exists = choice_set.filter(displayedName=self.value)
-  
+        exists = AttributeAttributeChoice.objects.filter(is_choice=False, attribute_choice__displayedName=self.value, attribute=self.attribute)
+        dd(exists.displayedName)
         if not exists:
             return False
         return True

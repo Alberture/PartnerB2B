@@ -111,5 +111,5 @@ class AttributeAttributeChoice(models.Model):
         or tell what attributes is required upon choosing an attribute choice.
     """
     attribute_choice = models.ForeignKey(AttributeChoice, on_delete=models.CASCADE)
-    requires = models.BooleanField() #If false then the attribute has an attribute_choice in its choice field
+    is_choice = models.BooleanField() #If false then choosing this attribute_choice makes the related attribute required
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
