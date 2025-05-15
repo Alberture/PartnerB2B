@@ -107,9 +107,9 @@ class Attribute(models.Model):
 
 class AttributeAttributeChoice(models.Model):
     """
-        Intermediate table to create either link a choice to an attribute
-        or tell what attributes is required upon chosing an attribute choice.
+        Intermediate table to either set an attribute_choice in an attribute choice set
+        or tell what attributes is required upon choosing an attribute choice.
     """
     attribute_choice = models.ForeignKey(AttributeChoice, on_delete=models.CASCADE)
-    requires = models.BooleanField() #If false then the attribute is has attribute_choice in its choice field
+    requires = models.BooleanField() #If false then the attribute has an attribute_choice in its choice field
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
