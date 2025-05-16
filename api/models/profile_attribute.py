@@ -1,7 +1,7 @@
 from django.db import models
 
 from .profile import Profile
-from .attribute import Attribute, AttributeAttributeChoice
+from .attribute import Attribute
 from ..utils import value_is_between
 
 from rest_framework import status

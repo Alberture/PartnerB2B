@@ -1,5 +1,5 @@
 from ..models import Profile
-from ..models.attribute import Attribute, AttributeAttributeChoice, AttributeChoice
+from ..models.attribute import Attribute, AttributeChoice
 from .profile_attribute import ProfileAttributeItemSerializer
 from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 

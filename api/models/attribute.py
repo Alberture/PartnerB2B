@@ -165,4 +165,4 @@ class AttributeAttributeChoice(models.Model):
         required".
     """
     attribute_choice = models.OneToOneField(AttributeChoice, on_delete=models.CASCADE, null=True, blank=True)
-    attribute = models.OneToOneField(Attribute, on_delete=models.CASCADE, null=True, blank=True)
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
