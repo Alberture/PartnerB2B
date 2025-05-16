@@ -84,16 +84,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         for name, value in data['attributes'].items():
             attribute = Attribute.get_attribute_or_error(name=name) 
             if attribute.type == "choice":
-                check_unique_multiple_choices_validation(attribute, value)
+                self.check_unique_multiple_choices_validation(attribute, value)
                 if isinstance(value, list):
                     for choice in value:
-                        value_is_in_attribute_choice_set_or_error(attribute, choice)
+                        self.value_is_in_attribute_choice_set_or_error(attribute, choice)
                         attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=choice)
                         required_attribute = attribute_choice.get_required_attribute_if_chosen()    
                         if required_attribute:
                             required_attributes.append(required_attribute)   
                 else:
-                    value_is_in_attribute_choice_set_or_error(attribute, value)
+                    self.value_is_in_attribute_choice_set_or_error(attribute, value)
                     attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=value)
                     required_attribute = attribute_choice.get_required_attribute_if_chosen()    
                     if required_attribute:
