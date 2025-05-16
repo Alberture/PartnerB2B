@@ -47,7 +47,7 @@ class RefreshToken(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
+        
         access_token_str = serializer.validated_data['access']
         access_token = AccessToken(access_token_str)
         access_exp = datetime.fromtimestamp(access_token['exp']).isoformat()

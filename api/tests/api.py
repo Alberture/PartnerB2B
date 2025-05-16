@@ -5,10 +5,10 @@ from api.models import *
 
 class ApiTestCase(APITestCase):
     def setUp(self):
-        self.partners = [
-            Partner.objects.create(name="admin", limitUsage=1000),
-            Partner.objects.create(name="bank", limitUsage=3)
-        ]
+        self.partners = {
+            "admin":Partner.objects.create(name="admin", limitUsage=1000),
+            "bank":Partner.objects.create(name="bank", limitUsage=3)
+        }
         self.attributes = {
             "lastname": Attribute.objects.create(
                 name="lastname", 
@@ -42,7 +42,7 @@ class ApiTestCase(APITestCase):
                 category="personal data", 
                 isRequired=True, 
                 sensitiveData=False,
-                regex='/^[a-zA-Z0-9. _%+-]+@[a-zA-Z0-9',
+                regex="/^[a-zA-Z0-9. _%+-]+@[a-zA-Z0-9",
                 validation='regex'
             ),
             "phone_number":Attribute.objects.create(
@@ -53,7 +53,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False,
                 validation='regex',
-                regex=' (?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}'
+                regex=str("^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}$"),
             ),
             "birth_date":Attribute.objects.create(
                 name="birth_date", 
@@ -259,6 +259,7 @@ class ApiTestCase(APITestCase):
                 displayedName="Années de poste actuel", 
                 type="integer", 
                 category="diverse",
+                isRequired=False, 
                 sensitiveData=False
             ),
             "means_of_movement":Attribute.objects.create(
@@ -267,6 +268,7 @@ class ApiTestCase(APITestCase):
                 type="choice", 
                 validation='multiple choice',
                 category="diverse",
+                isRequired=False, 
                 sensitiveData=False
             ),
             "bank_statement":Attribute.objects.create(
@@ -275,6 +277,7 @@ class ApiTestCase(APITestCase):
                 type="file", 
                 acceptedFormat="pdf",
                 category="documents",
+                isRequired=False, 
                 sensitiveData=True
             ),
             "proof_of_address":Attribute.objects.create(
@@ -283,6 +286,7 @@ class ApiTestCase(APITestCase):
                 type="file", 
                 acceptedFormat="pdf",
                 category="documents",
+                isRequired=False, 
                 sensitiveData=True
             ),
             
@@ -327,7 +331,93 @@ class ApiTestCase(APITestCase):
             AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["indépendant_libéral"]),
             AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["fonction_publique"]),
             AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["salarié"]),
-            AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["autre situation professionnelle"]),
-                        
+            AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["autre situation professionnelle"]),     
         ]
+    
+    def test_cant_access_any_endpoint_except_auth_unless_authenticated(self):
+        #Create profile
+        url = reverse('profiles-list')
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #List metadata
+        url = reverse('metadata')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Retrieve Profile
+        url = reverse('profiles-detail', kwargs={'pk':1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+               
+        #Partial-Update Profile
+        url = reverse('profiles-detail', kwargs={'pk':1})
+        response = self.client.patch(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #Delete Profile
+        url = reverse('profiles-detail', kwargs={'pk':1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+        
+        #Submit Profile
+        url = reverse('profiles-submit', kwargs={'pk':1})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Create Document
+        url = reverse('documents-list')
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #Retrieve Document
+        url = reverse('documents-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Create Analysis
+        url = reverse('analysis-list')
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #Retrieve Analysis
+        url = reverse('analysis-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Config Webhook
+        url = reverse('webhooks-config')
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #Retrieve Webhook
+        url = reverse('webhooks-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Partial-Update Webhook
+        url = reverse('webhooks-detail', kwargs={'pk': 1})
+        response = self.client.post(url, {})
+        self.assertEqual(response.status_code, 401)
+
+        #Delete Webhook
+        url = reverse('webhooks-detail', kwargs={'pk': 1})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 401)
+
+        #Get Access Token
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        print(response.data)
+        refresh_token = response.data["data"]["refresh"]
+        self.assertEqual(response.status_code, 200)
+        
+        #Refresh Token
+        url = reverse('token_refresh')
+        print({"refresh": "%s" % (refresh_token)})
+        response = self.client.post(url, {"refresh": "%s" % (refresh_token)})
+        self.assertEqual(response.status_code, response)
+        
+
+        
         

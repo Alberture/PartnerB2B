@@ -6,4 +6,3 @@ from .models.profile import ProfileTestCase
 from .models.webhook import WebhookTestCase
 from .models.profile_attribute_document import ProfileAttributeDocumentTestCase
 from .api import ApiTestCase
-
