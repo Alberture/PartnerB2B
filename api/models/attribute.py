@@ -64,11 +64,11 @@ class Attribute(models.Model):
     
     def get_attribute_or_error(name):
         """
-            Method that returns an Attribute with the given id or
+            Method that returns an Attribute with the given name or
             raises an exception if the Attribute was not found
-            or pk is invalid.
+            or name is invalid.
 
-            param: int pk, id of the Attribute
+            param: string name
             return: Attribute
             exceptions: NotFound, ValueError
         """
@@ -80,6 +80,7 @@ class Attribute(models.Model):
                 "message": "Attribute Not Found",
                 "details": [{
                     "field": "name",
+                    "attribute": name,
                     "error": "This attribute name does not exist. Please try again"
                     }]
                 }
@@ -90,6 +91,7 @@ class Attribute(models.Model):
                 "message": "Type Error",
                 "details": [{
                         "field": "name",
+                        "attribute": name,
                         "error": "The attribute name must be a string."
                         }]
                     }
@@ -104,6 +106,53 @@ class AttributeChoice(models.Model):
     
     def __str__(self):
         return self.displayedName
+    
+    def get_attribute_choice_or_error(displayedName):
+        """
+            Method that returns an AttributeChoice with the given displayedName or
+            raises an exception if the Attribute was not found or displayedName 
+            is invalid.
+
+            param: string displayedName
+            return: AttributeChoice
+            exceptions: NotFound, ValueError
+        """
+        try:
+            return AttributeChoice.objects.get(displayedName=displayedName)
+        except AttributeChoice.DoesNotExist:
+            raise NotFound({
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "AttributeChoice Not Found",
+                "details": [{
+                    "field": "displayedName",
+                    "attribute choice": displayedName,
+                    "error": "This displayedName name does not exist. Please try again"
+                    }]
+                }
+            )
+        except ValueError:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Type Error",
+                "details": [{
+                        "field": "displayedName",
+                        "attribute choice": displayedName,
+                        "error": "The displayedName name must be a string."
+                        }]
+                    }
+                )
+        
+    def get_required_attribute_if_chosen(self):
+        """
+            Method that returns required if this attribute choice
+            is chosen.
+
+            return: Attribute or None
+        """
+        try:
+            return self.attributeattributechoice.attribute
+        except AttributeChoice.attributeattributechoice.RelatedObjectDoesNotExist:
+            return None
 
 class AttributeAttributeChoice(models.Model):
     """

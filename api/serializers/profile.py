@@ -81,15 +81,16 @@ class ProfileSerializer(serializers.ModelSerializer):
         data = super().validate(data)
 
         if not self.instance:
-            required_attributes = Attribute.objects.filter(isRequired=True).exclude(category="document")
+            required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
             for name, value in data['attributes'].items():
                 if isinstance(value, list):
                     for choice in value:
-                        required_attribute = Attribute.objects.filter(choices__displayedName=choice, attributeattributechoice__isChoice=False)
-                        required_attributes = required_attributes.union(required_attribute)
-            
+                        attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=choice)
+                        required_attribute = attribute_choice.get_required_attribute_if_chosen()
+                        if required_attribute:
+                            required_attributes.append(required_attribute)
+                            
             required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
-            
             if required_attributes:
                 raise serializers.ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,

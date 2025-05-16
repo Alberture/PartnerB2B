@@ -21,7 +21,7 @@ def value_is_in_attribute_choice_set(attribute, value):
         param: Attribute attribute, any value
         return: boolean
     """
-    exists = attribute.choices.order_by("displayedName").filter(attributeattributechoice__isChoice=True, displayedName=value)
+    exists = attribute.attributechoice_set.order_by("displayedName").filter(displayedName=value)
     if not exists:
         return False
     return True
