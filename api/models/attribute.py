@@ -41,7 +41,8 @@ class AttributeChoice(models.Model):
         Model that represents a choice related to an attriute.
     """
     displayedName = models.CharField(max_length=255)
-
+    attribute = models.ForeignKey()
+    
     def __str__(self):
         return self.displayedName
 
@@ -111,5 +112,4 @@ class AttributeAttributeChoice(models.Model):
         or tell what attributes is required upon choosing an attribute choice.
     """
     attribute_choice = models.ForeignKey(AttributeChoice, on_delete=models.CASCADE)
-    isChoice = models.BooleanField() #If false then choosing this attribute_choice makes the related attribute required
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
