@@ -3,6 +3,8 @@ from django.db import models
 from rest_framework import status
 from rest_framework.exceptions import NotFound, ValidationError
 
+import sys
+
 TYPE_CHOICE = [
     ('string', 'Texte'),
     ('integer', 'Entier'),
@@ -20,6 +22,7 @@ CATEGORIES_CHOICE = [
     ('address', 'Adresse'),
     ('housing situation', 'Situation d\'habitation'),
     ('family situation', 'Situation familiale'),
+    ('children', 'Enfants'),
     ('professional situation', 'Situation professionnelle'),
     ('product usage', 'Usage du produit'),
     ('income and expenses', 'Revenus et charge'),
@@ -49,10 +52,10 @@ class Attribute(models.Model):
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
-    maxLength = models.IntegerField(null=True, blank=True)
-    minLength = models.IntegerField(null=True, blank=True)
-    maxValue = models.FloatField(null=True, blank=True)
-    minValue = models.FloatField(null=True, blank=True)
+    maxLength = models.IntegerField(null=True, blank=True, default=sys.maxsize)
+    minLength = models.IntegerField(null=True, blank=True, default=0)
+    maxValue = models.FloatField(null=True, blank=True, default=sys.maxsize)
+    minValue = models.FloatField(null=True, blank=True, default=-sys.maxsize - 1)
     isEqualTo = models.FloatField(null=True, blank=True)
     maxDate = models.DateField(null=True, blank=True)
     minDate = models.DateField(null=True, blank=True)
