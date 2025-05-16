@@ -4,9 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import serializers
 from datetime import datetime
 
-from django.contrib.auth.models import User
-
-from ..utils import valid_response
+from ..utils import valid_response, PartnerUserWrapper
 from ..models import Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer, OpenApiResponse
@@ -64,21 +62,6 @@ class ObtainPairToken(APIView):
     )
     def post(self, request, *args, **kwargs):
         partner = Partner.get_partner_or_error(request.data.get('apiKey'))
-        class PartnerUserWrapper:
-            """
-                Since I'm using django JWT I need to pass an User-like object to the RefreshToken object
-                because the RefreshToken object is based on the User object
-            """
-            def __init__(self, id): 
-                self.id = id
-                try:
-                    partner = Partner.objects.get(pk=id)
-                except Partner.DoesNotExist:
-                    user = User.objects.create_user(username=partner.name)
-
-            @property
-            def is_active(self): return True  # required by JWT
-
         partner_user = PartnerUserWrapper(partner.id)
         refresh_token = RefreshToken.for_user(partner_user)
         refresh_expire = datetime.fromtimestamp(refresh_token['exp']).isoformat()

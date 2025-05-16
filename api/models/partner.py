@@ -6,6 +6,7 @@ from django.db import models
 from rest_framework import status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import NotFound, ValidationError
+from django.contrib.auth.models import User
 
 STATUS_CHOICE = [
     ('pending', 'en attente'),
@@ -37,6 +38,8 @@ class Partner(models.Model):
             while partner:
                 self.apiKey = binascii.hexlify(os.urandom(20)).decode()
                 partner = Partner.objects.filter(apiKey=self.apiKey)
+            
+        User.objects.create_user(username=self.name)
         super().save(*args, **kwargs)
 
     def get_partner_or_error(apiKey):

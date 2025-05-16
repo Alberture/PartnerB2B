@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from api.models import *
+from django.contrib.auth.models import User
 
 class ApiTestCase(APITestCase):
     def setUp(self):
@@ -405,19 +406,13 @@ class ApiTestCase(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, 401)
 
-        #Get Access Token
+        # Get Access + Refresh token
         url = reverse('token')
         response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        print(response.data)
         refresh_token = response.data["data"]["refresh"]
         self.assertEqual(response.status_code, 200)
-        
-        #Refresh Token
-        url = reverse('token_refresh')
-        print({"refresh": "%s" % (refresh_token)})
-        response = self.client.post(url, {"refresh": "%s" % (refresh_token)})
-        self.assertEqual(response.status_code, response)
-        
 
-        
-        
+        # Refresh the token
+        url = reverse('token_refresh')
+        response = self.client.post(url, {"refresh": refresh_token})
+        self.assertEqual(response.status_code, 200)        
