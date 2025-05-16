@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -10,8 +9,8 @@ class ApiTestCase(APITestCase):
             Partner.objects.create(name="admin", limitUsage=1000),
             Partner.objects.create(name="bank", limitUsage=3)
         ]
-        self.attributes = [
-            Attribute.objects.create(
+        self.attributes = {
+            "lastname": Attribute.objects.create(
                 name="lastname", 
                 displayedName="Nom", 
                 type="string", 
@@ -19,7 +18,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "firstname": Attribute.objects.create(
                 name="firstname", 
                 displayedName="Prénom", 
                 type="string", 
@@ -27,7 +26,16 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "gender": Attribute.objects.create(
+                name="gender", 
+                displayedName="Genre", 
+                type="choice", 
+                validation='unique choice',
+                category="personal data", 
+                isRequired=False, 
+                sensitiveData=False
+            ),
+            "email": Attribute.objects.create(
                 name="email", 
                 displayedName="Email", 
                 type="string", 
@@ -37,7 +45,7 @@ class ApiTestCase(APITestCase):
                 regex='/^[a-zA-Z0-9. _%+-]+@[a-zA-Z0-9',
                 validation='regex'
             ),
-            Attribute.objects.create(
+            "phone_number":Attribute.objects.create(
                 name="phone_number", 
                 displayedName="Numéro de téléphone", 
                 type="string", 
@@ -47,7 +55,7 @@ class ApiTestCase(APITestCase):
                 validation='regex',
                 regex=' (?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}'
             ),
-            Attribute.objects.create(
+            "birth_date":Attribute.objects.create(
                 name="birth_date", 
                 displayedName="Date de naissance", 
                 type="date", 
@@ -55,7 +63,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False,
             ),
-            Attribute.objects.create(
+            "birth_country":Attribute.objects.create(
                 name="birth_country", 
                 displayedName="Pays de naissance", 
                 type="choice", 
@@ -63,7 +71,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "birth_town":Attribute.objects.create(
                 name="birth_town", 
                 displayedName="Ville de naissance", 
                 type="string", 
@@ -71,7 +79,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "identity_document_type":Attribute.objects.create(
                 name="identity_document_type", 
                 displayedName="Type de pièce d'identité", 
                 type="choice", 
@@ -79,7 +87,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "identity_document_number":Attribute.objects.create(
                 name="identity_document_number", 
                 displayedName="Numéro de pièce d'identité", 
                 type="string", 
@@ -87,7 +95,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False,
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "billing_address1":Attribute.objects.create(
                 name="billing_address1", 
                 displayedName="Adresse de facturation 1", 
                 type="string", 
@@ -95,7 +103,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "billing_address2":Attribute.objects.create(
                 name="billing_address2", 
                 displayedName="Adresse de facturation 2", 
                 type="string", 
@@ -103,7 +111,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "billing_zip_code":Attribute.objects.create(
                 name="billing_zip_code", 
                 displayedName="Code postal de facturation", 
                 type="string", 
@@ -111,7 +119,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "billing_town":Attribute.objects.create(
                 name="billing_town", 
                 displayedName="Ville de facturation", 
                 type="string", 
@@ -119,7 +127,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "billing_country":Attribute.objects.create(
                 name="billing_country", 
                 displayedName="Pays de facturation", 
                 type="choice", 
@@ -128,7 +136,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "delivery_address1":Attribute.objects.create(
                 name="delivery_address1", 
                 displayedName="Adresse de livraison1", 
                 type="string", 
@@ -136,7 +144,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "delivery_address2":Attribute.objects.create(
                 name="delivery_address2", 
                 displayedName="Adresse de livraison2", 
                 type="string", 
@@ -144,7 +152,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "delivery_zip_code":Attribute.objects.create(
                 name="delivery_zip_code", 
                 displayedName="Code postal de livraison", 
                 type="string", 
@@ -152,7 +160,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "delivery_town":Attribute.objects.create(
                 name="delivery_town", 
                 displayedName="Ville de livraison", 
                 type="string", 
@@ -160,7 +168,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "delivery_country":Attribute.objects.create(
                 name="delivery_country", 
                 displayedName="Pays de livraison", 
                 type="choice", 
@@ -169,7 +177,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "housing_situation":Attribute.objects.create(
                 name="housing_situation", 
                 displayedName="Situation de logement", 
                 type="choice", 
@@ -178,7 +186,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "other_housing_situation":Attribute.objects.create(
                 name="other_housing_situation", 
                 displayedName="Situation de logement autre", 
                 type="string", 
@@ -186,7 +194,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "family_situation":Attribute.objects.create(
                 name="family_situation", 
                 displayedName="Situation familiale", 
                 type="choice", 
@@ -194,7 +202,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "children_number":Attribute.objects.create(
                 name="children_number", 
                 displayedName="Nombre d'enfants", 
                 type="integer", 
@@ -204,7 +212,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "professional_situation":Attribute.objects.create(
                 name="professional_situation", 
                 displayedName="Situation professionnelle", 
                 type="choice", 
@@ -213,7 +221,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "product_usage":Attribute.objects.create(
                 name="product_usage", 
                 displayedName="Usage du produit", 
                 type="choice", 
@@ -222,7 +230,7 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "monthly_income":Attribute.objects.create(
                 name="monthly_income", 
                 displayedName="Revenu mensuel", 
                 type="integer", 
@@ -230,7 +238,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "monthly_charges":Attribute.objects.create(
                 name="monthly_charges", 
                 displayedName="Charges mensuel", 
                 type="integer", 
@@ -238,7 +246,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "scholarship_student":Attribute.objects.create(
                 name="scholarship_student", 
                 displayedName="étudiant boursier", 
                 type="boolean", 
@@ -246,14 +254,14 @@ class ApiTestCase(APITestCase):
                 isRequired=False, 
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "years_in_current_job":Attribute.objects.create(
                 name="years_in_current_job", 
                 displayedName="Années de poste actuel", 
                 type="integer", 
                 category="diverse",
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "means_of_movement":Attribute.objects.create(
                 name="means_of_movement", 
                 displayedName="Moyen de déplacement", 
                 type="choice", 
@@ -261,7 +269,7 @@ class ApiTestCase(APITestCase):
                 category="diverse",
                 sensitiveData=False
             ),
-            Attribute.objects.create(
+            "bank_statement":Attribute.objects.create(
                 name="bank_statement", 
                 displayedName="Relevé bancaire", 
                 type="file", 
@@ -269,7 +277,7 @@ class ApiTestCase(APITestCase):
                 category="documents",
                 sensitiveData=True
             ),
-            Attribute.objects.create(
+            "proof_of_address":Attribute.objects.create(
                 name="proof_of_address", 
                 displayedName="Justificatif de domicile", 
                 type="file", 
@@ -278,9 +286,39 @@ class ApiTestCase(APITestCase):
                 sensitiveData=True
             ),
             
-        ]
+        }
         self.attribute_choices = [
-
+            AttributeChoice.objects.create(displayedName="M", attribute=self.attributes['gender']),
+            AttributeChoice.objects.create(displayedName="F", attribute=self.attributes['gender']),
+            AttributeChoice.objects.create(displayedName="autre genre", attribute=self.attributes['gender']),
+            AttributeChoice.objects.create(displayedName="CI", attribute=self.attributes['identity_document_type']),
+            AttributeChoice.objects.create(displayedName="passeport", attribute=self.attributes['identity_document_type']),
+            AttributeChoice.objects.create(displayedName="carte_sejour", attribute=self.attributes['identity_document_type']),
+            AttributeChoice.objects.create(displayedName="locataire", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="colocataire", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="propriétaire", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="accédant_propriété", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="hébergé_gratuit", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="autre situation d'habilitation", attribute=self.attributes['housing_situation']),
+            AttributeChoice.objects.create(displayedName="célibataire", attribute=self.attributes['family_situation']),
+            AttributeChoice.objects.create(displayedName="marié_pacsé", attribute=self.attributes['family_situation']),
+            AttributeChoice.objects.create(displayedName="séparé_divorcé", attribute=self.attributes['family_situation']),
+            AttributeChoice.objects.create(displayedName="étudiant", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="cadre", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="entrepreneur_chef_entreprise", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="indépendant_libéral", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="fonction_publique", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="salarié", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="recherche_emploi", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="autre situation professionnelle", attribute=self.attributes['professional_situation']),
+            AttributeChoice.objects.create(displayedName="études", attribute=self.attributes['product_usage']),
+            AttributeChoice.objects.create(displayedName="loisir", attribute=self.attributes['product_usage']),
+            AttributeChoice.objects.create(displayedName="professionnel", attribute=self.attributes['product_usage']),
+            AttributeChoice.objects.create(displayedName="marche", attribute=self.attributes['means_of_movement']),
+            AttributeChoice.objects.create(displayedName="vélo", attribute=self.attributes['means_of_movement']),
+            AttributeChoice.objects.create(displayedName="auto", attribute=self.attributes['means_of_movement']),
+            AttributeChoice.objects.create(displayedName="moto", attribute=self.attributes['means_of_movement']),
+            
         ]
         self.attribute_attribute_choice = [
 

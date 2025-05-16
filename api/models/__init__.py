@@ -10,7 +10,6 @@ __all__ = [
     'Partner',
     'Attribute',
     'Profile',
-    'Profil',
     'ProfileAttribute',
     'Analysis',
     'ProfileAttributeDocument',
