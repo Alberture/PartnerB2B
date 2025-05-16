@@ -73,4 +73,5 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
                     }
                 ]
             })
+        return data
     
