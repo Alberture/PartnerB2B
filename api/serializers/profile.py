@@ -6,8 +6,6 @@ from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 
-from ..utils import value_is_in_attribute_choice_set_or_error, check_unique_multiple_choices_validation
-
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
         Serializer to transform a Profile object to JSON.
