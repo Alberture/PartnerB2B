@@ -36,16 +36,6 @@ VALIDATION_CHOICE = [
     ('min/max date', 'Date minimale et maximale'),
 ]
 
-class AttributeChoice(models.Model):
-    """
-        Model that represents a choice related to an attriute.
-    """
-    displayedName = models.CharField(max_length=255)
-    attribute = models.ForeignKey()
-    
-    def __str__(self):
-        return self.displayedName
-
 class Attribute(models.Model):
     """
         Model that represents a specificity of a Profile or Document.
@@ -57,7 +47,6 @@ class Attribute(models.Model):
     category = models.CharField(choices=CATEGORIES_CHOICE)
     isRequired = models.BooleanField()
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
-    choices = models.ManyToManyField(AttributeChoice, through='AttributeAttributeChoice')
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
     maxLength = models.IntegerField(null=True, blank=True)
@@ -106,10 +95,22 @@ class Attribute(models.Model):
                     }
                 )
 
+class AttributeChoice(models.Model):
+    """
+        Model that represents a choice related to an attriute.
+    """
+    displayedName = models.CharField()
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
+    
+    def __str__(self):
+        return self.displayedName
+
 class AttributeAttributeChoice(models.Model):
     """
-        Intermediate table to either set an attribute_choice in an attribute choice set
-        or tell what attributes is required upon choosing an attribute choice.
+        Intermediate table that link an attribute choice to an attribute.
+        The relation can be interpreted as "In this table, if an attribute_choice is related
+        to an attribute then if the user choses this attribute_choice, the attribute becomes 
+        required"
     """
-    attribute_choice = models.ForeignKey(AttributeChoice, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE)
+    attribute_choice = models.OneToOneField(AttributeChoice, on_delete=models.CASCADE, null=True, blank=True)
+    attribute = models.OneToOneField(Attribute, on_delete=models.CASCADE, null=True, blank=True)
