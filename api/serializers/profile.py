@@ -6,7 +6,7 @@ from .profile_attribute_document import ProfileAttributeDocumentItemSerializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 
-from ..utils import value_is_in_attribute_choice_set
+from ..utils import value_is_in_attribute_choice_set_or_error, check_unique_multiple_choices_validation
 
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
@@ -80,16 +80,26 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
 
-        if not self.instance:
-            required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
-            for name, value in data['attributes'].items():
+        required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
+        for name, value in data['attributes'].items():
+            attribute = Attribute.get_attribute_or_error(name=name) 
+            if attribute.type == "choice":
+                check_unique_multiple_choices_validation(attribute, value)
                 if isinstance(value, list):
                     for choice in value:
+                        value_is_in_attribute_choice_set_or_error(attribute, choice)
                         attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=choice)
-                        required_attribute = attribute_choice.get_required_attribute_if_chosen()
+                        required_attribute = attribute_choice.get_required_attribute_if_chosen()    
                         if required_attribute:
-                            required_attributes.append(required_attribute)
-                            
+                            required_attributes.append(required_attribute)   
+                else:
+                    value_is_in_attribute_choice_set_or_error(attribute, value)
+                    attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=value)
+                    required_attribute = attribute_choice.get_required_attribute_if_chosen()    
+                    if required_attribute:
+                        required_attributes.append(required_attribute)   
+    
+        if not self.instance:
             required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
             if required_attributes:
                 raise serializers.ValidationError({
@@ -99,60 +109,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                         {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
                     ]
                 })
-            
-        for name, value in data['attributes'].items():
-            if isinstance(value, list):
-                attribute = Attribute.get_attribute_or_error(name=name)                
-                if attribute.type == "choice":
-                    for choice in value:   
-                        if not value_is_in_attribute_choice_set(attribute, choice):
-                            raise serializers.ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error.",
-                            "details":[
-                                {
-                                    "field": "value",
-                                    "error": "The choice must among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
-                                    "attribute": attribute.name,
-                                }
-                            ]
-                        })
-                    if attribute.validation == 'unique choice' and len(value) != 1:
-                        raise serializers.ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error.",
-                            "details":[
-                                {
-                                    "field": "value",
-                                    "error": "The choice must be unique among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
-                                    "attribute": attribute.name,
-                                }
-                            ]
-                        })
-                    elif attribute.validation == 'multiple choice' and len(value) < 2:
-                        raise serializers.ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error.",
-                            "details":[
-                                {
-                                    "field": "value",
-                                    "error": "There must be multiple choices be unique among : %s" % (list(map(str, attribute.choices.order_by('displayedName')))),
-                                    "attribute": attribute.name
-                                }
-                            ]
-                        })
-                else:
-                    raise serializers.ValidationError({
-                            "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error.",
-                            "details":[
-                                {
-                                    "field": "value",
-                                    "error": "This attribute does not have choices.",
-                                    "attribute": attribute.name
-                                }
-                            ]
-                        })
+        
         return data
 
         

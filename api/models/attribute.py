@@ -159,7 +159,7 @@ class AttributeAttributeChoice(models.Model):
         Intermediate table that link an attribute choice to an attribute.
         The relation can be interpreted as "In this table, if an attribute_choice is related
         to an attribute then if the user choses this attribute_choice, the attribute becomes 
-        required"
+        required".
     """
     attribute_choice = models.OneToOneField(AttributeChoice, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.OneToOneField(Attribute, on_delete=models.CASCADE, null=True, blank=True)
