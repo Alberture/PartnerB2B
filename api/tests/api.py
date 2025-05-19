@@ -677,6 +677,9 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
+        self.assertEqual(response.data['data']['status'], 'draft')
+        self.assertEqual(response.data['data']['profileattribute_set'][0]['value'], 'Jean-Luck')
+        self.assertEqual(response.data['data']['profileattribute_set'][1]['value'], 'Sithi')
 
     def test_create_valid_profile_without_external_reference(self):
         url = reverse('token')
@@ -709,6 +712,8 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-detail', kwargs={"pk": 1})
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['data']['profileattribute_set'][0]['value'], 'Jean-Luck')
+        self.assertEqual(response.data['data']['profileattribute_set'][1]['value'], 'Sithi')
         
         url = reverse('profiles-detail', kwargs={"pk": 2})
         response = self.client.get(url, content_type='application/json')
@@ -721,8 +726,16 @@ class ApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         url = reverse('profiles-detail', kwargs={"pk": 1})
-        response = self.client.patch(url, content_type='application/json')
+        request_body = {
+            "attributes":{
+                "firstname": "Hugo"
+            }
+        }
+        response = self.client.patch(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.data['data']['profileattribute_set'][0]['value'], "Hugo")
         
         url = reverse('profiles-detail', kwargs={"pk": 2})
         response = self.client.patch(url, content_type='application/json')
@@ -737,6 +750,7 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-detail', kwargs={"pk": 1})
         response = self.client.delete(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['data']['message'], 'Le profil à bien été supprimé.')
 
         url = reverse('profiles-detail', kwargs={"pk": 2})
         response = self.client.delete(url, content_type='application/json')
@@ -752,6 +766,12 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
+        url = reverse('profiles-detail', kwargs={"pk": 1})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.data['data']['status'], "complete")
+
         url = reverse('profiles-submit', kwargs={"pk": 2})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
+
+    
