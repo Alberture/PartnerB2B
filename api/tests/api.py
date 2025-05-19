@@ -435,16 +435,16 @@ class ApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         url = reverse('profiles-list')
-        #missing attributes
+        #error for missing attributes
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck"
-            },
-            "externalReference": "reference"
+            }
         }
         response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
 
-        #attribute does not exist profile
+        #error for attribute does not exist profile
         request_body = {
             "attributes": {
                 "firname": "Jean-Luck",
@@ -456,11 +456,147 @@ class ApiTestCase(APITestCase):
                 "phone_number": "0768057143",
                 "scholarship_student": "True",
                 "professional_situation": "étudiant"
+            }
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 404)   
+
+        #error for invalid choice for attribute with choices
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "invalid choice"
+            }
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400) 
+
+        #error for multiple choice for attribute with choices with unique choice validation
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": ["étudiant", "salarié"]
+            }
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400)     
+
+        #error for multiple choice for attribute with choices with unique choice validation
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "means_of_movement": "vélo"
+            }
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400)     
+
+        #error for value does not match an attribute with regex validation
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "1234567890",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            }
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400) 
+
+        #error for invalid attribute type
+        #integer
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": "monthly_income",
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
             },
             "externalReference": "reference"
         }
         response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 404)   
+        self.assertEqual(response.status_code, 400) 
+        #invalid date
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "9999-99-99",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400) 
+        #invalid date format
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "01/01/2020",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400)   
+
+        #error for missing conditionnaly required attribute(s)
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "professional_situation": "étudiant"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 400)  
 
         #valid profile
         request_body = {
