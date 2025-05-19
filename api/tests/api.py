@@ -428,14 +428,12 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data['data']), 12)
 
-    def test_create_profile(self):
+    def test_cant_create_profile_with_missing_attributes(self):
         url = reverse('token')
         response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
         access_token = response.data["data"]["access"]
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
-
         url = reverse('profiles-list')
-        #error for missing required attributes
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck"
@@ -446,10 +444,15 @@ class ApiTestCase(APITestCase):
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')
 
-        #error for attribute does not exist profile
+    def test_cant_create_profile_with_invalid_attribute_name(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
-                "firname": "Jean-Luck",
+                "firnamet": "Jean-Luck",
                 "lastname": "Sithi",
                 "email": "sithijeanluck@gmail.com",
                 "birth_date": "2005-07-21",
@@ -465,7 +468,12 @@ class ApiTestCase(APITestCase):
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
 
-        #error for invalid choice for attribute with choices
+    def test_cant_create_profile_with_a_choice_that_does_not_exist_for_an_attribute(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -483,8 +491,13 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Choice does not exist.')
-
-        #error for multiple choice for attribute with choices with unique choice validation
+    
+    def test_cant_create_profile_with_multiple_choices_for_an_attribute_with_unique_choice_validation(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -502,8 +515,13 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Choice must be unique')    
-
-        #error for value does not match an attribute with regex validation
+    
+    def test_cant_create_profile_with_invalid_regex_for_attribute_with_regex_validation(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -522,8 +540,13 @@ class ApiTestCase(APITestCase):
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Regex match invalid')   
 
-        #error for invalid attribute type
-        #integer
+    def test_cant_create_profile_with_invalid_value_type_for_an_attribute(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
+        #invalid integer
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -581,7 +604,12 @@ class ApiTestCase(APITestCase):
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Type Error')   
 
-        #error for missing conditionnaly required attribute(s)
+    def test_cant_create_profile_with_missing_conditionally_required_attributes(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -600,7 +628,12 @@ class ApiTestCase(APITestCase):
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')   
 
-        #valid profile
+    def test_create_valid_profile(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck",
@@ -619,3 +652,25 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
 
+    def test_create_valid_profile_without_external_reference(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        url = reverse('profiles-list')
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNotNone(response.data.get('data'))

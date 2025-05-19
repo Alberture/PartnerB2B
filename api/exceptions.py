@@ -43,7 +43,7 @@ def _handle_authentication_error(exc, context, response):
     return response
 
 def _handle_validation_error(exc, context, response):
-    if exc.args[0]:
+    if response.data.get('message'):
         return Response(error_response_template(exc.args[0], context.get('request')), status=status.HTTP_400_BAD_REQUEST)
     
     fields = response.data.keys()
