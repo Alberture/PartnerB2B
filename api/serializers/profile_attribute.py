@@ -17,7 +17,4 @@ class ProfileAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileAttribute
         fields = '__all__'
-
-    
-
-
+        

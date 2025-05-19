@@ -144,7 +144,7 @@ class ProfileAttribute(models.Model):
                             }]
                             }
                         ) 
-    def save(self, *args, **kwargs):
+    def save(self, **kwargs):
         self.clean()
-        return super().save(*args, **kwargs)
+        return super().save(**kwargs)
     

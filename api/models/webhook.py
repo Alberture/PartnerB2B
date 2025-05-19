@@ -54,7 +54,7 @@ class Webhook(models.Model):
         
     def clean(self):
         try:
-            requests.post(self.url, {"key": self.token})
+            requests.post(self.url, json={"key": self.token})
         except ConnectionError:
             raise ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,

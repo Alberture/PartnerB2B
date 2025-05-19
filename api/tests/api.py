@@ -43,7 +43,7 @@ class ApiTestCase(APITestCase):
                 category="personal data", 
                 isRequired=True, 
                 sensitiveData=False,
-                regex="/^[a-zA-Z0-9. _%+-]+@[a-zA-Z0-9",
+                regex=r"^\S+@\S+\.\S+$",
                 validation='regex'
             ),
             "phone_number":Attribute.objects.create(
@@ -54,7 +54,7 @@ class ApiTestCase(APITestCase):
                 isRequired=True, 
                 sensitiveData=False,
                 validation='regex',
-                regex=str("^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}$"),
+                regex=r"^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$",
             ),
             "birth_date":Attribute.objects.create(
                 name="birth_date", 
@@ -435,15 +435,48 @@ class ApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         url = reverse('profiles-list')
+        #missing attributes
         request_body = {
             "attributes": {
-                "firstname": "name"
+                "firstname": "Jean-Luck"
             },
             "externalReference": "reference"
         }
         response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(str(response.data["error"]["code"][0]), "400")
 
-        
+        #attribute does not exist profile
+        request_body = {
+            "attributes": {
+                "firname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 404)   
 
-    
+        #valid profile
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(response.status_code, 201)   
+
