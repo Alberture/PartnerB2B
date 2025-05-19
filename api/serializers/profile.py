@@ -87,7 +87,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         for name, value in data['attributes'].items():
             attribute = Attribute.get_attribute_or_error(name=name) 
             if attribute.type == "choice":
-                self.check_unique_multiple_choices_validation(attribute, value)
+                if attribute.validation == 'unique choice':
+                    self.check_unique_choice_validation(attribute, value)
                 if isinstance(value, list):
                     for choice in value:
                         self.value_is_in_attribute_choice_set_or_error(attribute, choice)
@@ -138,40 +139,23 @@ class ProfileSerializer(serializers.ModelSerializer):
                 ]
             })
     
-    def check_unique_multiple_choices_validation(self, attribute, value):
+    def check_unique_choice_validation(self, attribute, value):
         """
-            Method that verifies the validation choice for an attribute 
-            and value.
+            Method that verifies for an attribute with unique choice 
+            if the choice made is unique.
 
             param: Attribute attribute, any value
             exceptions: ValidationError
         """
-        if attribute.validation == 'unique choice':
-            if isinstance(value, list) and len(value) != 1:
-                raise serializers.ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Choice must be unique",
-                    "details":[
-                        {
-                            "field": "value",
-                            "error": "The choice must be unique among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
-                            "attribute": attribute.name,
-                        }
-                    ]
-                })
-        elif attribute.validation == 'multiple choice':
-            if len(value) < 2 or not isinstance(value, list):
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Choice must not be unique",
-                    "details":[
-                        {
-                            "field": "value",
-                            "error": "There must be multiple choices be unique among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
-                            "attribute": attribute.name
-                        }
-                    ]
-                })
-
-        
-    
+        if isinstance(value, list) and len(value) != 1:
+            raise serializers.ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Choice must be unique",
+                "details":[
+                    {
+                        "field": "value",
+                        "error": "The choice must be unique among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
+                        "attribute": attribute.name,
+                    }
+                ]
+            })

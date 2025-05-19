@@ -501,22 +501,6 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)     
 
-        #error for multiple choice for attribute with choices with unique choice validation
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "means_of_movement": "vélo"
-            }
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 400)     
-
         #error for value does not match an attribute with regex validation
         request_body = {
             "attributes": {
