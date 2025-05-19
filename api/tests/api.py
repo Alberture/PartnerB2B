@@ -482,7 +482,7 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
-        self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
+        self.assertEqual(response.data['error']['message'][0], 'Choice does not exist.')
 
         #error for multiple choice for attribute with choices with unique choice validation
         request_body = {
@@ -499,7 +499,9 @@ class ApiTestCase(APITestCase):
             }
         }
         response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 400)     
+        self.assertEqual(response.status_code, 400) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'][0], 'Choice must be unique')    
 
         #error for value does not match an attribute with regex validation
         request_body = {
@@ -517,6 +519,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Regex match invalid')   
 
         #error for invalid attribute type
         #integer
@@ -536,6 +540,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Type Error')   
         #invalid date
         request_body = {
             "attributes": {
@@ -553,6 +559,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Type Error')   
         #invalid date format
         request_body = {
             "attributes": {
@@ -570,6 +578,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)   
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Type Error')   
 
         #error for missing conditionnaly required attribute(s)
         request_body = {
@@ -587,6 +597,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)  
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')   
 
         #valid profile
         request_body = {
@@ -604,5 +616,6 @@ class ApiTestCase(APITestCase):
             "externalReference": "reference"
         }
         response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 201)   
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNotNone(response.data.get('data'))
 
