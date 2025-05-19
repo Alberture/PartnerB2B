@@ -5,6 +5,9 @@ from .partner import Partner
 import binascii
 import os
 
+import requests
+from requests.exceptions import MissingSchema, ConnectionError
+
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework import status
 
@@ -15,7 +18,7 @@ class Webhook(models.Model):
     """
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE, null=True, blank=True)
     url = models.CharField()
-    key = models.CharField(null=True, blank=True)
+    token = models.CharField(null=True, blank=True)
 
     def get_webhook_or_error(pk):
         """
@@ -49,12 +52,38 @@ class Webhook(models.Model):
                 }
             )
         
+    def clean(self):
+        try:
+            requests.post(self.url, {"key": self.token})
+        except ConnectionError:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Connection Error",
+                "details":[
+                    {
+                        "field": "url",
+                        "error": "We couldn't connect to the given url. Please make sure it is correct."
+                    }
+                ]
+            })
+        except MissingSchema:
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Missing Schema",
+                "details":[
+                    {
+                        "field": "url",
+                        "error": "This is not an url. Perhaps you meant https://%s ?" % (self.url)
+                    }
+                ]
+            })
+        
     def save(self, *args, **kwargs):
-        if not self.key:
-            self.apikeyKey = binascii.hexlify(os.urandom(20)).decode()
-            webhook = Webhook.objects.filter(key=self.key)
+        if not self.token:
+            self.token = binascii.hexlify(os.urandom(20)).decode()
+            webhook = Webhook.objects.filter(token=self.token)
             while webhook:
-                self.key = binascii.hexlify(os.urandom(20)).decode()
-                webhook = Webhook.objects.filter(key=self.key)
-
+                self.token = binascii.hexlify(os.urandom(20)).decode()
+                webhook = Webhook.objects.filter(token=self.token)
+        self.clean()
         super().save(*args, **kwargs)
