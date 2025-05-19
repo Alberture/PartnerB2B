@@ -1,7 +1,11 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
-from api.models import *
 from django.test import Client
+
+from rest_framework.test import APITestCase
+
+from api.models import *
+
+from PIL import Image
 
 class ApiTestCase(APITestCase):
     def setUp(self):
@@ -359,6 +363,20 @@ class ApiTestCase(APITestCase):
                 ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(pk=1), value="étudiant"),
             ],
         }
+
+        self.request_body_for_create_profile = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            }
+        }
     
     def test_cant_access_any_endpoint_except_auth_unless_authenticated(self):
         #Create profile
@@ -466,41 +484,17 @@ class ApiTestCase(APITestCase):
     def test_cant_create_profile_with_invalid_attribute_name(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firnamet": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            }
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 404) 
+        self.request_body_for_create_profile['attributes']['firname'] = "Jean-Luck"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
+        self.assertEqual(response.status_code, 404)
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
 
     def test_cant_create_profile_with_a_choice_that_does_not_exist_for_an_attribute(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "invalid choice"
-            }
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['professional_situation'] = "invalid choice"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Choice does not exist.')
@@ -508,20 +502,8 @@ class ApiTestCase(APITestCase):
     def test_cant_create_profile_with_multiple_choices_for_an_attribute_with_unique_choice_validation(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": ["étudiant", "salarié"]
-            }
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['professional_situation'] = ["étudiant", "salarié"]
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'][0], 'Choice must be unique')    
@@ -529,20 +511,8 @@ class ApiTestCase(APITestCase):
     def test_cant_create_profile_with_invalid_regex_for_attribute_with_regex_validation(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "1234567890",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            }
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['phone_number'] = "1234567890"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Regex match invalid')   
@@ -551,59 +521,20 @@ class ApiTestCase(APITestCase):
         self.authenticate('bank')
         url = reverse('profiles-list')
         #invalid integer
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": "monthly_income",
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-            "externalReference": "reference"
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['monthly_income'] = "monthly_income"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Type Error')   
         #invalid date
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "9999-99-99",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-            "externalReference": "reference"
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['birth_date'] = "9999-99-99"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Type Error')   
         #invalid date format
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "01/01/2020",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-            "externalReference": "reference"
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        self.request_body_for_create_profile['attributes']['birth_date'] = "01/01/2020"
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 400)   
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Type Error')   
@@ -612,17 +543,7 @@ class ApiTestCase(APITestCase):
         self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "professional_situation": "étudiant"
-            },
-            "externalReference": "reference"
+            "attributes": {attribute: value for attribute, value in self.request_body_for_create_profile['attributes'].items() if attribute != "scholarship_student"}
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)  
@@ -632,21 +553,7 @@ class ApiTestCase(APITestCase):
     def test_create_valid_profile(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-            "externalReference": "reference"
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
         self.assertEqual(response.data['data']['status'], 'draft')
@@ -656,19 +563,7 @@ class ApiTestCase(APITestCase):
     def test_create_valid_profile_without_external_reference(self):
         self.authenticate('bank')
         url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-        }
+        request_body = {attribute: value for attribute, value in self.request_body_for_create_profile.items() if attribute != "externalReference"}
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
@@ -737,7 +632,6 @@ class ApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
     def test_create_document(self):
-        pass
         """
         image = Image.new('RGB', (100, 100))
 
