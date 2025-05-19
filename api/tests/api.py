@@ -742,4 +742,16 @@ class ApiTestCase(APITestCase):
         response = self.client.delete(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
     
-    
+    def test_partner_can_submit_their_profiles_only(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        url = reverse('profiles-submit', kwargs={"pk": 1})
+        response = self.client.post(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        url = reverse('profiles-submit', kwargs={"pk": 2})
+        response = self.client.post(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
