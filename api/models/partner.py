@@ -39,7 +39,7 @@ class Partner(models.Model):
                 self.apiKey = binascii.hexlify(os.urandom(20)).decode()
                 partner = Partner.objects.filter(apiKey=self.apiKey)
             
-        User.objects.create_user(username=self.name)
+            User.objects.create_user(username=self.name)
         super().save(*args, **kwargs)
 
     def get_partner_or_error(apiKey):
@@ -71,8 +71,9 @@ class Partner(models.Model):
                 "message": "Type Error",
                 "details": [
                     {
-                    "field": "pk",
-                    "error": "The partner id must be an integer."
+                    "field": "apiKey",
+                    "apiKey": apiKey,
+                    "error": "The partner API key must be a string."
                     }
                 ]
                 }

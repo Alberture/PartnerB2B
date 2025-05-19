@@ -53,6 +53,7 @@ class Analysis(models.Model):
                         "message": "Type Error",
                         "details": [{
                             "field": "pk",
+                            "pk": pk,
                             "error": "The analysis id must be an integer."
                         }]
                     }

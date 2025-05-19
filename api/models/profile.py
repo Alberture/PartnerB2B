@@ -50,6 +50,7 @@ class Profile(models.Model):
                 "message": "Type Error", 
                 "details": [{
                     "field": "pk",
+                    "pk": pk,
                     "error": "The profile id must be an integer."
                     }]
                 }

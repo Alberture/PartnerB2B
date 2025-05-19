@@ -47,6 +47,7 @@ class Webhook(models.Model):
                 "message": "Type Error", 
                 "details": [{
                     "field": "pk",
+                    "pk": pk,
                     "error": "The Webhook id must be an integer."
                     }]
                 }

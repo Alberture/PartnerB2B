@@ -377,6 +377,9 @@ class ApiTestCase(APITestCase):
                 "professional_situation": "étudiant"
             }
         }
+
+        Analysis.objects.create(profile=Profile.objects.get(pk=1))
+        Analysis.objects.create(profile=Profile.objects.get(pk=2))
     
     def test_cant_access_any_endpoint_except_auth_unless_authenticated(self):
         #Create profile
@@ -624,12 +627,6 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-submit', kwargs={"pk": 2})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
-    
-    def authenticate(self, partner_name):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners[partner_name].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
     def test_create_document(self):
         """
@@ -641,3 +638,32 @@ class ApiTestCase(APITestCase):
 
         response = self.client.post('my_url', {'image': tmp_file}, format='multipart')
         """
+    
+    def test_partner_can_create_analysis_for_their_profiles_only(self):
+        self.authenticate("bank")
+        url = reverse('profiles-create-analysis', kwargs={"pk": 1})
+        response = self.client.post(url, content_type='application/json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['data']['message'], "Vous venez de faire une demande d'analyse pour le profile 1")
+        self.assertEqual(response.data['data']['status'], "pending")
+
+        url = reverse('profiles-create-analysis', kwargs={"pk": 2})
+        response = self.client.post(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+    
+    def test_partner_can_retrieve_analysis_of_their_profiles_only(self):
+        self.authenticate("bank")
+        url = reverse('analysis-detail', kwargs={"pk": 1})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['data']['status'], 'pending')
+
+        url = reverse('analysis-detail', kwargs={"pk": 2})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        
+    def authenticate(self, partner_name):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners[partner_name].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
