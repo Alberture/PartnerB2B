@@ -77,43 +77,43 @@ class ProfileSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         data = super().validate(data)
-
         """
             Verifies if the choices and attributes are correct. 
             If so then it retrieves all the attributes required
             based on choices made.
         """
         required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
-        for name, value in data['attributes'].items():
-            attribute = Attribute.get_attribute_or_error(name=name) 
-            if attribute.type == "choice":
-                if attribute.validation == 'unique choice':
-                    self.check_unique_choice_validation(attribute, value)
-                if isinstance(value, list):
-                    for choice in value:
-                        self.value_is_in_attribute_choice_set_or_error(attribute, choice)
-                        attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=choice)
+        if data.get('attributes'):
+            for name, value in data['attributes'].items():
+                attribute = Attribute.get_attribute_or_error(name=name) 
+                if attribute.type == "choice":
+                    if attribute.validation == 'unique choice':
+                        self.check_unique_choice_validation(attribute, value)
+                    if isinstance(value, list):
+                        for choice in value:
+                            self.value_is_in_attribute_choice_set_or_error(attribute, choice)
+                            attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=choice)
+                            required_attribute = attribute_choice.get_required_attribute_if_chosen()    
+                            if required_attribute:
+                                required_attributes.append(required_attribute)   
+                    else:
+                        self.value_is_in_attribute_choice_set_or_error(attribute, value)
+                        attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=value)
                         required_attribute = attribute_choice.get_required_attribute_if_chosen()    
                         if required_attribute:
                             required_attributes.append(required_attribute)   
-                else:
-                    self.value_is_in_attribute_choice_set_or_error(attribute, value)
-                    attribute_choice = AttributeChoice.get_attribute_choice_or_error(displayedName=value)
-                    required_attribute = attribute_choice.get_required_attribute_if_chosen()    
-                    if required_attribute:
-                        required_attributes.append(required_attribute)   
 
-        if not self.instance:
-            #Verifies if all the required attributes were set.
-            required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
-            if required_attributes:
-                raise serializers.ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Missing required attributes.",
-                    "details":[
-                        {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
-                    ]
-                })
+            if not self.instance:
+                #Verifies if all the required attributes were set.
+                required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
+                if required_attributes:
+                    raise serializers.ValidationError({
+                        "code": status.HTTP_400_BAD_REQUEST,
+                        "message": "Missing required attributes.",
+                        "details":[
+                            {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
+                        ]
+                    })
         
         return data
     

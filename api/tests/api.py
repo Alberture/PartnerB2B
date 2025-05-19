@@ -335,6 +335,31 @@ class ApiTestCase(APITestCase):
             AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["salarié"]),
             AttributeAttributeChoice.objects.create(attribute=self.attributes["years_in_current_job"], attribute_choice=self.attribute_choices["autre situation professionnelle"]),     
         ]
+
+        self.profiles = {
+            Profile.objects.create(partner=self.partners['bank']) : [
+                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(pk=1), value="Jean-Luck"),
+                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(pk=1), value="Sithi"),
+                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(pk=1), value="sithijeanluck@gmail.com"),
+                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(pk=1), value="2005-07-21"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(pk=1), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(pk=1), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(pk=1), value="0768057143"),
+                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(pk=1), value="True"),
+                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(pk=1), value="étudiant"),
+            ],
+            Profile.objects.create(partner=self.partners['real_estate_agency']) : [
+                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(pk=1), value="Cyril"),
+                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(pk=1), value="Perosino"),
+                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(pk=1), value="cyrilperosino@gmail.com"),
+                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(pk=1), value="2002-07-21"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(pk=1), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(pk=1), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(pk=1), value="0768057143"),
+                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(pk=1), value="True"),
+                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(pk=1), value="étudiant"),
+            ],
+        }
     
     def test_cant_access_any_endpoint_except_auth_unless_authenticated(self):
         #Create profile
@@ -681,33 +706,24 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
         access_token = response.data["data"]["access"]
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
-        
-        url = reverse('profiles-list')
-        request_body = {
-            "attributes": {
-                "firstname": "Jean-Luck",
-                "lastname": "Sithi",
-                "email": "sithijeanluck@gmail.com",
-                "birth_date": "2005-07-21",
-                "monthly_income": 0,
-                "monthly_charges": 0,
-                "phone_number": "0768057143",
-                "scholarship_student": "True",
-                "professional_situation": "étudiant"
-            },
-        }
-        response = self.client.post(url, request_body, content_type='application/json')
-
         url = reverse('profiles-detail', kwargs={"pk": 1})
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
         
+        url = reverse('profiles-detail', kwargs={"pk": 2})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+    
+    def test_partner_can_update_his_profiles_only(self):
         url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['real_estate_agency'].apiKey})
+        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
         access_token = response.data["data"]["access"]
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         url = reverse('profiles-detail', kwargs={"pk": 1})
-        response = self.client.get(url, content_type='application/json')
+        response = self.client.patch(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        
+        url = reverse('profiles-detail', kwargs={"pk": 2})
+        response = self.client.patch(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
-    
