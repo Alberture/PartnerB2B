@@ -2,6 +2,9 @@ from django.db import models
 
 from .partner import Partner
 
+import binascii
+import os
+
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework import status
 
@@ -12,6 +15,7 @@ class Webhook(models.Model):
     """
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE, null=True, blank=True)
     url = models.CharField()
+    key = models.CharField(null=True, blank=True)
 
     def get_webhook_or_error(pk):
         """
@@ -44,3 +48,13 @@ class Webhook(models.Model):
                     }]
                 }
             )
+        
+    def save(self, *args, **kwargs):
+        if not self.key:
+            self.apikeyKey = binascii.hexlify(os.urandom(20)).decode()
+            webhook = Webhook.objects.filter(key=self.key)
+            while webhook:
+                self.key = binascii.hexlify(os.urandom(20)).decode()
+                webhook = Webhook.objects.filter(key=self.key)
+
+        super().save(*args, **kwargs)

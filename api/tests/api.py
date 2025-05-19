@@ -198,7 +198,7 @@ class ApiTestCase(APITestCase):
             "family_situation":Attribute.objects.create(
                 name="family_situation", 
                 displayedName="Situation familiale", 
-                type="choice", 
+                type="choice",
                 category="family situation",
                 isRequired=False, 
                 sensitiveData=False
@@ -415,4 +415,35 @@ class ApiTestCase(APITestCase):
         # Refresh the token
         url = reverse('token_refresh')
         response = self.client.post(url, {"refresh": refresh_token})
-        self.assertEqual(response.status_code, 200)        
+        self.assertEqual(response.status_code, 200)   
+
+    def test_metadata(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        
+        url = reverse('metadata')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['data']), 12)
+
+    def test_create_profile(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        url = reverse('profiles-list')
+        request_body = {
+            "attributes": {
+                "firstname": "name"
+            },
+            "externalReference": "reference"
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+        self.assertEqual(str(response.data["error"]["code"][0]), "400")
+
+        
+
+    
