@@ -1,8 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from rest_framework import status
 from api.models import *
-from django.contrib.auth.models import User
+from django.test import Client
 
 class ApiTestCase(APITestCase):
     def setUp(self):
@@ -444,10 +443,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)   
 
     def test_metadata(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         
         url = reverse('metadata')
         response = self.client.get(url)
@@ -455,10 +451,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(len(response.data['data']), 12)
 
     def test_cant_create_profile_with_missing_attributes(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -471,10 +464,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')
 
     def test_cant_create_profile_with_invalid_attribute_name(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -495,10 +485,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
 
     def test_cant_create_profile_with_a_choice_that_does_not_exist_for_an_attribute(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -519,10 +506,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'][0], 'Choice does not exist.')
     
     def test_cant_create_profile_with_multiple_choices_for_an_attribute_with_unique_choice_validation(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -543,10 +527,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'][0], 'Choice must be unique')    
     
     def test_cant_create_profile_with_invalid_regex_for_attribute_with_regex_validation(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -567,10 +548,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'], 'Regex match invalid')   
 
     def test_cant_create_profile_with_invalid_value_type_for_an_attribute(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         #invalid integer
         request_body = {
@@ -631,10 +609,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'], 'Type Error')   
 
     def test_cant_create_profile_with_missing_conditionally_required_attributes(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -655,10 +630,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')   
 
     def test_create_valid_profile(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -682,10 +654,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['data']['profileattribute_set'][1]['value'], 'Sithi')
 
     def test_create_valid_profile_without_external_reference(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['admin'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-list')
         request_body = {
             "attributes": {
@@ -705,10 +674,7 @@ class ApiTestCase(APITestCase):
         self.assertIsNotNone(response.data.get('data'))
 
     def test_partner_can_retrieve_their_profiles_only(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
         url = reverse('profiles-detail', kwargs={"pk": 1})
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
@@ -720,10 +686,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
     
     def test_partner_can_update_their_profiles_only(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
 
         url = reverse('profiles-detail', kwargs={"pk": 1})
         request_body = {
@@ -742,10 +705,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_partner_can_delete_their_profiles_only(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        self.authenticate('bank')
 
         url = reverse('profiles-detail', kwargs={"pk": 1})
         response = self.client.delete(url, content_type='application/json')
@@ -757,11 +717,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 403)
     
     def test_partner_can_submit_their_profiles_only(self):
-        url = reverse('token')
-        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
-        access_token = response.data["data"]["access"]
-        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
-
+        self.authenticate('bank')
         url = reverse('profiles-submit', kwargs={"pk": 1})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 200)
@@ -773,5 +729,21 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-submit', kwargs={"pk": 2})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
-
     
+    def authenticate(self, partner_name):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners[partner_name].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+    def test_create_document(self):
+        pass
+        """
+        image = Image.new('RGB', (100, 100))
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.jpg')
+        image.save(tmp_file)
+        tmp_file.seek(0)
+
+        response = self.client.post('my_url', {'image': tmp_file}, format='multipart')
+        """
