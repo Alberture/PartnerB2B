@@ -435,7 +435,7 @@ class ApiTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
         url = reverse('profiles-list')
-        #error for missing attributes
+        #error for missing required attributes
         request_body = {
             "attributes": {
                 "firstname": "Jean-Luck"
@@ -443,6 +443,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')
 
         #error for attribute does not exist profile
         request_body = {
@@ -459,7 +461,9 @@ class ApiTestCase(APITestCase):
             }
         }
         response = self.client.post(url, request_body, content_type='application/json')
-        self.assertEqual(response.status_code, 404)   
+        self.assertEqual(response.status_code, 404) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
 
         #error for invalid choice for attribute with choices
         request_body = {
@@ -477,6 +481,8 @@ class ApiTestCase(APITestCase):
         }
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400) 
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
 
         #error for multiple choice for attribute with choices with unique choice validation
         request_body = {

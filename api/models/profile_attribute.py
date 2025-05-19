@@ -100,7 +100,7 @@ class ProfileAttribute(models.Model):
                     if not re.match(self.attribute.regex, self.value):
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error",
+                            "message": "Regex match invalid",
                             "details": [{
                                 "field": "value",
                                 "attribute": self.attribute.name, 
@@ -112,7 +112,7 @@ class ProfileAttribute(models.Model):
                     if not value_is_between(self.value, self.attribute.minValue, self.attribute.maxValue):
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error",
+                            "message": "Invalid value",
                             "details": [{
                                 "field": "value",
                                 "attribute": self.attribute.name, 
@@ -124,7 +124,7 @@ class ProfileAttribute(models.Model):
                     if not value_is_between(len(self.value), self.attribute.minLength, self.attribute.maxLength):
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error",
+                            "message": "Invalid length",
                             "details": [{
                                 "field": "value",
                                 "attribute": self.attribute.name, 
@@ -136,7 +136,7 @@ class ProfileAttribute(models.Model):
                     if not value_is_between(self.value, self.attribute.minDate, self.attribute.maxDate, is_date=True):
                         raise ValidationError({
                             "code": status.HTTP_400_BAD_REQUEST,
-                            "message": "Validation Error",
+                            "message": "Invalid date",
                             "details": [{
                                 "field": "value",
                                 "attribute": self.attribute.name, 

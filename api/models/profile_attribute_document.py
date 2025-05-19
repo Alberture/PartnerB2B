@@ -38,7 +38,7 @@ class ProfileAttributeDocument(models.Model):
             if not self.type in self.attribute.acceptedFormat:
                 raise ValidationError({
                         "code": status.HTTP_400_BAD_REQUEST,
-                        "message": "Validation Error",
+                        "message": "This format is not supported for this document",
                         "details": [{
                             "field": "type",
                             "attribute": self.attribute.name, 

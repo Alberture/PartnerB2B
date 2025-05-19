@@ -64,7 +64,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
         if attribute.maxSize and data['file'].size > attribute.maxSize:
             raise ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Validation Error",
+                "message": "Invalid file size",
                 "details":[
                     {
                         "field": "value",

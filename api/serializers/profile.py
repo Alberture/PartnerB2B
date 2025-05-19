@@ -128,7 +128,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         if not exists:
             raise serializers.ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Validation Error.",
+                "message": "Choice does not exist.",
                 "details":[
                     {
                         "field": "value",
@@ -150,7 +150,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             if isinstance(value, list) and len(value) != 1:
                 raise serializers.ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error.",
+                    "message": "Choice must be unique",
                     "details":[
                         {
                             "field": "value",
@@ -163,7 +163,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             if len(value) < 2 or not isinstance(value, list):
                 raise ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Validation Error.",
+                    "message": "Choice must not be unique",
                     "details":[
                         {
                             "field": "value",
