@@ -701,7 +701,7 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
 
-    def test_partner_can_retrieve_his_profiles_only(self):
+    def test_partner_can_retrieve_their_profiles_only(self):
         url = reverse('token')
         response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
         access_token = response.data["data"]["access"]
@@ -714,7 +714,7 @@ class ApiTestCase(APITestCase):
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
     
-    def test_partner_can_update_his_profiles_only(self):
+    def test_partner_can_update_their_profiles_only(self):
         url = reverse('token')
         response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
         access_token = response.data["data"]["access"]
@@ -727,3 +727,19 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-detail', kwargs={"pk": 2})
         response = self.client.patch(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
+
+    def test_partner_can_delete_their_profiles_only(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        url = reverse('profiles-detail', kwargs={"pk": 1})
+        response = self.client.delete(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+        url = reverse('profiles-detail', kwargs={"pk": 2})
+        response = self.client.delete(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+    
+    
