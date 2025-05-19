@@ -12,7 +12,7 @@ def custom_exception_handler(exc, context):
         'NotFound': _handle_raised_error,
         'MethodNotAllowed': _handle_method_not_allowed_error,
         'ParseError': _handle_parse_error,
-        'InvalidToken': _handle_invalid_token
+        'InvalidToken': _handle_invalid_token,
     }
 
     # Call REST framework's default exception handler first,
@@ -42,9 +42,9 @@ def _handle_authentication_error(exc, context, response):
     return response
 
 def _handle_validation_error(exc, context, response):
-    if response.data.get('message'):
+    if exc.args[0]:
         return Response(error_response_template(exc.args[0], context.get('request')))
-
+    
     fields = response.data.keys()
     return Response(error_response_template({
         "code": response.status_code, 

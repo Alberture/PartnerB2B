@@ -78,6 +78,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     def validate(self, data):
         data = super().validate(data)
 
+        """
+            Verifies if the choices and attributes are correct. 
+            If so then it retrieves all the attributes required
+            based on choices made.
+        """
         required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
         for name, value in data['attributes'].items():
             attribute = Attribute.get_attribute_or_error(name=name) 
@@ -96,8 +101,9 @@ class ProfileSerializer(serializers.ModelSerializer):
                     required_attribute = attribute_choice.get_required_attribute_if_chosen()    
                     if required_attribute:
                         required_attributes.append(required_attribute)   
-    
+
         if not self.instance:
+            #Verifies if all the required attributes were set.
             required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
             if required_attributes:
                 raise serializers.ValidationError({
@@ -110,7 +116,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         
         return data
     
-    def value_is_in_attribute_choice_set_or_error(attribute, value):
+    def value_is_in_attribute_choice_set_or_error(self, attribute, value):
         """
             Method that verifies if a value is in the attribute choice set,
             if not raises a ValidationError.
@@ -120,7 +126,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         """
         exists = attribute.attributechoice_set.order_by("displayedName").filter(displayedName=value)
         if not exists:
-            raise ValidationError({
+            raise serializers.ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,
                 "message": "Validation Error.",
                 "details":[
@@ -132,7 +138,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 ]
             })
     
-    def check_unique_multiple_choices_validation(attribute, value):
+    def check_unique_multiple_choices_validation(self, attribute, value):
         """
             Method that verifies the validation choice for an attribute 
             and value.
@@ -142,7 +148,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         """
         if attribute.validation == 'unique choice':
             if isinstance(value, list) and len(value) != 1:
-                raise ValidationError({
+                raise serializers.ValidationError({
                     "code": status.HTTP_400_BAD_REQUEST,
                     "message": "Validation Error.",
                     "details":[
