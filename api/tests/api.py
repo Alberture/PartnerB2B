@@ -8,7 +8,8 @@ class ApiTestCase(APITestCase):
     def setUp(self):
         self.partners = {
             "admin":Partner.objects.create(name="admin", limitUsage=1000),
-            "bank":Partner.objects.create(name="bank", limitUsage=3)
+            "bank":Partner.objects.create(name="bank", limitUsage=3),
+            "real_estate_agency":Partner.objects.create(name="real estate agency", limitUsage=3),
         }
         self.attributes = {
             "lastname": Attribute.objects.create(
@@ -674,3 +675,39 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(response.data.get('data'))
+
+    def test_partner_can_retrieve_his_profiles_only(self):
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['bank'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+        
+        url = reverse('profiles-list')
+        request_body = {
+            "attributes": {
+                "firstname": "Jean-Luck",
+                "lastname": "Sithi",
+                "email": "sithijeanluck@gmail.com",
+                "birth_date": "2005-07-21",
+                "monthly_income": 0,
+                "monthly_charges": 0,
+                "phone_number": "0768057143",
+                "scholarship_student": "True",
+                "professional_situation": "étudiant"
+            },
+        }
+        response = self.client.post(url, request_body, content_type='application/json')
+
+        url = reverse('profiles-detail', kwargs={"pk": 1})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        
+        url = reverse('token')
+        response = self.client.post(url, {"apiKey": self.partners['real_estate_agency'].apiKey})
+        access_token = response.data["data"]["access"]
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
+
+        url = reverse('profiles-detail', kwargs={"pk": 1})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+    
