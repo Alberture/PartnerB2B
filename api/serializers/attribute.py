@@ -26,5 +26,14 @@ class AttributeSerializer(serializers.ModelSerializer):
             'isRequired',
             'validation',
             'sensitiveData',
-            'attributechoice_set'
+            'attributechoice_set',
+            'maxLength',
+            'minLength',
+            'maxValue',
+            'minValue',
+            'isEqualTo',
+            'maxDate',
+            'minDate',
+            'maxSize',
+            'acceptedFormat',
         ]
