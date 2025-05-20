@@ -117,6 +117,15 @@ class ProfileViewSet(ModelViewSet):
     @action(detail=True, methods=['post'], url_path='analyses')
     def create_analysis(self, request, pk=None):
         profile = self.get_object()
+        if not profile.status == "complete":
+            raise ValidationError({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "message": "Profile not submitted",
+                "details": [
+                    {"error": "You must submit your profile in order to make an analysis of it."}
+                ]
+            })
+
         serializer = AnalysisSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         analysis = serializer.save(profile=profile)

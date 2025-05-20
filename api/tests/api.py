@@ -341,7 +341,7 @@ class ApiTestCase(APITestCase):
         ]
 
         self.profiles = {
-            Profile.objects.create(partner=self.partners['bank']) : [
+            Profile.objects.create(partner=self.partners['bank'], status="complete") : [
                 ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(partner=self.partners['bank']), value="Jean-Luck"),
                 ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(partner=self.partners['bank']), value="Sithi"),
                 ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(partner=self.partners['bank']), value="sithijeanluck@gmail.com"),
@@ -352,7 +352,7 @@ class ApiTestCase(APITestCase):
                 ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(partner=self.partners['bank']), value="True"),
                 ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(partner=self.partners['bank']), value="étudiant"),
             ],
-            Profile.objects.create(partner=self.partners['real_estate_agency']) : [
+            Profile.objects.create(partner=self.partners['real_estate_agency'], status="complete") : [
                 ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="Cyril"),
                 ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="Perosino"),
                 ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="cyrilperosino@gmail.com"),
@@ -363,6 +363,7 @@ class ApiTestCase(APITestCase):
                 ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="True"),
                 ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="étudiant"),
             ],
+            Profile.objects.create(partner=self.partners['bank']): []
         }
 
         self.request_body_for_create_profile = {
@@ -647,25 +648,19 @@ class ApiTestCase(APITestCase):
         url = reverse('profiles-submit', kwargs={"pk": 2})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
-
-    def test_create_document(self):
-        """
-        image = Image.new('RGB', (100, 100))
-
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.jpg')
-        image.save(tmp_file)
-        tmp_file.seek(0)
-
-        response = self.client.post('my_url', {'image': tmp_file}, format='multipart')
-        """
     
-    def test_partner_can_create_analysis_for_their_profiles_only(self):
+    def test_partner_can_create_analysis_for_their_submitted_profiles_only(self):
         self.authenticate("bank")
         url = reverse('profiles-create-analysis', kwargs={"pk": 1})
         response = self.client.post(url, content_type='application/json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['data']['message'], "Vous venez de faire une demande d'analyse pour le profile 1")
         self.assertEqual(response.data['data']['status'], "pending")
+
+        url = reverse('profiles-create-analysis', kwargs={"pk": 3})
+        response = self.client.post(url, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['error']['message'], 'Profile not submitted')
 
         url = reverse('profiles-create-analysis', kwargs={"pk": 2})
         response = self.client.post(url, content_type='application/json')
