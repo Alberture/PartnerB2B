@@ -68,6 +68,7 @@ Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET
 vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
 
 <details>
+
 <summary>Liste des attributs</summary>
 <pre style="max-height:500px;overflow-y:auto;"><code>
   
