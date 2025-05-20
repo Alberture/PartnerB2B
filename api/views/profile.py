@@ -286,7 +286,7 @@ class ProfileViewSet(ModelViewSet):
             value={
                 "data": {
                     "status": "Complet",
-                    "message": "Ce profil a été marqué est complet et prêt pour analyse."
+                    "message": "Ce profil est complet et prêt pour analyse."
                 },
                 "meta": {
                     "timestamp": "2025-05-12T10:24:45.337404"
@@ -304,7 +304,7 @@ class ProfileViewSet(ModelViewSet):
 
         return valid_response({
             'status': 'Complet',
-            'message': 'Ce profil a été marqué est complet et prêt pour analyse.'
+            'message': 'Ce profil est complet et prêt pour analyse.'
         }, request.id)
 
     @extend_schema(
