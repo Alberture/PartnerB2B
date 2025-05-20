@@ -22,12 +22,12 @@ class Webhook(models.Model):
 
     def get_webhook_or_error(pk):
         """
-            Method that returns a Webhook with the given id, raises an
+            Method that returns a Webhook with the given id or raises an
             exception if the Webhook was not found or pk is invalid.
 
             param: int pk, id of the Webhook
             return: Webhook
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return Webhook.objects.get(pk=pk)

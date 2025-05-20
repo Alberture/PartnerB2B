@@ -6,10 +6,10 @@ from rest_framework import status
 def value_is_between(value, minValue, maxValue, is_date=False):
     """
         Method that says if the given value is between given the minimum value 
-        and maximum value. It also works with dates, it must be precised in param.
+        and maximum value. It also works with dates, it must be precised in params.
         The date format for the value is "yyyy-mm-dd".
         
-        param: int/float/string value, int/float/date minValue, int/float/date maxValue, boolean is_date
+        params: int/float/string value, int/float/date minValue, int/float/date maxValue, boolean is_date
         return: boolean
     """
     if is_date:

@@ -32,7 +32,7 @@ class Analysis(models.Model):
 
             param: int pk, id of the Analysis
             return: Analysis
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return Analysis.objects.get(pk=pk)

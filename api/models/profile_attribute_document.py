@@ -22,8 +22,8 @@ FILE_TYPE = [
 
 class ProfileAttributeDocument(models.Model):
     """
-        Model that represents a document related to a user and attribute.
-        This model is to make attributes dynamic a Documents. 
+        Model that represents a document related to a Profile and Attribute.
+        This model is to create dynamic documents for a Profile. 
     """
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
@@ -34,6 +34,10 @@ class ProfileAttributeDocument(models.Model):
     metadata = models.CharField(null=True, blank=True)
 
     def clean(self):
+        """
+            method that verifies if the validations are correct for a given document
+            of a ProfileAttributeDocument.
+        """
         if self.attribute.acceptedFormat:
             if not self.type in self.attribute.acceptedFormat:
                 raise ValidationError({
@@ -42,7 +46,7 @@ class ProfileAttributeDocument(models.Model):
                         "details": [{
                             "field": "type",
                             "attribute": self.attribute.name, 
-                            "error": "accepted file types are : %s" % (self.attribute.acceptedFormat)
+                            "error": "accepted file types are : %s" % (self.attribute.acceptedFormat.split(";"))
                         }]
                         }
                     )
@@ -59,7 +63,7 @@ class ProfileAttributeDocument(models.Model):
 
             param: int pk, id of the ProfileAttributeDocument
             return: ProfileAttributeDocument
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return ProfileAttributeDocument.objects.get(pk=pk)
@@ -77,9 +81,10 @@ class ProfileAttributeDocument(models.Model):
         except ValueError:
             raise ValidationError({
                 "code": status.HTTP_400_BAD_REQUEST,
-                "message": "TypeError",
+                "message": "Type Error",
                 "details": [{
                         "field": "pk",
+                        "pk": pk,
                         "error": "The document id must be an integer"
                         }]
                     }

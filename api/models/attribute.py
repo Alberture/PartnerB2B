@@ -73,7 +73,7 @@ class Attribute(models.Model):
 
             param: string name
             return: Attribute
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return Attribute.objects.get(name=name)

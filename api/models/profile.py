@@ -30,7 +30,7 @@ class Profile(models.Model):
 
             param: int pk, id of the Profile
             return: Profile
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return Profile.objects.get(pk=pk)

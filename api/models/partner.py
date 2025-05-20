@@ -22,7 +22,7 @@ class Partner(models.Model):
         Model that represents a partner that will use the API.
     """
     name = models.CharField(max_length=255)
-    apiKey = models.CharField(max_length=512, null=True, blank=True)
+    apiKey = models.CharField(max_length=512, null=True, blank=True, unique=True)
     activationStatus = models.CharField(choices=STATUS_CHOICE, default='pending', max_length=11)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
@@ -50,7 +50,7 @@ class Partner(models.Model):
 
             param: int pk, id of the Partner
             return: Partner
-            exceptions: NotFound, ValueError
+            exceptions: NotFound, ValidationError
         """
         try:
             return Partner.objects.get(apiKey=apiKey)

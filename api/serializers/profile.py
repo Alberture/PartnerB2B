@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 class ProfileItemSerializer(serializers.ModelSerializer):
     """
         Serializer to transform a Profile object to JSON.
+        Used to represent a Profile when retrieved.
     """
     createdAt = serializers.DateTimeField(read_only=True)
     updatedAt = serializers.DateTimeField(read_only=True)
@@ -48,6 +49,7 @@ class ProfileItemSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     """
         Serializer to transform JSON to a Profile object.
+        Used to create a Profile with the given data.
     """
     attributes = serializers.DictField(write_only=True)
     profileattribute_set = ProfileAttributeItemSerializer(read_only=True, many=True)

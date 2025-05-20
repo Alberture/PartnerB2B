@@ -14,7 +14,7 @@ import json
 class ProfileAttribute(models.Model):
     """
         Model that contains the value of an attribute related to a profile.
-        This model is to make attributes dynamic for Profiles. 
+        This model is to make attributes dynamic for Profiles.
     """
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, null=True, blank=True)
@@ -24,6 +24,10 @@ class ProfileAttribute(models.Model):
     source = models.CharField(null=True, blank=True) 
 
     def clean(self):    
+        """
+            method that verifies if the validations and type are correct for a given value
+            of a ProfileAttribute.
+        """
         if self.attribute: 
             match self.attribute.type:       
                 case 'integer':

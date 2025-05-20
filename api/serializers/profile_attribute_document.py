@@ -6,8 +6,8 @@ from ..models.attribute import Attribute
 
 class ProfileDocumentSerializer(serializers.Serializer):
     """
-        Serializer to transform a Profile object to JSON.
-        Mainly to avoid infinite include.
+        Serializer to transform a Profile object to JSON, copy of ProfileItemSerializer.
+        it is mainly to avoid circular import.
     """
     pk = serializers.IntegerField(read_only=True)
     createdAt = serializers.DateTimeField(read_only=True)
@@ -18,6 +18,7 @@ class ProfileDocumentSerializer(serializers.Serializer):
 class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
     """
         Serializer to transform a ProfileAttributeDocument object to JSON format.
+        Used to represent a ProfileAttributeDocument when retrieved.
     """
     profile = ProfileDocumentSerializer(read_only=True)
     file = serializers.CharField(read_only=True)
@@ -39,6 +40,7 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
 class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
     """
         Serializer to transform JSON to a ProfileAttributeDocument object.
+        Used to create ProfileAttributeDocument with the given data.
     """
     pk = serializers.IntegerField(read_only=True)
     status = serializers.CharField(read_only=True)
@@ -59,6 +61,10 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
+        """
+            Serializer level verification of data.
+            Verifies the received data.
+        """
         data = super().validate(data)
         attribute = Attribute.objects.get(name=data['attribute'])
         if attribute.maxSize and data['file'].size > attribute.maxSize:

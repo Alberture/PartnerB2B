@@ -6,12 +6,14 @@ from rest_framework import serializers
 class AttributeItemSerializer(serializers.Serializer):
     """
         Serializer to transform an Attribute object to JSON.
+        Used to represent an Attribute when retrieved.
     """
     name = serializers.CharField(read_only=True)
 
 class AttributeSerializer(serializers.ModelSerializer):
     """
         Serializer to transform JSON to an Attribute object.
+        Used to create an Attribute with the given data.
     """
     attributechoice_set = AttributeChoiceSerializer(many=True, read_only=True)
     class Meta:
