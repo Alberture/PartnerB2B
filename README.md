@@ -872,11 +872,20 @@ vous obtiendrez le profil crée avec les details.
     }
 }
 ```
-## Modifier un profil
-## Supprimer un profil
 ## Soumettre d'un profil
+Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST
+Vous obtiendrez un message de confirmation
+
 ## Faire une demande d'analyse d'un profil
-## Voir les détails d'une analyse
+Une fois un profil soumis vous pourrez faire la demande d'une analyse pour le 
+profil validé à cet endpoint /api/v1/profiles/{profiles_id}/analyses/ avec un POST
+
 ## Configuration d'un webhook
-## Consultation d'un webhook
-## Suppression d'un webhook
+Pour configurer un webhook il faut à cet endpoint /api/v1/webhooks/configure/
+faire un POST avec le corps de la requête contenant 
+```
+{
+  "url": "VOTRE_URL"
+}
+```
+
