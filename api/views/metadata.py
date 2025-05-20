@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
 
-from ..models import Attribute
+from ..models import *
 from ..serializers import AttributeSerializer
 from ..utils import valid_response
 

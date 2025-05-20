@@ -72,7 +72,8 @@ class ApiTestCase(APITestCase):
                 name="birth_country", 
                 displayedName="Pays de naissance", 
                 type="choice", 
-                category="unique choice", 
+                validation="unique choice", 
+                category="personal data", 
                 isRequired=False, 
                 sensitiveData=False
             ),
@@ -146,7 +147,7 @@ class ApiTestCase(APITestCase):
                 displayedName="Adresse de livraison1", 
                 type="string", 
                 category="address",
-                isRequired=False, 
+                isRequired=True, 
                 sensitiveData=False
             ),
             "delivery_address2":Attribute.objects.create(
@@ -341,26 +342,26 @@ class ApiTestCase(APITestCase):
 
         self.profiles = {
             Profile.objects.create(partner=self.partners['bank']) : [
-                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(pk=1), value="Jean-Luck"),
-                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(pk=1), value="Sithi"),
-                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(pk=1), value="sithijeanluck@gmail.com"),
-                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(pk=1), value="2005-07-21"),
-                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(pk=1), value="0"),
-                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(pk=1), value="0"),
-                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(pk=1), value="0768057143"),
-                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(pk=1), value="True"),
-                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(pk=1), value="étudiant"),
+                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(partner=self.partners['bank']), value="Jean-Luck"),
+                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(partner=self.partners['bank']), value="Sithi"),
+                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(partner=self.partners['bank']), value="sithijeanluck@gmail.com"),
+                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(partner=self.partners['bank']), value="2005-07-21"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(partner=self.partners['bank']), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(partner=self.partners['bank']), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(partner=self.partners['bank']), value="0768057143"),
+                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(partner=self.partners['bank']), value="True"),
+                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(partner=self.partners['bank']), value="étudiant"),
             ],
             Profile.objects.create(partner=self.partners['real_estate_agency']) : [
-                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(pk=1), value="Cyril"),
-                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(pk=1), value="Perosino"),
-                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(pk=1), value="cyrilperosino@gmail.com"),
-                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(pk=1), value="2002-07-21"),
-                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(pk=1), value="0"),
-                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(pk=1), value="0"),
-                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(pk=1), value="0768057143"),
-                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(pk=1), value="True"),
-                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(pk=1), value="étudiant"),
+                ProfileAttribute.objects.create(attribute=self.attributes['firstname'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="Cyril"),
+                ProfileAttribute.objects.create(attribute=self.attributes['lastname'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="Perosino"),
+                ProfileAttribute.objects.create(attribute=self.attributes['email'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="cyrilperosino@gmail.com"),
+                ProfileAttribute.objects.create(attribute=self.attributes['birth_date'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="2002-07-21"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_income'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['monthly_charges'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="0"),
+                ProfileAttribute.objects.create(attribute=self.attributes['phone_number'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="0768057143"),
+                ProfileAttribute.objects.create(attribute=self.attributes['scholarship_student'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="True"),
+                ProfileAttribute.objects.create(attribute=self.attributes['professional_situation'], profile=Profile.objects.get(partner=self.partners['real_estate_agency']), value="étudiant"),
             ],
         }
 
@@ -374,7 +375,8 @@ class ApiTestCase(APITestCase):
                 "monthly_charges": 0,
                 "phone_number": "0768057143",
                 "scholarship_student": "True",
-                "professional_situation": "étudiant"
+                "professional_situation": "étudiant",
+                "delivery_address1": "3 rue truc"
             }
         }
 
@@ -469,7 +471,7 @@ class ApiTestCase(APITestCase):
         url = reverse('metadata')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['data']), 12)
+        self.assertEqual(len(response.data['data']), 11)
 
     def test_cant_create_profile_with_missing_attributes(self):
         self.authenticate('bank')

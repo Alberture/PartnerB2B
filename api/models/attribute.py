@@ -52,7 +52,7 @@ class Attribute(models.Model):
     validation = models.CharField(null=True, blank=True, choices=VALIDATION_CHOICE)
     regex = models.CharField(null=True, blank=True)
     sensitiveData = models.BooleanField()
-    maxLength = models.IntegerField(null=True, blank=True, default=sys.maxsize)
+    maxLength = models.IntegerField(null=True, blank=True, default=0)
     minLength = models.IntegerField(null=True, blank=True, default=0)
     maxValue = models.FloatField(null=True, blank=True, default=sys.maxsize)
     minValue = models.FloatField(null=True, blank=True, default=-sys.maxsize - 1)
