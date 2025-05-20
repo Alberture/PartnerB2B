@@ -69,7 +69,7 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
 
 <details>
 <summary>Code très long (cliquer pour afficher)</summary>
-<pre style="max-height:500px;overflow-y:auto;"><code>
+<pre style="max-height:500px;overflow-y:scroll;"><code>
   
 ```json
 {
@@ -829,6 +829,7 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
 ```
 
 </details>
+
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
 requeête contenant 
