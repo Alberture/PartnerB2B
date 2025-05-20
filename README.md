@@ -187,7 +187,7 @@ vous obtiendrez le profil crée avec les details.
 ```
 ## Soumettre d'un profil
 Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message de confirmation comme ci-dessous
-```
+```json
 {
     "data": {
         "status": "Complet",
@@ -202,7 +202,7 @@ Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/s
 
 ## Faire une demande d'analyse d'un profil
 Une fois un profil soumis vous pourrez faire la demande d'une analyse pour le profil validé à cet endpoint /api/v1/profiles/{profiles_id}/analyses/ avec un POST et obtiendrez un message de confirmation.
-```
+```json
 {
     "data": {
         "message": "Vous venez de faire une demande d'analyse pour le profile 437",
@@ -218,7 +218,7 @@ Une fois un profil soumis vous pourrez faire la demande d'une analyse pour le pr
 
 ## Configuration d'un webhook
 Pour configurer un webhook il faut à cet endpoint /api/v1/webhooks/configure/ faire un POST avec le corps de la requête contenant 
-```
+```json
 {
   "url": "VOTRE_URL"
 }
