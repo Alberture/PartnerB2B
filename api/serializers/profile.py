@@ -135,8 +135,8 @@ class ProfileSerializer(serializers.ModelSerializer):
                 "details":[
                     {
                         "field": "value",
-                        "error": "The choice must among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
                         "attribute": attribute.name,
+                        "error": "The choice must among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
                     }
                 ]
             })
@@ -156,8 +156,8 @@ class ProfileSerializer(serializers.ModelSerializer):
                 "details":[
                     {
                         "field": "value",
-                        "error": "The choice must be unique among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
                         "attribute": attribute.name,
+                        "error": "The choice must be unique among : %s" % (list(map(str, attribute.attributechoice_set.order_by('displayedName')))),
                     }
                 ]
             })

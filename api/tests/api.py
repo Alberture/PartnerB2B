@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.test import Client
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from rest_framework.test import APITestCase
 
@@ -7,12 +8,14 @@ from api.models import *
 
 from PIL import Image
 
+
 class ApiTestCase(APITestCase):
     def setUp(self):
         self.partners = {
             "admin":Partner.objects.create(name="admin", limitUsage=1000, activationStatus="success"),
             "bank":Partner.objects.create(name="bank", limitUsage=3, activationStatus="success"),
-            "real_estate_agency":Partner.objects.create(name="real estate agency", limitUsage=3),
+            "real_estate_agency":Partner.objects.create(name="real estate agency", limitUsage=3, activationStatus="success"),
+            "fnac":Partner.objects.create(name="fnac", limitUsage=3),
         }
         self.attributes = {
             "lastname": Attribute.objects.create(
@@ -498,7 +501,7 @@ class ApiTestCase(APITestCase):
     
     def test_cant_create_profile_without_activated_api_key(self):
 
-        self.authenticate('real_estate_agency')
+        self.authenticate('fnac')
         url = reverse('profiles-list')
         response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
         self.assertEqual(response.status_code, 403)
@@ -674,6 +677,78 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.data['data']['status'], 'pending')
 
         url = reverse('analysis-detail', kwargs={"pk": 2})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+
+    def test_partner_can_create_document_of_their_profiles_only(self):
+        self.authenticate("bank")
+
+        pdf_content = b'%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF'
+        pdf_file = SimpleUploadedFile(
+            name='document.pdf',
+            content=pdf_content,
+            content_type='application/pdf'
+        )
+        request_body = {
+            "file": pdf_file,
+            "attribute": "bank_statement"
+        }
+        url = reverse('profiles-create-document', kwargs={"pk": 1})
+        response = self.client.post(url, request_body, format='multipart')
+        self.assertEqual(response.status_code, 201)
+
+        txt_content = b'content'
+        txt_file = SimpleUploadedFile(
+            name='test_file.txt',
+            content=txt_content,
+            content_type='text/plain'
+        )
+        request_body = {
+            "file": txt_file,
+            "attribute": "bank_statement"
+        }
+        url = reverse('profiles-create-document', kwargs={"pk": 1})
+        response = self.client.post(url, request_body, format='multipart')
+        self.assertEqual(response.status_code, 400)
+
+        url = reverse('profiles-create-document', kwargs={"pk": 2})
+        response = self.client.post(url, request_body, format='multipart')
+        self.assertEqual(response.status_code, 403)
+
+    def test_partner_can_retrieve_document_of_their_profiles_only(self):
+        self.authenticate("real_estate_agency")
+        pdf_content = b'%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF'
+        pdf_file = SimpleUploadedFile(
+            name='document.pdf',
+            content=pdf_content,
+            content_type='application/pdf'
+        )
+        request_body = {
+            "file": pdf_file,
+            "attribute": "bank_statement"
+        }
+        url = reverse('profiles-create-document', kwargs={"pk": 2})
+        response = self.client.post(url, request_body, format='multipart')
+
+        self.authenticate("bank")
+        pdf_content = b'%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF'
+        pdf_file = SimpleUploadedFile(
+            name='document.pdf',
+            content=pdf_content,
+            content_type='application/pdf'
+        )
+        request_body = {
+            "file": pdf_file,
+            "attribute": "bank_statement"
+        }
+        url = reverse('profiles-create-document', kwargs={"pk": 1})
+        response = self.client.post(url, request_body, format='multipart')
+
+        url = reverse('documents-detail', kwargs={"pk": 2})
+        response = self.client.get(url, content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+        
+        url = reverse('documents-detail', kwargs={"pk": 1})
         response = self.client.get(url, content_type='application/json')
         self.assertEqual(response.status_code, 403)
         

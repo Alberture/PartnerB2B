@@ -45,7 +45,7 @@ class ProfileAttributeDocumentSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(read_only=True)
     status = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)
-    file = serializers.ImageField(write_only=True)
+    file = serializers.FileField(write_only=True)
     attribute = serializers.CharField(write_only=True)
     type = serializers.CharField(read_only=True)
 
