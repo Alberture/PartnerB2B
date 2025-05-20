@@ -16,15 +16,13 @@ Le refresh token intervient pour générer un autre access token et dure 1 semai
 
 Pour obtenir un access token il faut envoyer votre clef API à cet endpoint /api/v1/auth/token/ avec le corps 
 de la requête en JSON et contenant 
-```
-json
+```json
 {
   "apiKey": VOTRE_CLEF_API
 }
 ```
 et obtiendrez une réponse resemblant à 
-```
-json
+```json
 {
     "data": {
         "access": VOTRE_ACCESS_TOKEN,
@@ -41,15 +39,13 @@ json
 
 Pour pouvoir refresh l'access token il suffit d'envoyer le refresh token à cet endpoint /api/v1/auth/token/refresh/ avec le corps 
 de la requête en JSON et contenant 
-```
-json
+```json
 {
   "refresg": VOTRE_REFRESH_TOKEN
 }
 ```
 et obtiendrez une réponse resemblant à 
-```
-json
+```json
 {
     "data": {
         "access": VOTRE_NOUVEAU_ACCESS_TOKEN,
