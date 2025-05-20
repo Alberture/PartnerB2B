@@ -36,7 +36,8 @@ class RefreshToken(TokenRefreshView):
                     "access_expires": "2025-05-13T10:42:53"
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T10:42:54.520677"
+                    "timestamp": "2025-05-12T10:42:54.520677",
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
             },
             response_only=True

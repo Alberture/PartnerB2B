@@ -17,7 +17,7 @@ FILE_TYPE = [
     ('jpeg', 'JPEG'),
     ('png', 'PNG'),
     ('txt', 'TXT'),
-    ('ODT', 'TXT'),
+    ('odt', 'ODT'),
 ]
 
 class ProfileAttributeDocument(models.Model):
@@ -39,7 +39,7 @@ class ProfileAttributeDocument(models.Model):
             of a ProfileAttributeDocument.
         """
         if self.attribute.acceptedFormat:
-            if not self.type in self.attribute.acceptedFormat:
+            if not self.type in self.attribute.acceptedFormat.split(";"):
                 raise ValidationError({
                         "code": status.HTTP_400_BAD_REQUEST,
                         "message": "This format is not supported for this document",
@@ -50,6 +50,7 @@ class ProfileAttributeDocument(models.Model):
                         }]
                         }
                     )
+            
 
     def save(self, *args, **kwargs):
         self.clean()

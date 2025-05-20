@@ -45,7 +45,8 @@ class ObtainPairToken(APIView):
                             "refesh_expire": "2025-05-19T09:12:06"
                         },
                         "meta": {
-                            "timestamp": "2025-05-12T09:12:06.926977"
+                            "timestamp": "2025-05-12T09:12:06.926977",
+                            "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                         }
                     },
                     response_only=True

@@ -38,21 +38,21 @@ class DocumentViewSet(ModelViewSet):
             value={
                 "data": {
                     "profile": {
-                        "pk": 297,
-                        "createdAt": "2025-05-09T12:14:27.693624Z",
-                        "updatedAt": "2025-05-12T09:56:39.629783Z",
-                        "status": "complete",
-                        "externalReference": ""
+                        "pk": 439,
+                        "createdAt": "2025-05-20T08:33:07.727323Z",
+                        "updatedAt": "2025-05-20T08:33:07.727369Z",
+                        "status": "draft",
+                        "externalReference": "reference"
                     },
-                    "title": "",
-                    "file": "documents/test.png",
-                    "type": "png",
-                    "downloadedAt": "2025-05-09T12:16:06.840877Z",
+                    "file": "documents/document_4IhNFgL_Fgm2F4j.pdf",
+                    "type": "pdf",
+                    "downloadedAt": "2025-05-20T11:55:58.957300Z",
                     "status": "pending",
                     "metadata": None
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T12:05:48.747117"
+                    "timestamp": "2025-05-20T11:58:24.436578",
+                    "request_id": "7343247c-6654-4be2-952f-0ab98048e769"
                 }
             },
             response_only=True

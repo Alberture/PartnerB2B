@@ -69,7 +69,8 @@ class ProfileViewSet(ModelViewSet):
                     ]
                 },
                 "meta":{
-                    "timestamp": datetime.now()
+                    "timestamp": datetime.now(),
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
                 
             },
@@ -106,7 +107,8 @@ class ProfileViewSet(ModelViewSet):
                     "status": "pending"
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T12:04:24.219023"
+                    "timestamp": "2025-05-12T12:04:24.219023",
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
             },
             response_only=True
@@ -152,7 +154,8 @@ class ProfileViewSet(ModelViewSet):
                     "type": "png"
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T12:10:37.538076"
+                    "timestamp": "2025-05-12T12:10:37.538076",
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
             },
             response_only=True
@@ -208,7 +211,8 @@ class ProfileViewSet(ModelViewSet):
                     }
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T10:11:43.627984"
+                    "timestamp": "2025-05-12T10:11:43.627984",
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
             },
             response_only=True
@@ -289,7 +293,8 @@ class ProfileViewSet(ModelViewSet):
                     "message": "Ce profil est complet et prêt pour analyse."
                 },
                 "meta": {
-                    "timestamp": "2025-05-12T10:24:45.337404"
+                    "timestamp": "2025-05-12T10:24:45.337404",
+                    "request_id": "e3959285-8b54-4ee7-bf9e-330c987716f7"
                 }
             },
             response_only=True
