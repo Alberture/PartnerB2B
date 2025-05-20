@@ -10,8 +10,8 @@ pour cela l'API va recevoir des données sur un client et retourner à la fin de
 Pour obtenir une clef API il faut faire une demande auprès de Alberture.
 
 ## JWT
-JWT utiliser un système d'access et refresh token. Un access token est un token permettant 
-de vous authentifier et utiliser notre API et ne dure que 1 heure.
+JWT utilise un système d'access et refresh token. Un access token est un token permettant 
+de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
 Le refresh token intervient pour générer un autre access token et dure 1 semaine
 
 Pour obtenir un access token il faut envoyer (POST) votre clef API à cet endpoint /api/v1/auth/token/ avec le corps 
