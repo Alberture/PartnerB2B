@@ -68,7 +68,7 @@ Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET
 vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
 
 <details>
-<summary>Code très long (cliquer pour afficher)</summary>
+<summary>Liste des attributs</summary>
 <pre style="max-height:500px;overflow-y:auto;"><code>
   
 ```json
@@ -827,8 +827,8 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
     }
 }
 ```
-
 </details>
+
 
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
