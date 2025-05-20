@@ -148,5 +148,3 @@ class WebhookViewSet(ModelViewSet):
         webhook = self.get_object()
         serializer = WebhookItemSerializer(webhook)
         return valid_response(serializer.data, request.id)
-    
-    
