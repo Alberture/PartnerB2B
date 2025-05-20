@@ -1,13 +1,13 @@
 # PartnerB2B
 
 ## Objectifs de l'API
-Cette API a pour objectif de soumettre des données concernant les clients de partenaires
-souhaitant évaluer la confiance d'un client pour réaliser un emprunt (immobilier , crédit, etc....)
+Cette API a pour objectif d'évaluer la fiabilité d'un client pour la réalisation de l'emprunt d'un bien ou un crédit,
+pour cela l'API va recevoir des données sur un client et retourner à la fin de l'analyse un score qui évaluera le facteur de confiance.
 
 # Authentification
 
 ## Obtenir une clef API
-Pour obtenir une clef API il faut faire une demande auprès de Aberture.
+Pour obtenir une clef API il faut faire une demande auprès de Alberture.
 
 ## JWT
 JWT utiliser un système d'access et refresh token. Un access token est un token permettant 
