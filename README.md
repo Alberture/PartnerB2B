@@ -66,11 +66,6 @@ A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès 
 Avant de créer des profils vous devez prendre connaissance des attributs disponible pour un profil.
 Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET
 vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
-
-<details>
-
-<summary>Liste des attributs</summary>
-<pre style="max-height:500px;overflow-y:auto;"><code>
   
 ```json
 {
@@ -828,8 +823,6 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
     }
 }
 ```
-
-</details>
 
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
