@@ -1,8 +1,7 @@
 # PartnerB2B
 
 ## Objectifs de l'API
-Cette API a pour objectif d'évaluer la fiabilité d'un client pour la réalisation de l'emprunt d'un bien ou un crédit,
-pour cela l'API va recevoir des données sur un client et retourner à la fin de l'analyse un score qui évaluera le facteur de confiance.
+Cette API a pour objectif d'évaluer la fiabilité d'un client pour la réalisation de l'emprunt d'un bien ou un crédit, pour cela l'API va recevoir des données sur un client et retourner à la fin de l'analyse un score qui évaluera le facteur de confiance.
 
 # Authentification
 
@@ -10,12 +9,10 @@ pour cela l'API va recevoir des données sur un client et retourner à la fin de
 Pour obtenir une clef API il faut faire une demande auprès de Alberture.
 
 ## JWT
-JWT utilise un système d'access et refresh token. Un access token est un token permettant 
-de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
+JWT utilise un système d'access et refresh token. Un access token est un token permettant de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
 Le refresh token intervient pour générer un autre access token et dure 1 semaine
 
-Pour obtenir un access token il faut envoyer (POST) votre clef API à cet endpoint /api/v1/auth/token/ avec le corps 
-de la requête en JSON et contenant 
+Pour obtenir un access token il faut envoyer (POST) votre clef API à cet endpoint /api/v1/auth/token/ avec le corps de la requête en JSON et contenant 
 ```json
 {
   "apiKey": VOTRE_CLEF_API
@@ -37,7 +34,7 @@ et obtiendrez une réponse resemblant à
 }
 ```
 
-Pour pouvoir refresh l'access token il suffit d'envoyer (POST) le refresh token à cet endpoint /api/v1/auth/token/refresh/ avec le corps 
+Pour pouvoir refresh l'access token (c'est à dire renouveller l'access token si ce dernier a expiré) il suffit d'envoyer (POST) le refresh token à cet endpoint /api/v1/auth/token/refresh/ avec le corps 
 de la requête en JSON et contenant 
 ```json
 {
@@ -58,14 +55,11 @@ et obtiendrez une réponse resemblant à
 }
 ```
 
-Si les 2 token venaient à expirer il faut de nouveau envoyer la clef API comme nous l'avons fait pour l'access token.
-A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès aux autres.
+Si les 2 token venaient à expirer il faut de nouveau envoyer la clef API comme nous l'avons fait pour l'access token. A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès aux autres.
 
 # Utilisation
 ## Liste des attributs
-Avant de créer des profils vous devez prendre connaissance des attributs disponible pour un profil.
-Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET
-vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
+Avant de créer des profils vous devez prendre connaissance des attributs disponible pour un profil. Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
   
 ```json
 {
@@ -151,8 +145,7 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
 ```
 
 ## Création de profils
-Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
-requeête contenant 
+Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la requeête contenant 
 ```json
 {
     "attributes": {
@@ -193,18 +186,41 @@ vous obtiendrez le profil crée avec les details.
 }
 ```
 ## Soumettre d'un profil
-Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST
-Vous obtiendrez un message de confirmation
+Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message de confirmation comme ci-dessous
+```
+{
+    "data": {
+        "status": "Complet",
+        "message": "Ce profil est complet et prêt pour analyse."
+    },
+    "meta": {
+        "timestamp": "2025-05-20T21:32:56.215846",
+        "request_id": "3bbbf338-e6d2-43ec-95de-e73e8a844af0"
+    }
+}
+```
 
 ## Faire une demande d'analyse d'un profil
-Une fois un profil soumis vous pourrez faire la demande d'une analyse pour le 
-profil validé à cet endpoint /api/v1/profiles/{profiles_id}/analyses/ avec un POST
+Une fois un profil soumis vous pourrez faire la demande d'une analyse pour le profil validé à cet endpoint /api/v1/profiles/{profiles_id}/analyses/ avec un POST et obtiendrez un message de confirmation.
+```
+{
+    "data": {
+        "message": "Vous venez de faire une demande d'analyse pour le profile 437",
+        "pk": 50,
+        "status": "pending"
+    },
+    "meta": {
+        "timestamp": "2025-05-20T21:34:28.459388",
+        "request_id": "355afbf3-4a8f-40fa-8077-ce998e12b328"
+    }
+}
+```
 
 ## Configuration d'un webhook
-Pour configurer un webhook il faut à cet endpoint /api/v1/webhooks/configure/
-faire un POST avec le corps de la requête contenant 
+Pour configurer un webhook il faut à cet endpoint /api/v1/webhooks/configure/ faire un POST avec le corps de la requête contenant 
 ```
 {
   "url": "VOTRE_URL"
 }
 ```
+Vous devrez obtenir un message de confirmation comme quoi ce dernier a été configuré.
