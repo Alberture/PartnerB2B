@@ -69,7 +69,7 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
 
 <details>
 <summary>Code très long (cliquer pour afficher)</summary>
-<pre style="max-height:500px;overflow-y:scroll;"><code>
+<pre style="max-height:500px;overflow-y:auto;"><code>
   
 ```json
 {
