@@ -827,8 +827,8 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
     }
 }
 ```
-</details>
 
+</details>
 
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
