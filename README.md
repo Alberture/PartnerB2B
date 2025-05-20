@@ -66,6 +66,8 @@ A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès 
 Avant de créer des profils vous devez prendre connaissance des attributs disponible pour un profil.
 Ces derniers sont disponibles à cet endpoint /api/v1/metadata/ avec GET
 vous obtiendrez la liste de tous les attributs et les catégories auxquels ils appartiennent.
+
+<div style="height: 300px; overflow: auto;">
 ```json
 {
     "data": {
@@ -88,7 +90,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "séparé_divorcé"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "documents": [
@@ -100,7 +111,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": true,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": "pdf"
             },
             {
                 "pk": 101,
@@ -110,7 +130,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": true,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": "pdf"
             }
         ],
         "address": [
@@ -122,7 +151,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 80,
@@ -132,7 +170,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 81,
@@ -142,7 +189,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 82,
@@ -152,7 +208,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 83,
@@ -162,7 +227,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": "unique choice",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 84,
@@ -172,7 +246,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 85,
@@ -182,7 +265,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 86,
@@ -192,7 +284,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 87,
@@ -202,7 +303,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 88,
@@ -212,7 +322,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": "unique choice",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "diverse": [
@@ -224,7 +343,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 98,
@@ -234,7 +362,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 99,
@@ -257,7 +394,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "moto"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "housing situation": [
@@ -288,7 +434,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "autre situation d'habilitation"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 90,
@@ -298,7 +453,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "professional situation": [
@@ -335,7 +499,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "autre situation professionnelle"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "children": [
@@ -347,7 +520,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": "min/max value",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": 0.0,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "identity document": [
@@ -369,7 +551,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "carte_sejour"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 78,
@@ -379,7 +570,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "personal data": [
@@ -391,7 +591,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 70,
@@ -401,7 +610,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 71,
@@ -421,7 +639,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "autre genre"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 72,
@@ -431,7 +658,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": "regex",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 74,
@@ -441,7 +677,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 75,
@@ -451,7 +696,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": "unique choice",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 76,
@@ -461,7 +715,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": false,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 73,
@@ -471,7 +734,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": "regex",
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "product usage": [
@@ -493,7 +765,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                     {
                         "displayedName": "professionnel"
                     }
-                ]
+                ],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ],
         "income and expenses": [
@@ -505,7 +786,16 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             },
             {
                 "pk": 96,
@@ -515,16 +805,26 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
                 "isRequired": true,
                 "validation": null,
                 "sensitiveData": false,
-                "attributechoice_set": []
+                "attributechoice_set": [],
+                "maxLength": 0,
+                "minLength": 0,
+                "maxValue": 9.223372036854776e+18,
+                "minValue": -9.223372036854776e+18,
+                "isEqualTo": null,
+                "maxDate": null,
+                "minDate": null,
+                "maxSize": null,
+                "acceptedFormat": null
             }
         ]
     },
     "meta": {
-        "timestamp": "2025-05-20T13:17:41.890416",
-        "request_id": "065aab7a-4901-478e-a84b-bc68e5c4544c"
+        "timestamp": "2025-05-20T13:27:25.746149",
+        "request_id": "7ad6fbda-e35a-45d8-b983-fde90770b092"
     }
 }
 ```
+</div>
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
 requeête contenant 
