@@ -824,7 +824,7 @@ vous obtiendrez la liste de tous les attributs et les catégories auxquels ils a
         "request_id": "7ad6fbda-e35a-45d8-b983-fde90770b092"
     }
 }
-```
+```</details>
 ## Création de profils
 Pour créer un profile vous devez envoyer une requête POST à cet endpoints api/v1/profiles/ avec le corps de la 
 requeête contenant 
@@ -866,7 +866,7 @@ vous obtiendrez le profil crée avec les details.
         "request_id": "32f449be-62e9-4747-a7d4-16385e07fb8d"
     }
 }
-```</details>
+```
 ## Modifier un profil
 ## Supprimer un profil
 ## Soumettre d'un profil
