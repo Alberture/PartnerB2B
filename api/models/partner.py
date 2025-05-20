@@ -26,7 +26,6 @@ class Partner(models.Model):
     activationStatus = models.CharField(choices=STATUS_CHOICE, default='pending', max_length=11)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
-    webhookUrl = models.CharField(max_length=1000, null=True, blank=True)
     limitUsage = models.PositiveIntegerField()
 
     def save(self, *args, **kwargs):

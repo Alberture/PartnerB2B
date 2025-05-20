@@ -74,6 +74,7 @@ def _handle_method_not_allowed_error(exc, context, response):
     return Response(error_response_template(exc.args[0], context.get('request')), status=status.HTTP_403_FORBIDDEN)
 
 def _handle_permission_denied_error(exc, context, response):
+   dd(exc.args[0])
    return Response(error_response_template(exc.args[0], context.get('request')), status=status.HTTP_403_FORBIDDEN)
 
 def _handle_not_found_error(exc, context, response):

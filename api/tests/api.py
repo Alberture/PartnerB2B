@@ -10,8 +10,8 @@ from PIL import Image
 class ApiTestCase(APITestCase):
     def setUp(self):
         self.partners = {
-            "admin":Partner.objects.create(name="admin", limitUsage=1000),
-            "bank":Partner.objects.create(name="bank", limitUsage=3),
+            "admin":Partner.objects.create(name="admin", limitUsage=1000, activationStatus="success"),
+            "bank":Partner.objects.create(name="bank", limitUsage=3, activationStatus="success"),
             "real_estate_agency":Partner.objects.create(name="real estate agency", limitUsage=3),
         }
         self.attributes = {
@@ -494,6 +494,15 @@ class ApiTestCase(APITestCase):
         self.assertEqual(response.status_code, 404)
         self.assertIsNone(response.data.get('data'))
         self.assertEqual(response.data['error']['message'], 'Attribute Not Found')  
+    
+    def test_cant_create_profile_without_activated_api_key(self):
+
+        self.authenticate('real_estate_agency')
+        url = reverse('profiles-list')
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
+        self.assertEqual(response.status_code, 403)
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Not Allowed')
 
     def test_cant_create_profile_with_a_choice_that_does_not_exist_for_an_attribute(self):
         self.authenticate('bank')
@@ -553,7 +562,16 @@ class ApiTestCase(APITestCase):
         response = self.client.post(url, request_body, content_type='application/json')
         self.assertEqual(response.status_code, 400)  
         self.assertIsNone(response.data.get('data'))
-        self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')   
+        self.assertEqual(response.data['error']['message'][0], 'Missing required attributes.')  
+
+    def test_cant_create_profile_with_invalid_interval_value(self):
+        self.authenticate('bank')
+        url = reverse('profiles-list')
+        self.request_body_for_create_profile['attributes']['children_number'] = -1
+        response = self.client.post(url, self.request_body_for_create_profile, content_type='application/json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIsNone(response.data.get('data'))
+        self.assertEqual(response.data['error']['message'], 'Invalid value')   
 
     def test_create_valid_profile(self):
         self.authenticate('bank')

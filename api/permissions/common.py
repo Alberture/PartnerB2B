@@ -1,5 +1,6 @@
 from rest_framework import permissions, status
 from rest_framework.exceptions import MethodNotAllowed
+from ..models import Partner
 
 class RetrieveOnly(permissions.BasePermission):
     """
@@ -60,3 +61,26 @@ class CantListUpdateCreate(permissions.BasePermission):
                 ]
             },
         )
+
+class IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed(permissions.BasePermission):
+    """
+        Permission allows only partner with activation status as success
+        to manage their profiles.
+    """
+    def has_permission(self, request, view):
+        if request.user.is_staff:
+            return True
+
+        partner = Partner.get_authenticated_partner(request)
+        if not partner.activationStatus == "success":
+            raise MethodNotAllowed({
+                "code": status.HTTP_403_FORBIDDEN,
+                "message": "Not Allowed",
+                "details":[
+                    {
+                        "error": "Your api key is not activated yet."
+                    }
+                ]
+            })
+
+        return True

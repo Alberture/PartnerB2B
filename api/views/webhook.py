@@ -6,7 +6,7 @@ from rest_framework import status
 
 from ..utils import valid_response
 from ..serializers import WebhookSerializer, WebhookItemSerializer
-from ..permissions import WebhookBelongsToParnter, CantListUpdateCreate
+from ..permissions import WebhookBelongsToParnter, CantListUpdateCreate, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 from ..models import Webhook, Partner
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
@@ -23,7 +23,7 @@ class WebhookViewSet(ModelViewSet):
         ViewSet that manages Webhooks objects.
     """
     serializer_class = WebhookSerializer
-    permission_classes = [IsAuthenticated, WebhookBelongsToParnter, CantListUpdateCreate]
+    permission_classes = [IsAuthenticated, WebhookBelongsToParnter, CantListUpdateCreate, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed]
     queryset = Webhook.objects.all()
 
     @extend_schema(

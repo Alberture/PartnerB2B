@@ -9,7 +9,7 @@ from ..utils import valid_response
 
 from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
-from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateAndListNotAllowed
+from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateAndListNotAllowed, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -29,7 +29,8 @@ class ProfileViewSet(ModelViewSet):
         IsAuthenticated, 
         ProfileBelongsToPartner,
         IsAdminOrHasEnoughTries,
-        UpdateAndListNotAllowed
+        UpdateAndListNotAllowed,
+        IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser, ]
 

@@ -8,7 +8,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from ..serializers import ProfileAttributeDocumentItemSerializer
 from ..utils import valid_response
 from ..models import ProfileAttributeDocument
-from ..permissions import DocumentBelongsToPartnerToRead, RetrieveOnly
+from ..permissions import DocumentBelongsToPartnerToRead, RetrieveOnly, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -26,7 +26,8 @@ class DocumentViewSet(ModelViewSet):
     permission_classes = [
         IsAuthenticated, 
         DocumentBelongsToPartnerToRead,
-        RetrieveOnly
+        RetrieveOnly,
+        IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
     ]
     serializer_class = ProfileAttributeDocumentItemSerializer
 
