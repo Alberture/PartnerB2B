@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/482d8293-3982-487e-b865-f9e3e7d6d702)# JWT
+# JWT
 JWT utilise un système d'access et refresh token. Un access token est un token permettant de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
 Le refresh token intervient pour générer un autre access token et dure 1 semaine
 
