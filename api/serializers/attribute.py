@@ -32,7 +32,6 @@ class AttributeSerializer(serializers.ModelSerializer):
             'minLength',
             'maxValue',
             'minValue',
-            'isEqualTo',
             'maxDate',
             'minDate',
             'maxSize',
