@@ -29,11 +29,11 @@ Détails des résultats:
                         "displayedName": "séparé_divorcé"
                     }
                 ],
+                "regex": null,
                 "maxLength": 0,
                 "minLength": 0,
                 "maxValue": 9.223372036854776e+18,
                 "minValue": -9.223372036854776e+18,
-                "isEqualTo": null,
                 "maxDate": null,
                 "minDate": null,
                 "maxSize": null,
@@ -50,11 +50,11 @@ Détails des résultats:
                 "validation": null,
                 "sensitiveData": true,
                 "attributechoice_set": [],
+                "regex": null,
                 "maxLength": 0,
                 "minLength": 0,
                 "maxValue": 9.223372036854776e+18,
                 "minValue": -9.223372036854776e+18,
-                "isEqualTo": null,
                 "maxDate": null,
                 "minDate": null,
                 "maxSize": null,
@@ -69,11 +69,11 @@ Détails des résultats:
                 "validation": null,
                 "sensitiveData": true,
                 "attributechoice_set": [],
+                "regex": null,
                 "maxLength": 0,
                 "minLength": 0,
                 "maxValue": 9.223372036854776e+18,
                 "minValue": -9.223372036854776e+18,
-                "isEqualTo": null,
                 "maxDate": null,
                 "minDate": null,
                 "maxSize": null,
@@ -106,9 +106,9 @@ Détails des résultats:
 
 | nom validation  | Description |
 | ------------- | ------------- |
-| regex  | La valeur qui va être associé à cet attribut devra match le regex mis en place pour cet attribut |
-| unique choice  | Le choix réalisé pour cet attribut devra être unique  |
-| multiple choice  | Le choix réalisé pour cet attribut peut être unique ou multiple |
-| min/max value  | la taille de la chaine de l'attribut ne devra pas dépasser un certain seuil ni aller en dessous d'un minimum  |
-| min/max length  | la valeur d'un entier ou décimal ne devra pas dépasser un certain seuil ni aller en dessous d'un minimum  |
-| min/max date  | la date de l'attribut ne devra pas dépasser une certaine date et être inférieure à une autre date |
+| regex  | La valeur qui va être associé à cet attribut devra match le regex mis en place pour cet attribut (champ regex) |
+| unique choice  | Le choix réalisé pour cet attribut devra être unique parmis les choix disponibles  |
+| multiple choice  | Le choix réalisé pour cet attribut peut être unique ou multiple parmis les choix disponibles |
+| min/max value  | la taille de la chaine de l'attribut ne devra pas dépasser un certain seuil ni aller en dessous d'un minimum ( champs minValue et maxValue) |
+| min/max length  | la valeur d'un entier ou décimal ne devra pas dépasser un certain seuil ni aller en dessous d'un minimum (champs minLength et maxLength) |
+| min/max date  | la date de l'attribut ne devra pas dépasser une certaine date et être inférieure à une autre date (champs minDate et maxDate) |
