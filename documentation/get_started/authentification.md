@@ -1,4 +1,4 @@
-# JWT
+![image](https://github.com/user-attachments/assets/482d8293-3982-487e-b865-f9e3e7d6d702)# JWT
 JWT utilise un système d'access et refresh token. Un access token est un token permettant de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
 Le refresh token intervient pour générer un autre access token et dure 1 semaine
 
@@ -24,6 +24,21 @@ et obtiendrez une réponse resemblant à
 }
 ```
 
+| Champ  | Description |
+| ------------- | ------------- |
+| access | Ce champ corresponsd à l'access token qui vous permettra de vous identifier |
+| refresg  | Ce champ correspond au refresh token qui vous permettra de renouveller votre access token  |
+
+## Exemple avec postman
+
+![image](https://github.com/user-attachments/assets/48dfc887-e7a6-44d4-ad1e-be9fb1a973ab)
+![image](https://github.com/user-attachments/assets/f25dea34-bb00-4c48-a111-77f5412a619c)
+
+
+Appuyez sur "Send" et vous obtiendez le résultat vu plus tôt.
+
+
+
 Pour pouvoir refresh l'access token (c'est à dire renouveller l'access token si ce dernier a expiré) il suffit d'envoyer (POST) le refresh token à cet endpoint /api/v1/auth/token/refresh/ avec le corps 
 de la requête en JSON et contenant 
 ```json
@@ -44,5 +59,14 @@ et obtiendrez une réponse resemblant à
     }
 }
 ```
+| Champ  | Description |
+| ------------- | ------------- |
+| access | Ce champ corresponsd à l'access token qui vous permettra de vous identifier |
+
+## Exemple avec postman
+
+![image](https://github.com/user-attachments/assets/32c42cdf-771d-47af-93d7-b2b56f5b175b)
+![image](https://github.com/user-attachments/assets/66f920be-4520-411a-9cab-b5c37eaa043a)
+
 
 Si les 2 token venaient à expirer il faut de nouveau envoyer la clef API comme nous l'avons fait pour l'access token. A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès aux autres.
