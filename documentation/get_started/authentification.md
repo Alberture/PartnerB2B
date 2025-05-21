@@ -30,7 +30,7 @@ et obtiendrez une réponse resemblant à
 | access | Ce champ corresponsd à l'access token qui vous permettra de vous identifier |
 | refresg  | Ce champ correspond au refresh token qui vous permettra de renouveller votre access token  |
 
-## Exemple avec postman
+### Exemple avec postman
 
 ![image](https://github.com/user-attachments/assets/48dfc887-e7a6-44d4-ad1e-be9fb1a973ab)
 ![image](https://github.com/user-attachments/assets/f25dea34-bb00-4c48-a111-77f5412a619c)
@@ -64,7 +64,7 @@ et obtiendrez une réponse resemblant à
 | ------------- | ------------- |
 | access | Ce champ corresponsd à l'access token qui vous permettra de vous identifier |
 
-## Exemple avec postman
+### Exemple avec postman
 
 ![image](https://github.com/user-attachments/assets/32c42cdf-771d-47af-93d7-b2b56f5b175b)
 ![image](https://github.com/user-attachments/assets/66f920be-4520-411a-9cab-b5c37eaa043a)
