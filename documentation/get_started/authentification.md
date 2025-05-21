@@ -68,6 +68,6 @@ et obtiendrez une réponse resemblant à
 
 ![image](https://github.com/user-attachments/assets/32c42cdf-771d-47af-93d7-b2b56f5b175b)
 ![image](https://github.com/user-attachments/assets/66f920be-4520-411a-9cab-b5c37eaa043a)
-
+Appurez sur "Send" et vous obtendrez un résultat comme celui au dessus.
 
 Si les 2 token venaient à expirer il faut de nouveau envoyer la clef API comme nous l'avons fait pour l'access token. A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès aux autres.
