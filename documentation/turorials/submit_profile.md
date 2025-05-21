@@ -1,0 +1,14 @@
+# Soumettre d'un profil
+Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message de confirmation comme ci-dessous
+```json
+{
+    "data": {
+        "status": "Complet",
+        "message": "Ce profil est complet et prêt pour analyse."
+    },
+    "meta": {
+        "timestamp": "2025-05-20T21:32:56.215846",
+        "request_id": "3bbbf338-e6d2-43ec-95de-e73e8a844af0"
+    }
+}
+```
