@@ -5,6 +5,7 @@ Pour configurer un webhook il faut à cet endpoint /api/v1/webhooks/configure/ f
 
 ![image](https://github.com/user-attachments/assets/dc481404-b597-4333-9782-de4fddaf9662)
 
+Détail des résultats :
 ```json
 {
     "data": {
