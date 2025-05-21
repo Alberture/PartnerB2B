@@ -20,7 +20,7 @@ Détails des résultats :
 }
 ```
 
-| First Header  | Second Header |
+| Champ  | Description|
 | ------------- | ------------- |
 | message| Message de confirmation de demande d'analyse  |
 | pk | Identifiant de l'analyse, celui-ci vous permettra de le retrouver  |
