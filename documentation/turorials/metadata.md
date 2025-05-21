@@ -104,7 +104,7 @@ Détails des résultats:
 
 ## Description des validation
 
-| nom validation  | Description |
+| validation  | Description |
 | ------------- | ------------- |
 | regex  | La valeur qui va être associé à cet attribut devra match le regex mis en place pour cet attribut (champ regex) |
 | unique choice  | Le choix réalisé pour cet attribut devra être unique parmis les choix disponibles  |
