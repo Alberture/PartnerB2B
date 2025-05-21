@@ -27,6 +27,7 @@ class AttributeSerializer(serializers.ModelSerializer):
             'validation',
             'sensitiveData',
             'attributechoice_set',
+            'regex',
             'maxLength',
             'minLength',
             'maxValue',

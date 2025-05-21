@@ -56,7 +56,6 @@ class Attribute(models.Model):
     minLength = models.IntegerField(null=True, blank=True, default=0)
     maxValue = models.FloatField(null=True, blank=True, default=sys.maxsize)
     minValue = models.FloatField(null=True, blank=True, default=-sys.maxsize - 1)
-    isEqualTo = models.FloatField(null=True, blank=True)
     maxDate = models.DateField(null=True, blank=True)
     minDate = models.DateField(null=True, blank=True)
     maxSize = models.IntegerField(null=True, blank=True)
