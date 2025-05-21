@@ -1,14 +1,32 @@
 # Soumettre d'un profil
-Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message de confirmation comme ci-dessous
+Vous pouvez soumettre un fichier à cet endpoint /api/v1/profiles/{profiles_id}/documents/ avec un POST contenant votre fichier et le nom de l'attribut
+
+## Exemple avec postman
+
+![image](https://github.com/user-attachments/assets/938fb36f-8b39-4d5a-8740-8a2d600f8e1c)
+
+Détails des résultats :
 ```json
 {
     "data": {
-        "status": "Complet",
-        "message": "Ce profil est complet et prêt pour analyse."
+        "pk": 41,
+        "status": "pending",
+        "downloadedAt": "2025-05-21T07:43:53.905907Z",
+        "type": "pdf"
     },
     "meta": {
-        "timestamp": "2025-05-20T21:32:56.215846",
-        "request_id": "3bbbf338-e6d2-43ec-95de-e73e8a844af0"
+        "timestamp": "2025-05-21T07:43:53.952490",
+        "request_id": "b6ea958a-3ae3-4910-b247-d8d58bb8d97a"
     }
 }
 ```
+
+| Champ  | Description |
+| ------------- | ------------- |
+| pk  | Identifiant du document, il vous permettra de retrouver le document  |
+| status  | Status de validation du document  |
+| downloadedAt  | Date d'envoie du document  |
+| type  | type de fichier  |
+
+
+Automatiquement pour un attribut dans la catégorie "document" on procédera à la vérification de taille maximale et les formats acceptés (informations visibles dans les metadata).
