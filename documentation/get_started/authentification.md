@@ -70,4 +70,14 @@ et obtiendrez une réponse resemblant à
 ![image](https://github.com/user-attachments/assets/66f920be-4520-411a-9cab-b5c37eaa043a)
 Appurez sur "Send" et vous obtendrez un résultat comme celui au dessus.
 
+## S'authentifier
+
+Pour s'authentifier il suffit de mettre dans les headers votre access token à chaque fois que vous réalisez une requête.
+
+### Exemple avec postman
+
+![image](https://github.com/user-attachments/assets/a815b0ae-72f3-4b8e-b9b0-58e8fe1905a7)
+![image](https://github.com/user-attachments/assets/348d5af6-dbfe-4718-a8e3-5ce499acbaaf)
+
+
 Si les 2 token venaient à expirer il faut de nouveau envoyer la clef API comme nous l'avons fait pour l'access token. A l'exception de ces 2 endpoints vous devrez être identifié pour avoir accès aux autres.
