@@ -2,6 +2,7 @@
 JWT utilise un système d'access et refresh token. Un access token est un token permettant de vous authentifier et utiliser notre API, ce dernier ne dure que 1 heure.
 Le refresh token intervient pour générer un autre access token et dure 1 semaine
 
+## Access Token
 Pour obtenir un access token il faut envoyer (POST) votre clef API à cet endpoint /api/v1/auth/token/ avec le corps de la requête en JSON et contenant 
 ```json
 {
@@ -37,7 +38,7 @@ et obtiendrez une réponse resemblant à
 
 Appuyez sur "Send" et vous obtiendez le résultat vu plus tôt.
 
-
+## Refresh Token
 
 Pour pouvoir refresh l'access token (c'est à dire renouveller l'access token si ce dernier a expiré) il suffit d'envoyer (POST) le refresh token à cet endpoint /api/v1/auth/token/refresh/ avec le corps 
 de la requête en JSON et contenant 
