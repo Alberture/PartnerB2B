@@ -22,12 +22,12 @@ class RetrieveOnly(permissions.BasePermission):
             },
         )
     
-class UpdateAndListNotAllowed(permissions.BasePermission):
+class UpdateNotAllowed(permissions.BasePermission):
     """
         Permission that does not allow update and list actions.
     """
     def has_permission(self, request, view):
-        if view.action != 'list' and request.method != 'PUT':
+        if request.method != 'PUT':
             return True
         
         raise MethodNotAllowed({

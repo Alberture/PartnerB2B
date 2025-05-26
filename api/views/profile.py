@@ -7,9 +7,9 @@ from rest_framework.exceptions import MethodNotAllowed, ValidationError
 
 from ..utils import valid_response
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer
+from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer, AnalysisItemSerializer
 from ..models import Profile, ProfileAttribute, Attribute, Partner
-from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateAndListNotAllowed, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
+from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateNotAllowed, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -29,7 +29,7 @@ class ProfileViewSet(ModelViewSet):
         IsAuthenticated, 
         ProfileBelongsToPartner,
         IsAdminOrHasEnoughTries,
-        UpdateAndListNotAllowed,
+        UpdateNotAllowed,
         IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
     ]
     parser_classes = [MultiPartParser, FormParser, JSONParser, ]
@@ -116,17 +116,24 @@ class ProfileViewSet(ModelViewSet):
         ],
         responses=AnalysisSerializer,
     )
-    @action(detail=True, methods=['post'], url_path='analyses')
+    @action(detail=True, methods=['post', 'get'], url_path='analyses')
     def create_analysis(self, request, pk=None):
-        profile = self.get_object()
-        if not profile.status == "complete":
-            raise ValidationError({
-                "code": status.HTTP_400_BAD_REQUEST,
-                "message": "Profile not submitted",
-                "details": [
-                    {"error": "You must submit your profile in order to make an analysis of it."}
-                ]
-            })
+        if request.method == 'POST':
+            profile = self.get_object()
+            if not profile.status == "complete":
+                raise ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Profile not submitted",
+                    "details": [
+                        {"error": "You must submit your profile in order to make an analysis of it."}
+                    ]
+                })
+        else:
+            profile = Profile.get_profile_or_error(pk)
+            serializer = AnalysisItemSerializer(profile.analysis_set.order_by('id'), many=True)
+            return valid_response(serializer.data, request.id)
+    
+            
 
         serializer = AnalysisSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -355,3 +362,15 @@ class ProfileViewSet(ModelViewSet):
         serializer = ProfileAttributeSerializer(data={'value': value}, instance=instance)
         serializer.is_valid(raise_exception=True)
         return serializer.save(attribute=attribute, profile=profile)
+    
+    
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            profiles = Profile.objects.all()
+        else:
+            partner = Partner.get_authenticated_partner(request)
+            profiles = Profile.objects.filter(partner=partner)
+        
+        serializer = self.serializer_class(profiles, many=True)
+        return valid_response(serializer.data, request.id)
+    

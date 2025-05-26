@@ -2,7 +2,7 @@ from .profile import ProfileBelongsToPartner
 from .analysis import AnalysisBelongsToPartner, IsAdminOrHasEnoughTries
 from .document import DocumentBelongsToPartnerToRead
 from .webhook import WebhookBelongsToParnter
-from .common import RetrieveOnly, UpdateAndListNotAllowed, CantListUpdateCreate, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
+from .common import RetrieveOnly, UpdateNotAllowed, CantListUpdateCreate, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 
 __all__ = [
     'ProfileBelongsToPartner',
@@ -11,7 +11,7 @@ __all__ = [
     'WebhookBelongsToParnter',
     'IsAdminOrHasEnoughTries',
     'RetrieveOnly',
-    'UpdateAndListNotAllowed',
+    'UpdateNotAllowed',
     'CantListUpdateCreate',
-    'IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed'
+    'IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed',
 ]
