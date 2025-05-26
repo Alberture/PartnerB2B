@@ -22,12 +22,32 @@ class RetrieveOnly(permissions.BasePermission):
             },
         )
     
-class UpdateAndListNotAllowed(permissions.BasePermission):
+class ListAndRetrieveOnly(permissions.BasePermission):
+    """
+        Permission that allows retrieve and list action ONLY.
+    """
+    def has_permission(self, request, view):
+        if view.action == 'retrieve' or view.action == 'list':
+            return True
+
+        raise MethodNotAllowed({
+                "code": status.HTTP_403_FORBIDDEN,
+                "message": "Not Allowed",
+                "details":[
+                    {
+                        "error": "Method \"%s\" not allowed." % (request.method),
+                        "path": request.path
+                    }
+                ]
+            },
+        )
+    
+class UpdateNotAllowed(permissions.BasePermission):
     """
         Permission that does not allow update and list actions.
     """
     def has_permission(self, request, view):
-        if view.action != 'list' and request.method != 'PUT':
+        if request.method != 'PUT':
             return True
         
         raise MethodNotAllowed({

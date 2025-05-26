@@ -5,8 +5,8 @@ from rest_framework.exceptions import MethodNotAllowed
 
 from ..utils import valid_response
 from ..serializers import AnalysisSerializer, AnalysisItemSerializer
-from ..permissions import AnalysisBelongsToPartner, RetrieveOnly, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
-from ..models import Analysis
+from ..permissions import AnalysisBelongsToPartner, ListAndRetrieveOnly, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
+from ..models import Analysis, Profile
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
 
@@ -21,7 +21,7 @@ class AnalyseViewSet(ModelViewSet):
     """
         ViewSet that manages Analysis objects.
     """
-    permission_classes = [IsAuthenticated, AnalysisBelongsToPartner, RetrieveOnly, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed]
+    permission_classes = [IsAuthenticated, AnalysisBelongsToPartner, ListAndRetrieveOnly, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed]
     serializer_class = AnalysisSerializer
 
     @extend_schema(
