@@ -85,7 +85,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             based on choices made.
         """
         required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
+
         if data.get('attributes'):
+            
             for name, value in data['attributes'].items():
                 attribute = Attribute.get_attribute_or_error(name=name) 
                 if attribute.type == "choice":
@@ -109,15 +111,25 @@ class ProfileSerializer(serializers.ModelSerializer):
                 #Verifies if all the required attributes were set.
                 required_attributes = [attribute for attribute in required_attributes if attribute.name not in data['attributes'].keys()]
                 if required_attributes:
+                    missing_attributes = (list(map(str, required_attributes)))
                     raise serializers.ValidationError({
                         "code": status.HTTP_400_BAD_REQUEST,
                         "message": "Missing required attributes.",
                         "details":[
-                            {"error": "The following attributes are missing : %s" % (list(map(str, required_attributes)))}
+                            {"error": "The following attributes are missing : %s" % missing_attributes}
                         ]
                     })
-        
-        return data
+
+            return data
+        else:
+            missing_attributes = Attribute.objects.filter(isRequired=True)
+            raise serializers.ValidationError({
+                    "code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Missing required attributes.",
+                    "details":[
+                        {"error": "The following attributes are missing : %s" % (list(map(str, missing_attributes)))}
+                    ]
+                })
     
     def value_is_in_attribute_choice_set_or_error(self, attribute, value):
         """
