@@ -1,5 +1,11 @@
 # Soumettre d'un profil
-Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message de confirmation comme ci-dessous
+Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/submit/ avec un POST et obtiendrez un message.
+
+## Exemple avec postman
+
+![image](https://github.com/user-attachments/assets/63b417cd-6999-4bc0-8a0e-c908c717339f)
+
+Détails des résultats :
 ```json
 {
     "data": {
@@ -12,3 +18,8 @@ Vous pouvez soumettre un profil à cet endpoint /api/v1/profiles/{profiles_id}/s
     }
 }
 ```
+
+| Champ  | Description |
+| ------------- | ------------- |
+| status  | Status de l'analyse  |
+| message  | Message de confirmation  |

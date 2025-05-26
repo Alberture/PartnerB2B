@@ -13,5 +13,5 @@ __all__ = [
     'RetrieveOnly',
     'UpdateNotAllowed',
     'CantListUpdateCreate',
-    'IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed'
+    'IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed',
 ]
