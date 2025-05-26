@@ -16,7 +16,6 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_v
 from datetime import datetime
 
 @extend_schema_view(
-    list=extend_schema(exclude=True),
     update=extend_schema(exclude=True),
 )
 class ProfileViewSet(ModelViewSet):
