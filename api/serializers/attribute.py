@@ -10,6 +10,7 @@ class AttributeItemSerializer(serializers.Serializer):
         Used to represent an Attribute when retrieved.
     """
     name = serializers.CharField(read_only=True)
+    displayedName = serializers.CharField(read_only=True)
 
 
 class AttributeAttributeChoiceSerializer(serializers.Serializer):

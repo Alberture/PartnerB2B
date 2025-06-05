@@ -7,8 +7,8 @@ from rest_framework.exceptions import MethodNotAllowed, ValidationError
 
 from ..utils import valid_response
 
-from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer, AnalysisItemSerializer
-from ..models import Profile, ProfileAttribute, Attribute, Partner
+from ..serializers import ProfileSerializer, ProfileItemSerializer, ProfileAttributeSerializer, ProfileAttributeDocumentSerializer, AnalysisSerializer, AnalysisItemSerializer, ProfileAttributeDocumentItemSerializer
+from ..models import Profile, ProfileAttribute, Attribute, Partner, ProfileAttributeDocument
 from ..permissions import ProfileBelongsToPartner, IsAdminOrHasEnoughTries, UpdateNotAllowed, IsAdminOrPartnerActivationStatusIsSuccessOrNotAllowed
 
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
@@ -169,27 +169,33 @@ class ProfileViewSet(ModelViewSet):
         ],
         responses=ProfileAttributeDocumentSerializer
     )
-    @action(detail=True, methods=['post'], url_path='documents')
+    @action(detail=True, methods=['post', 'get'], url_path='documents')
     def create_document(self, request, pk=None):
         profile = self.get_object()
-        serializer = ProfileAttributeDocumentSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
-            if document_attribute.category != 'documents':
-                document_attributes = Attribute.objects.filter(category="documents")
-                raise ValidationError({
-                    "code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Erreur de validation",
-                    "details":[
-                        { 
-                            "field": "attribute",
-                            "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(map(str,document_attributes)))
-                        }
-                    ]
-                })
-            type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
-            serializer.save(attribute=document_attribute, profile=profile, type=type)
-            return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
+
+        if request.method == 'POST':
+            serializer = ProfileAttributeDocumentSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                document_attribute = Attribute.get_attribute_or_error(request.data['attribute'])
+                if document_attribute.category != 'documents':
+                    document_attributes = Attribute.objects.filter(category="documents")
+                    raise ValidationError({
+                        "code": status.HTTP_400_BAD_REQUEST,
+                        "message": "Erreur de validation",
+                        "details":[
+                            { 
+                                "field": "attribute",
+                                "error": "L'attribute selectionnée doit faire parti de la famille des documents. Liste des attributs dans cette catégorie : %s" % (list(map(str,document_attributes)))
+                            }
+                        ]
+                    })
+                type=str(request.data['file'])[str(request.data['file']).find(".")+1:]
+                serializer.save(attribute=document_attribute, profile=profile, type=type)
+                return valid_response(serializer.data, request.id, status.HTTP_201_CREATED)
+            
+        documents = ProfileAttributeDocument.objects.filter(profile=profile)
+        serializer = ProfileAttributeDocumentItemSerializer(documents, many=True)
+        return valid_response(serializer.data, request.id)
 
     @extend_schema(
         examples=[
