@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from ..models.profile_attribute_document import ProfileAttributeDocument
 from ..models.attribute import Attribute
+from .attribute import AttributeItemSerializer
 
 class ProfileDocumentSerializer(serializers.Serializer):
     """
@@ -20,7 +21,9 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
         Serializer to transform a ProfileAttributeDocument object to JSON format.
         Used to represent a ProfileAttributeDocument when retrieved.
     """
+    pk = serializers.IntegerField(read_only=True)
     profile = ProfileDocumentSerializer(read_only=True)
+    attribute = AttributeItemSerializer(read_only=True)
     file = serializers.CharField(read_only=True)
     type = serializers.CharField(read_only=True)
     downloadedAt = serializers.DateTimeField(read_only=True)
@@ -29,7 +32,9 @@ class ProfileAttributeDocumentItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileAttributeDocument
         fields = [
+            'pk',
             'profile',
+            'attribute',
             'file',
             'type',
             'downloadedAt',
