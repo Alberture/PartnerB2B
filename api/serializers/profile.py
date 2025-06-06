@@ -86,7 +86,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         """
         required_attributes = list(Attribute.objects.filter(isRequired=True).exclude(category="document"))
 
-        if data.get('attributes'):
+        if data.get('attributes') != None:
             
             for name, value in data['attributes'].items():
                 attribute = Attribute.get_attribute_or_error(name=name) 
